@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sprout &amp; Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EDF2E1;
+    --bg-deep: #E2E9D2;
+    --surface: #FCFBF6;
+    --ink: #2E2B22;
+    --ink-soft: #6B6A5C;
+    --matcha: #63804A;
+    --matcha-deep: #4C6538;
+    --framboise: #C24C79;
+    --honey: #E0A22E;
+    --plum: #8A5FA0;
+    --line: #DADFC8;
+    --radius: 18px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, var(--bg-deep) 0%, transparent 60%),
+      var(--bg);
+    font-family:'Figtree', sans-serif;
+    color: var(--ink);
+    display:flex;
+    justify-content:center;
+    padding: 40px 16px 64px;
+  }
+
+  .app{ width:100%; max-width: 540px; }
+
+  header{ text-align:center; margin-bottom: 18px; }
+
+  .sprig{ width:40px; height:40px; margin: 0 auto 8px; display:block; }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:700;
+    font-size: 31px;
+    margin: 0 0 4px;
+    color: var(--matcha-deep);
+    letter-spacing: -0.01em;
+  }
+
+  .tagline{ color: var(--ink-soft); font-size: 14.5px; margin:0; }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    gap:6px;
+    background: rgba(99,128,74,0.1);
+    border-radius: 100px;
+    padding: 4px;
+    margin: 20px auto 18px;
+    max-width: 340px;
+  }
+  .tab{
+    flex:1;
+    border:none;
+    background:transparent;
+    font-family:'Figtree', sans-serif;
+    font-weight:600;
+    font-size: 14px;
+    padding: 9px 10px;
+    border-radius: 100px;
+    color: var(--matcha-deep);
+    cursor:pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tab.active{
+    background: var(--matcha);
+    color: #fff;
+  }
+  .tab:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+
+  .panel[hidden]{ display:none; }
+
+  .card{
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px -18px rgba(46,43,34,0.25);
+    overflow:hidden;
+    margin-bottom: 12px;
+  }
+
+  /* ---- Grocery tab ---- */
+  .add-row{
+    display:flex;
+    gap:8px;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .add-row input[type=text]{
+    flex:1;
+    min-width:0;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-family:'Figtree', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .add-row input[type=text]:focus{
+    outline: none;
+    border-color: var(--matcha);
+    box-shadow: 0 0 0 3px rgba(99,128,74,0.15);
+  }
+  .add-row input[type=text]::placeholder{ color:#A9A896; }
+
+  .add-btn{
+    flex-shrink:0;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    border:none;
+    background: var(--matcha);
+    color: white;
+    font-size: 22px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .add-btn:hover{ background: var(--matcha-deep); }
+  .add-btn:active{ transform: scale(0.94); }
+  .add-btn:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+
+  .quick-add{ padding: 12px 16px 16px; border-bottom: 1px solid var(--line); }
+  .quick-add .label{ font-size: 12.5px; color: var(--ink-soft); margin-bottom: 8px; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap: 7px; }
+
+  .chip{
+    font-family:'Figtree', sans-serif;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--matcha-deep);
+    cursor:pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .chip:hover{ border-color: var(--matcha); background: #F4F7EC; }
+  .chip:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:1px; }
+  .chip.added{ opacity: 0.45; pointer-events:none; }
+
+  .list-area{ padding: 6px 4px 8px; min-height: 90px; }
+
+  .group{ padding: 10px 12px 2px; }
+
+  .group-title{
+    display:flex; align-items:center; gap:7px;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 6px 4px 6px;
+  }
+  .group-title svg{ flex-shrink:0; }
+
+  ul.items, ul.entries{ list-style:none; margin:0; padding:0; }
+
+  li.item, li.entry{
+    display:flex; align-items:center; gap: 11px;
+    padding: 9px 8px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+  }
+  li.item:hover, li.entry:hover{ background: rgba(99,128,74,0.06); }
+  li.item:hover .del, li.entry:hover .del{ opacity:1; }
+
+  .check{
+    flex-shrink:0;
+    width: 24px; height:24px;
+    border-radius:50%;
+    border: 2px solid #C7CBB2;
+    background:#fff;
+    cursor:pointer;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+  }
+  .check:hover{ border-color: var(--matcha); }
+  .check:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+  .check.checked{ background: var(--honey); border-color: var(--honey); animation: pop 0.28s ease; }
+  @keyframes pop{ 0%{ transform: scale(1); } 40%{ transform: scale(1.22); } 100%{ transform: scale(1); } }
+  .check svg{
+    width:13px; height:13px;
+    stroke: white; stroke-width:3; fill:none;
+    stroke-linecap:round; stroke-linejoin:round;
+    opacity:0; transform: scale(0.6);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+  }
+  .check.checked svg{ opacity:1; transform: scale(1); }
+
+  .item-text, .entry-text{
+    flex:1; font-size: 15.5px; color: var(--ink);
+    word-break: break-word; position:relative;
+  }
+  .item.checked .item-text, li.entry.done .entry-text{ color: var(--ink-soft); }
+  .item.checked .item-text::after, li.entry.done .entry-text::after{
+    content:"";
+    position:absolute; left:0; right:0; top:50%;
+    height: 6px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8'><path d='M0 5 Q 10 1, 20 5 T 40 5 T 60 5 T 80 5 T 100 5' fill='none' stroke='%23C24C79' stroke-width='2'/></svg>") repeat-x;
+    background-size: 40px 6px;
+    transform: translateY(-50%);
+    opacity: 0.85;
+  }
+
+  .del{
+    flex-shrink:0; opacity:0;
+    width:26px; height:26px;
+    border-radius:8px; border:none;
+    background:transparent; color: var(--ink-soft);
+    cursor:pointer; font-size:16px;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .del:hover{ background: rgba(194,76,121,0.12); color: var(--framboise); }
+  .del:focus-visible{ opacity:1; outline: 2px solid var(--framboise); outline-offset:1px; }
+
+  .empty{ text-align:center; padding: 34px 20px 30px; color: var(--ink-soft); }
+  .empty-emoji{ font-size: 26px; margin-bottom:6px; }
+  .empty p{ margin:0; font-size:14.5px; }
+
+  footer{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .footer-actions{ display:flex; gap:14px; flex-wrap:wrap; justify-content:flex-end; }
+  .footer-actions button, footer > button{
+    background:none; border:none;
+    font-family:'Figtree', sans-serif; font-size: 13px;
+    color: var(--matcha-deep);
+    cursor:pointer; padding:2px 0;
+    text-decoration: underline; text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .footer-actions button:hover, footer > button:hover{ text-decoration-color: var(--matcha-deep); }
+  .footer-actions button.danger, footer > button.danger{ color: var(--framboise); }
+  .footer-actions button.danger:hover, footer > button.danger:hover{ text-decoration-color: var(--framboise); }
+  .footer-actions button:focus-visible, footer > button:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+
+  .status{ text-align:center; padding: 30px 20px; color: var(--ink-soft); font-size: 14px; }
+
+  /* ---- This Week tab ---- */
+  .recipe-box{ padding: 14px 16px 4px; }
+  .recipe-box .label{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 14.5px;
+    color: var(--matcha-deep);
+    margin-bottom: 10px;
+  }
+  .rb-scroll{
+    max-height: 230px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 10px;
+  }
+  .rb-group{ margin-bottom: 10px; }
+  .rb-group-title{
+    font-size: 11.5px;
+    font-weight:700;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin: 0 0 6px 2px;
+  }
+  .rb-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .rb-chip{
+    font-family:'Figtree', sans-serif;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    cursor:pointer;
+    position:relative;
+  }
+  .rb-chip:hover{ border-color: var(--matcha); }
+  .rb-chip:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:1px; }
+
+  .day-popover{
+    position:absolute; z-index: 20;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px -10px rgba(46,43,34,0.35);
+    padding: 8px;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    min-width: 190px;
+  }
+  .day-popover button{
+    font-family:'Figtree', sans-serif;
+    font-size: 12.5px;
+    padding: 7px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    color: var(--ink);
+  }
+  .day-popover button:hover{ background: #F4F7EC; border-color: var(--matcha); }
+  .day-popover .hint{
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align:center;
+    padding-bottom: 3px;
+  }
+
+  .day-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow:hidden;
+    box-shadow: 0 8px 22px -18px rgba(46,43,34,0.2);
+  }
+  .day-header{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 16px;
+    color: var(--ink);
+    padding: 12px 16px 8px;
+  }
+
+  .meal-tag{
+    flex-shrink:0;
+    font-size: 11.5px;
+    font-weight:600;
+    padding: 4px 9px;
+    border-radius: 100px;
+    border:none;
+    cursor:pointer;
+    color:#fff;
+    white-space:nowrap;
+  }
+  .meal-tag:focus-visible{ outline: 2px solid var(--ink); outline-offset:1px; }
+  .tag-breakfast{ background: var(--honey); }
+  .tag-lunch{ background: var(--matcha); }
+  .tag-dinner{ background: var(--framboise); }
+  .tag-dessert{ background: var(--plum); }
+
+  .week-add-row{ display:flex; gap:8px; padding: 8px 12px 12px; }
+  .week-add-row input[type=text]{
+    flex:1; min-width:0;
+    border: 1.5px solid var(--line);
+    background:#fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family:'Figtree', sans-serif;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .week-add-row input[type=text]:focus{
+    outline:none; border-color: var(--matcha);
+    box-shadow: 0 0 0 3px rgba(99,128,74,0.15);
+  }
+  .week-add-row input[type=text]::placeholder{ color:#A9A896; }
+  .week-add-btn{
+    flex-shrink:0; width: 38px; height:38px;
+    border-radius: 10px; border:none;
+    background: var(--matcha); color:white;
+    font-size:19px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .week-add-btn:hover{ background: var(--matcha-deep); }
+  .week-add-btn:active{ transform: scale(0.94); }
+  .week-add-btn:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+
+  .week-footer{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding: 6px 4px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .week-footer button{
+    background:none; border:none;
+    font-family:'Figtree', sans-serif; font-size: 13px;
+    color: var(--framboise); cursor:pointer;
+    text-decoration: underline; text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .week-footer button:hover{ text-decoration-color: var(--framboise); }
+  .week-footer button:focus-visible{ outline: 2px solid var(--framboise); outline-offset:2px; }
+
+  @media (max-width: 380px){
+    h1{ font-size: 26px; }
+    .item-text, .entry-text{ font-size:15px; }
+  }
+
+  .entry-text.clickable{ cursor:pointer; }
+  .entry-text.clickable:hover{ text-decoration: underline; text-decoration-color: var(--matcha); text-underline-offset: 3px; }
+
+  /* ---- Recipe modal ---- */
+  .modal-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(46,43,34,0.42);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    z-index: 100;
+    padding: 0;
+  }
+  .modal-backdrop[hidden]{ display:none; }
+  @media (min-width: 560px){
+    .modal-backdrop{ align-items:center; padding: 20px; }
+  }
+
+  .modal-card{
+    background: var(--surface);
+    width: 100%;
+    max-width: 520px;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -10px 40px rgba(46,43,34,0.3);
+    padding: 22px 22px 28px;
+    position: relative;
+  }
+  @media (min-width: 560px){
+    .modal-card{ border-radius: 22px; padding: 26px 28px 30px; }
+  }
+
+  .modal-close{
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(99,128,74,0.1);
+    color: var(--matcha-deep);
+    font-size: 17px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{ background: rgba(99,128,74,0.2); }
+  .modal-close:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+
+  .modal-meal-tag{
+    display:inline-block;
+    font-size: 11.5px;
+    font-weight:600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    color:#fff;
+    margin-bottom: 10px;
+  }
+
+  .modal-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size: 23px;
+    color: var(--ink);
+    margin: 0 0 6px;
+    padding-right: 30px;
+  }
+
+  .modal-desc{
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    margin: 0 0 4px;
+    line-height:1.5;
+  }
+
+  .modal-servings{
+    font-size: 13px;
+    color: var(--matcha-deep);
+    font-weight:600;
+    margin: 10px 0 18px;
+  }
+
+  .modal-section-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 15.5px;
+    color: var(--matcha-deep);
+    margin: 20px 0 10px;
+  }
+
+  ul.modal-ingredients{
+    list-style:none;
+    margin:0; padding:0;
+  }
+  ul.modal-ingredients li{
+    font-size: 14.5px;
+    color: var(--ink);
+    padding: 5px 0 5px 20px;
+    position:relative;
+    line-height:1.4;
+  }
+  ul.modal-ingredients li::before{
+    content:"";
+    position:absolute;
+    left:2px; top:12px;
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--honey);
+  }
+
+  ol.modal-steps{
+    list-style:none;
+    margin:0; padding:0;
+    counter-reset: step;
+  }
+  ol.modal-steps li{
+    counter-increment: step;
+    display:flex;
+    gap:12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  ol.modal-steps li:first-child{ border-top:none; }
+  ol.modal-steps li::before{
+    content: counter(step);
+    flex-shrink:0;
+    width: 24px; height:24px;
+    border-radius:50%;
+    background: var(--matcha);
+    color:#fff;
+    font-size: 12.5px;
+    font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    margin-top: 1px;
+  }
+  .modal-step-body{ flex:1; }
+  .modal-step-title{
+    font-weight:600;
+    font-size: 14.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .modal-step-content{
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height:1.5;
+  }
+
+  .modal-notes{
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: rgba(224,162,46,0.12);
+    border-radius: 12px;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height:1.5;
+  }
+  .modal-notes strong{ color: var(--matcha-deep); }
+
+  .modal-empty{
+    text-align:center;
+    padding: 30px 10px 10px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+
+  /* ---- Toast ---- */
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--matcha-deep);
+    color: #fff;
+    font-family:'Figtree', sans-serif;
+    font-size: 13.5px;
+    font-weight:600;
+    padding: 11px 20px;
+    border-radius: 100px;
+    box-shadow: 0 10px 30px -10px rgba(46,43,34,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 200;
+    max-width: 90vw;
+    text-align:center;
+  }
+  .toast.show{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <svg class="sprig" viewBox="0 0 48 48" fill="none">
+      <path d="M24 42V22" stroke="#63804A" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M24 24C24 24 12 22 10 12C10 12 24 10 24 24Z" fill="#8CAE68"/>
+      <path d="M24 22C24 22 36 20 38 10C38 10 24 8 24 22Z" fill="#63804A"/>
+      <circle cx="24" cy="41" r="3.5" fill="#E0A22E"/>
+    </svg>
+    <h1>Sprout &amp; Table</h1>
+    <p class="tagline">for Nikki, Rylan &amp; Ruby</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="grocery">Grocery List</button>
+    <button class="tab" data-tab="week">This Week</button>
+  </div>
+
+  <!-- GROCERY PANEL -->
+  <div class="panel" id="groceryPanel">
+    <div class="card">
+      <div class="add-row">
+        <input id="newItemInput" type="text" placeholder="Add an item…" autocomplete="off" />
+        <button class="add-btn" id="addBtn" aria-label="Add item">+</button>
+      </div>
+      <div class="quick-add">
+        <div class="label">frequent finds</div>
+        <div class="chips" id="quickAddChips"></div>
+      </div>
+      <div class="list-area" id="listArea">
+        <div class="status">Loading your list…</div>
+      </div>
+      <footer>
+        <span id="countLabel">0 items</span>
+        <div class="footer-actions">
+          <button id="downloadListBtn">Download list</button>
+          <button id="clearCheckedBtn">Clear checked</button>
+          <button id="clearAllBtn" class="danger">Clear all</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- WEEK PANEL -->
+  <div class="panel" id="weekPanel" hidden>
+    <div class="card recipe-box">
+      <div class="label">your recipe box — tap to add to a day</div>
+      <div class="rb-scroll" id="recipeBoxScroll"></div>
+    </div>
+
+    <div id="week"><div class="status">Loading your week…</div></div>
+
+    <div class="week-footer">
+      <span id="weekCountLabel">0 meals planned</span>
+      <button id="clearWeekBtn">Clear week</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="recipeModalBackdrop" hidden>
+  <div class="modal-card" id="recipeModalCard" role="dialog" aria-modal="true"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  /* ---------- shared helpers ---------- */
+  function uid(prefix){
+    return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
+  }
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  function escapeAttr(str){
+    return String(str).replace(/"/g,'&quot;');
+  }
+  function checkIconSvg(){
+    return '<svg viewBox="0 0 16 16"><polyline points="3,8.5 6.5,12 13,4"/></svg>';
+  }
+  let toastTimer = null;
+  function showToast(message){
+    const toastEl = document.getElementById('toast');
+    toastEl.textContent = message;
+    toastEl.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toastEl.classList.remove('show'); }, 2600);
+  }
+
+  /* ---------- tabs ---------- */
+  const tabs = document.querySelectorAll('.tab');
+  const groceryPanel = document.getElementById('groceryPanel');
+  const weekPanel = document.getElementById('weekPanel');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const which = t.getAttribute('data-tab');
+      groceryPanel.hidden = which !== 'grocery';
+      weekPanel.hidden = which !== 'week';
+    });
+  });
+
+  /* ================= GROCERY ================= */
+  const GROCERY_STORAGE_KEY = 'grocery-items';
+
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry' };
+
+  const CATEGORIES = [
+    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno'] },
+    { id:'dairy',     label:'Dairy & Eggs',       color:'#E0A22E', keywords:['milk','cream','butter','cheese','yogurt','egg','sour cream','mascarpone','ricotta','buttermilk'] },
+    { id:'bakery',    label:'Bakery',             color:'#C24C79', keywords:['bread','bagel','croissant','roll','bun','tortilla','pita','baguette','brioche','graham cracker'] },
+    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle'] },
+    { id:'seafood',   label:'Seafood',            color:'#3F7C8A', keywords:['salmon','tuna','shrimp','fish','cod','halibut','scallop','crab','ahi','unagi','roe','uni','anchov'] },
+    { id:'frozen',    label:'Frozen',             color:'#6B84A8', keywords:['frozen','ice cream','popsicle','sorbet','edamame'] },
+    { id:'other',     label:'Other',              color:'#8A897A', keywords:[] },
+  ];
+
+  const QUICK_ADD = ['Honey','Matcha (Encha)','Panko','Nori','Rice vinegar','Quinoa','Couscous','Avocado','Chickpeas','Tahini'];
+
+  const listArea = document.getElementById('listArea');
+  const countLabel = document.getElementById('countLabel');
+  const newItemInput = document.getElementById('newItemInput');
+  const addBtn = document.getElementById('addBtn');
+  const quickAddChips = document.getElementById('quickAddChips');
+  const clearCheckedBtn = document.getElementById('clearCheckedBtn');
+  const clearAllBtn = document.getElementById('clearAllBtn');
+  const downloadListBtn = document.getElementById('downloadListBtn');
+
+  const PANTRY_STORAGE_KEY = 'pantry-stock';
+  const DERIVED_CHECKED_STORAGE_KEY = 'grocery-derived-checked';
+
+  let groceryItems = [];      // manual items only (quick-add / typed) — persisted as before
+  let groceryLoaded = false;
+  let pantryStock = {};       // { lowercasedName: {amount, unit, name, namePlural} } — what's on hand, persisted
+  let pantryLoaded = false;
+  let derivedChecked = {};    // { lowercasedName: boolean } — remembers checked state of recipe-derived lines, persisted
+  let derivedCheckedLoaded = false;
+  let derivedItems = [];      // recipe-derived shortfall lines — recomputed from weekEntries + pantryStock, not persisted directly
+
+  function isAppReady(){
+    return groceryLoaded && pantryLoaded && derivedCheckedLoaded && weekLoaded;
+  }
+
+  function categorize(text){
+    const t = text.toLowerCase();
+    if (CATEGORY_OVERRIDES[t]) return CATEGORY_OVERRIDES[t];
+    // "frozen" is a strong, explicit aisle signal — check it before anything else,
+    // so e.g. "frozen mango chunks" doesn't get pulled into Produce via "mango".
+    const frozenCat = CATEGORIES.find(c => c.id === 'frozen');
+    if (frozenCat.keywords.some(k => t.includes(k))) return 'frozen';
+    for (const cat of CATEGORIES){
+      if (cat.id === 'frozen') continue;
+      if (cat.keywords.some(k => t.includes(k))) return cat.id;
+    }
+    return 'other';
+  }
+
+  async function saveGrocery(){
+    try{
+      const res = await window.storage.set(GROCERY_STORAGE_KEY, JSON.stringify(groceryItems), false);
+      if (!res) console.error('Grocery save returned no result');
+    }catch(e){ console.error('Grocery storage save error', e); }
+  }
+  async function loadGrocery(){
+    try{
+      const res = await window.storage.get(GROCERY_STORAGE_KEY, false);
+      // Migration note: older saves may include items with a `derived` flag from a previous
+      // version that auto-filled the list directly. Those are dropped here — recipe-driven
+      // items are now recomputed fresh from the week plan + pantry stock instead.
+      if (res && res.value) groceryItems = JSON.parse(res.value).filter(i => !i.derived);
+    }catch(e){ groceryItems = []; }
+    groceryLoaded = true;
+    maybeInitialRender();
+  }
+
+  async function savePantryStock(){
+    try{
+      const res = await window.storage.set(PANTRY_STORAGE_KEY, JSON.stringify(pantryStock), false);
+      if (!res) console.error('Pantry save returned no result');
+    }catch(e){ console.error('Pantry storage save error', e); }
+  }
+  async function loadPantryStock(){
+    try{
+      const res = await window.storage.get(PANTRY_STORAGE_KEY, false);
+      if (res && res.value) pantryStock = JSON.parse(res.value);
+    }catch(e){ pantryStock = {}; }
+    pantryLoaded = true;
+    maybeInitialRender();
+  }
+
+  async function saveDerivedChecked(){
+    try{
+      const res = await window.storage.set(DERIVED_CHECKED_STORAGE_KEY, JSON.stringify(derivedChecked), false);
+      if (!res) console.error('Derived-checked save returned no result');
+    }catch(e){ console.error('Derived-checked storage error', e); }
+  }
+  async function loadDerivedChecked(){
+    try{
+      const res = await window.storage.get(DERIVED_CHECKED_STORAGE_KEY, false);
+      if (res && res.value) derivedChecked = JSON.parse(res.value);
+    }catch(e){ derivedChecked = {}; }
+    derivedCheckedLoaded = true;
+    maybeInitialRender();
+  }
+
+  function maybeInitialRender(){
+    if (isAppReady()){
+      recomputeDerivedGroceryItems(); // builds derivedItems fresh and calls renderGrocery()
+      renderWeek();
+    }
+  }
+
+  function addGroceryItem(text){
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    groceryItems.push({ id: uid('i'), text: trimmed, category: categorize(trimmed), checked:false, unit:null, name:null, amount:null, derived:false });
+    renderGrocery();
+    saveGrocery();
+  }
+
+  /* ---- unit-aware quantity math shared by the grocery/week logic ---- */
+  const VOLUME_TO_TSP = { tsp:1, tbsp:3, cup:48 };
+  const WEIGHT_TO_G = { g:1, kg:1000, oz:28.3495, lb:453.592 };
+
+  function unitFamily(unit){
+    if (!unit) return 'count';
+    if (unit === 'pinch') return 'pinch';
+    if (VOLUME_TO_TSP[unit]) return 'volume';
+    if (WEIGHT_TO_G[unit]) return 'weight';
+    return 'other';
+  }
+  function convertAmount(amount, fromUnit, toUnit){
+    if (fromUnit === toUnit) return amount;
+    const fam = unitFamily(fromUnit);
+    if (fam === 'volume') return amount * VOLUME_TO_TSP[fromUnit] / VOLUME_TO_TSP[toUnit];
+    if (fam === 'weight') return amount * WEIGHT_TO_G[fromUnit] / WEIGHT_TO_G[toUnit];
+    return amount;
+  }
+  function formatFraction(value){
+    if (Math.abs(value - Math.round(value)) < 0.02) return String(Math.round(value));
+    const whole = Math.floor(value + 1e-9);
+    const frac = value - whole;
+    const fractions = [[0.125,'1/8'],[0.25,'1/4'],[0.333333,'1/3'],[0.375,'3/8'],[0.5,'1/2'],[0.625,'5/8'],[0.666667,'2/3'],[0.75,'3/4'],[0.875,'7/8']];
+    let best = null, bestDiff = Infinity;
+    fractions.forEach(([f, label]) => {
+      const diff = Math.abs(frac - f);
+      if (diff < bestDiff){ bestDiff = diff; best = label; }
+    });
+    if (bestDiff > 0.03){
+      const rounded = Math.round(value * 100) / 100;
+      return String(rounded);
+    }
+    return whole > 0 ? whole + ' ' + best : best;
+  }
+
+  // Per Nikki's preference: measured ingredients (cup/tbsp/tsp/oz/lb/g/kg/pinch) show just the
+  // name, no cooking measurement — the fact that it's on the list at all already means "buy some."
+  // Discrete/countable ingredients (no unit) keep their count, since "how many" is the useful part.
+  function formatGroceryLine(item){
+    const { amount, unit, name, namePlural } = item;
+    if (!unit){
+      if (amount == null) return name;
+      const displayName = Math.abs(amount - 1) < 0.001 ? name : (namePlural || (name + 's'));
+      return formatFraction(amount) + ' ' + displayName;
+    }
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+
+  function findGroceryOrDerived(id){
+    const manual = groceryItems.find(i => i.id === id);
+    if (manual) return { item: manual, isDerived: false };
+    const derived = derivedItems.find(i => i.id === id);
+    if (derived) return { item: derived, isDerived: true };
+    return null;
+  }
+
+  function toggleGroceryItem(id){
+    const found = findGroceryOrDerived(id);
+    if (!found) return;
+    found.item.checked = !found.item.checked;
+    if (found.isDerived){
+      derivedChecked[found.item.name.toLowerCase()] = found.item.checked;
+      saveDerivedChecked();
+    } else {
+      saveGrocery();
+    }
+    renderGrocery();
+  }
+  function deleteGroceryItem(id){
+    const found = findGroceryOrDerived(id);
+    if (!found) return;
+    if (found.isDerived){
+      delete derivedChecked[found.item.name.toLowerCase()];
+      saveDerivedChecked();
+      derivedItems = derivedItems.filter(i => i.id !== id);
+      // Note: if the underlying need is still real (not enough in stock), this line will
+      // reappear next time the week plan or pantry stock changes — deleting the line doesn't
+      // erase the shortfall itself.
+    } else {
+      groceryItems = groceryItems.filter(i => i.id !== id);
+      saveGrocery();
+    }
+    renderGrocery();
+  }
+  function clearCheckedItems(){
+    groceryItems = groceryItems.filter(i => !i.checked);
+    derivedItems.filter(i => i.checked).forEach(i => delete derivedChecked[i.name.toLowerCase()]);
+    derivedItems = derivedItems.filter(i => !i.checked);
+    saveGrocery();
+    saveDerivedChecked();
+    renderGrocery();
+  }
+  function clearAllItems(){
+    groceryItems = [];
+    derivedItems.forEach(i => delete derivedChecked[i.name.toLowerCase()]);
+    derivedItems = [];
+    saveGrocery();
+    saveDerivedChecked();
+    renderGrocery();
+  }
+  function groupIconSvg(color){
+    return '<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="'+color+'" stroke-width="2"/></svg>';
+  }
+
+  function renderGrocery(){
+    const allItems = groceryItems.concat(derivedItems);
+
+    quickAddChips.innerHTML = '';
+    QUICK_ADD.forEach(label => {
+      const already = allItems.some(i =>
+        i.text.toLowerCase() === label.toLowerCase() ||
+        (i.name && i.name.toLowerCase() === label.toLowerCase())
+      );
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (already ? ' added' : '');
+      chip.type = 'button';
+      chip.textContent = (already ? '✓ ' : '+ ') + label;
+      chip.disabled = already;
+      chip.addEventListener('click', () => addGroceryItem(label));
+      quickAddChips.appendChild(chip);
+    });
+
+    if (!isAppReady()){
+      listArea.innerHTML = '<div class="status">Loading your list…</div>';
+      return;
+    }
+
+    if (allItems.length === 0){
+      listArea.innerHTML = '<div class="empty"><div class="empty-emoji">🌱</div><p>Your list is empty — add something tasty.</p></div>';
+      countLabel.textContent = '0 items';
+      return;
+    }
+
+    let html = '';
+    CATEGORIES.forEach(cat => {
+      const catItems = allItems.filter(i => i.category === cat.id);
+      if (catItems.length === 0) return;
+      html += '<div class="group">';
+      html += '<div class="group-title">' + groupIconSvg(cat.color) + '<span>' + cat.label + '</span></div>';
+      html += '<ul class="items">';
+      catItems.forEach(it => {
+        html += '<li class="item' + (it.checked ? ' checked' : '') + '" data-id="' + it.id + '">' +
+          '<button class="check' + (it.checked ? ' checked' : '') + '" data-action="toggle" data-id="' + it.id + '" aria-label="Mark ' + escapeAttr(it.text) + (it.checked ? ' unchecked' : ' checked') + '">' + checkIconSvg() + '</button>' +
+          '<span class="item-text">' + escapeHtml(it.text) + '</span>' +
+          '<button class="del" data-action="delete" data-id="' + it.id + '" aria-label="Remove ' + escapeAttr(it.text) + '">✕</button>' +
+        '</li>';
+      });
+      html += '</ul></div>';
+    });
+    listArea.innerHTML = html;
+
+    const checkedCount = allItems.filter(i => i.checked).length;
+    countLabel.textContent = allItems.length + (allItems.length === 1 ? ' item' : ' items') +
+      (checkedCount > 0 ? ' · ' + checkedCount + ' checked' : '');
+  }
+
+  listArea.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const id = btn.getAttribute('data-id');
+    if (btn.getAttribute('data-action') === 'toggle') toggleGroceryItem(id);
+    if (btn.getAttribute('data-action') === 'delete') deleteGroceryItem(id);
+  });
+  addBtn.addEventListener('click', () => {
+    addGroceryItem(newItemInput.value);
+    newItemInput.value = '';
+    newItemInput.focus();
+  });
+  newItemInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ addGroceryItem(newItemInput.value); newItemInput.value = ''; }
+  });
+  clearCheckedBtn.addEventListener('click', clearCheckedItems);
+  clearAllBtn.addEventListener('click', () => { if (groceryItems.length || derivedItems.length) clearAllItems(); });
+
+  function buildGroceryListText(itemsSnapshot){
+    const allItems = itemsSnapshot || groceryItems.concat(derivedItems);
+    const toBuy = allItems.filter(i => !i.checked);
+    const dateStr = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    let lines = ['Sprout & Table — Grocery List (' + dateStr + ')', ''];
+    if (toBuy.length === 0){
+      lines.push("Everything's checked off — nothing left to buy!");
+    } else {
+      CATEGORIES.forEach(cat => {
+        const catItems = toBuy.filter(i => i.category === cat.id);
+        if (catItems.length === 0) return;
+        lines.push(cat.label.toUpperCase());
+        catItems.forEach(i => lines.push('- ' + i.text));
+        lines.push('');
+      });
+    }
+    return lines.join('\n').trim() + '\n';
+  }
+
+  // Crediting pantry stock only happens here, at download time — per Nikki's choice,
+  // "bought" means "I downloaded the list to go buy it," not just checking a box.
+  function creditPantryStock(item){
+    const key = item.name.toLowerCase();
+    if (!pantryStock[key]){
+      pantryStock[key] = { amount: item.amount, unit: item.unit, name: item.name, namePlural: item.namePlural || null };
+      return;
+    }
+    const fam1 = unitFamily(pantryStock[key].unit);
+    const fam2 = unitFamily(item.unit);
+    if (fam1 === fam2 && fam1 !== 'other'){
+      pantryStock[key].amount += convertAmount(item.amount, item.unit, pantryStock[key].unit);
+    } else {
+      pantryStock[key].amount += item.amount;
+    }
+  }
+
+  function downloadGroceryList(){
+    const snapshot = groceryItems.concat(derivedItems);
+    const text = buildGroceryListText(snapshot);
+
+    let creditedAny = false;
+    derivedItems.forEach(item => {
+      if (item.checked) return; // checked = "handling this myself," don't record as newly bought
+      creditPantryStock(item);
+      creditedAny = true;
+    });
+    groceryItems.forEach(item => { if (!item.checked) item.checked = true; });
+
+    if (creditedAny) savePantryStock();
+    saveGrocery();
+    recomputeDerivedGroceryItems(); // now-covered recipe ingredients drop off the list
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const dateSlug = new Date().toISOString().slice(0,10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'grocery-list-' + dateSlug + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Downloaded ' + a.download);
+  }
+
+  downloadListBtn.addEventListener('click', downloadGroceryList);
+
+  /* ================= WEEK ================= */
+  const WEEK_STORAGE_KEY = 'weekly-recipe-plan';
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const DAY_ABBR = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const MEAL_TYPES = ['breakfast','lunch','dinner','dessert'];
+  const MEAL_LABELS = { breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', dessert:'Dessert' };
+
+  const RECIPE_BOX = [
+    // Breakfast
+    { name:'Whole Wheat Lemon-Poppyseed Pancakes', meal:'breakfast' },
+    { name:'Miso-Butter Scrambled Eggs with Scallions', meal:'breakfast' },
+    { name:'Shakshuka with Feta', meal:'breakfast' },
+    { name:'Sweet Potato Breakfast Hash with Fried Eggs', meal:'breakfast' },
+    // Lunch
+    { name:'Curried Couscous Salad', meal:'lunch' },
+    { name:'Avocado & Quinoa Superfood Ensalada', meal:'lunch' },
+    { name:'Scallion Egg Salad', meal:'lunch' },
+    { name:'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing', meal:'lunch' },
+    // Dinner
+    { name:'Chirashi-Style Rice Bowl', meal:'dinner' },
+    { name:'Crispy Tofu Banh Mi', meal:'dinner' },
+    { name:'Fish Tacos with Cabbage Slaw', meal:'dinner' },
+    { name:'Miso-Glazed Salmon', meal:'dinner' },
+    { name:'Mushroom Risotto', meal:'dinner' },
+    { name:'Spicy Tuna Hand Rolls', meal:'dinner' },
+    { name:'Vegetarian Pad Thai', meal:'dinner' },
+    { name:'Veggie Burgers with Special Sauce and Fries', meal:'dinner' },
+    // Dessert
+    { name:'Nutella Framboise Cookie', meal:'dessert' },
+    { name:'Matcha Nuage Bar', meal:'dessert' },
+    { name:'Honey Apple Galette', meal:'dessert' },
+    { name:'No-Churn Mango Ice Cream', meal:'dessert' },
+    { name:'Olive Oil Cake with Lemon and Whipped Cream', meal:'dessert' },
+    { name:'Turkish Yogurt Cake', meal:'dessert' },
+  ];
+
+  const RECIPE_DETAILS = {
+    'Whole Wheat Lemon-Poppyseed Pancakes': {
+      servings: 3,
+      description: "Fluffy whole wheat pancakes brightened with lemon zest and poppy seeds. Makes about 10-11 pancakes.",
+      ingredients: ['1 1/4 cups whole wheat flour','1 1/2 tbsp granulated sugar','1 1/2 tsp baking powder','1/4 tsp baking soda','1/2 tsp salt','1 tbsp poppy seeds','1 cup buttermilk','1 large egg','2 tbsp unsalted butter, melted','1 lemon, zested','1 tsp vanilla extract','3/4 cup maple syrup, to serve'],
+      steps: [
+        {title:'Mix dry ingredients', content:'Whisk the flour, sugar, baking powder, baking soda, salt, and poppy seeds in a large bowl.'},
+        {title:'Mix wet ingredients', content:'In another bowl, whisk the buttermilk, egg, melted butter, lemon zest, and vanilla.'},
+        {title:'Combine', content:'Pour the wet ingredients into the dry and stir just until combined — a few lumps are fine.'},
+        {title:'Cook', content:'Cook 1/4-cup portions of batter on a lightly greased griddle over medium heat, 2 to 3 minutes per side, until golden.'},
+        {title:'Serve', content:'Serve warm with maple syrup.'},
+      ],
+    },
+    'Miso-Butter Scrambled Eggs with Scallions': {
+      servings: 2,
+      description: "Silky scrambled eggs with a savory, umami depth from miso butter.",
+      ingredients: ['6 large eggs','2 tbsp unsalted butter','1 1/2 tbsp white miso paste','2 scallions, thinly sliced','1/4 tsp black pepper'],
+      steps: [
+        {title:'Whisk the eggs', content:'Whisk the eggs in a bowl until smooth.'},
+        {title:'Make the miso butter', content:'Melt the butter in a nonstick skillet over low heat. Whisk in the miso paste until smooth with no lumps.'},
+        {title:'Scramble', content:'Pour in the eggs and cook low and slow, stirring gently and constantly, until soft curds form, 4 to 6 minutes.'},
+        {title:'Finish', content:"Stir in half the scallions, then remove from heat while still slightly wet — they'll keep cooking from residual heat. Top with the remaining scallions and black pepper."},
+      ],
+      notes: 'Great over steamed rice. Go easy on any extra salt — the miso brings plenty.',
+    },
+    'Shakshuka with Feta': {
+      servings: 4,
+      description: "Eggs poached in a spiced tomato-pepper sauce, finished with feta. A Cookie and Kate-style weekend breakfast.",
+      ingredients: ['2 tbsp olive oil','1 yellow onion, diced','1 red bell pepper, diced','4 garlic cloves, minced','1 tsp ground cumin','1 tsp smoked paprika','1/4 tsp red pepper flakes (optional)','28 oz crushed tomatoes','3/4 tsp salt','6 large eggs','4 oz feta cheese, crumbled','1/4 cup fresh parsley or cilantro, chopped'],
+      steps: [
+        {title:'Sauté the vegetables', content:'Heat the olive oil in a large skillet over medium heat. Add the onion and bell pepper; cook 5 to 6 minutes until softened.'},
+        {title:'Bloom the spices', content:'Add the garlic, cumin, smoked paprika, and red pepper flakes; cook 1 minute until fragrant.'},
+        {title:'Simmer the sauce', content:'Stir in the crushed tomatoes and salt. Simmer uncovered 10 to 12 minutes until slightly thickened.'},
+        {title:'Poach the eggs', content:'Make small wells in the sauce and crack the eggs into them. Cover and cook 6 to 8 minutes, until whites are set and yolks are done to your liking.'},
+        {title:'Finish and serve', content:'Top with the feta and parsley or cilantro. Serve hot with crusty bread for dipping.'},
+      ],
+      notes: "For a Ruby-friendly portion, scoop out a plain section of egg and sauce before adding feta and spice-heavy garnish.",
+    },
+    'Sweet Potato Breakfast Hash with Fried Eggs': {
+      servings: 4,
+      description: "A hearty, savory hash with crisp-edged sweet potatoes, topped with a fried egg.",
+      ingredients: ['2 sweet potatoes, diced small','2 tbsp olive oil, divided','1 small onion, diced','1 red bell pepper, diced','2 garlic cloves, minced','1 tsp smoked paprika','1/2 tsp salt','1/4 tsp black pepper','4 large eggs','2 scallions, sliced, for garnish','1 avocado, sliced (optional)'],
+      steps: [
+        {title:'Cook the sweet potatoes', content:'Heat 1 tbsp of the olive oil in a large skillet over medium heat. Add the sweet potatoes, cover, and cook 8 to 10 minutes, stirring occasionally, until just tender.'},
+        {title:'Add vegetables', content:'Add the onion, bell pepper, garlic, smoked paprika, salt, and black pepper. Cook uncovered 6 to 8 minutes more, until potatoes are golden and vegetables are soft.'},
+        {title:'Fry the eggs', content:'Push the hash to one side of the pan. Add the remaining olive oil to the empty side and fry the eggs to your liking, 3 to 4 minutes.'},
+        {title:'Serve', content:'Divide the hash between plates, top each with a fried egg, and garnish with scallions and avocado.'},
+      ],
+    },
+    'Curried Couscous Salad': {
+      servings: 6,
+      description: "Cold, tangy pearl couscous salad with curry-roasted cauliflower and carrots, brightened with lime and cilantro. Vegetarian as written.",
+      ingredients: ['1 cup Israeli pearl couscous','1 1/4 cups water','3 tbsp olive oil','2 cups cauliflower florets, chopped small','1 cup carrots, peeled and diced small','1 1/2 tsp curry powder','1/2 tsp ground turmeric','1/2 tsp ground cumin','1/2 tsp ground coriander','1/4 tsp cayenne pepper','1 tbsp brown sugar','1 tsp salt','1/3 cup mayonnaise','1 fresh lime, juiced','1/4 cup fresh cilantro, chopped','1/3 cup golden raisins (optional)'],
+      steps: [
+        {title:'Toast and cook the couscous', content:'Heat the olive oil in a medium saucepan over medium heat. Add the couscous and toast, stirring, 1 to 2 minutes until fragrant and lightly golden. Add the water, bring to a boil, reduce to a simmer, cover, and cook about 8 minutes until tender and liquid is absorbed. Let stand covered 5 minutes, fluff with a fork, and spread on a sheet pan to cool.'},
+        {title:'Make the spice blend', content:'Mix the curry powder, turmeric, cumin, coriander, cayenne, brown sugar, and salt in a small bowl.'},
+        {title:'Roast the vegetables', content:'Preheat oven to 450°F. Toss the cauliflower and carrots with the spice blend on a lined sheet pan. Roast 15 to 18 minutes, stirring once, until tender with lightly browned edges. Let cool slightly.'},
+        {title:'Make the dressing', content:'Whisk together the mayonnaise and lime juice.'},
+        {title:'Combine and chill', content:'Add the cooled couscous and roasted vegetables to the dressing. Stir in the cilantro and raisins, if using. Toss well to coat, then chill at least 1 hour before serving cold.'},
+      ],
+      notes: 'Use Israeli (pearl) couscous, not the tiny traditional kind — it gives the chewy, pasta-like texture from the original. Keeps well 4 to 5 days refrigerated; meant to be served cold.',
+    },
+    'Avocado & Quinoa Superfood Ensalada': {
+      servings: 4,
+      description: "A hearty, crunchy salad with crispy baked quinoa, romaine and kale, roasted corn, black beans, avocado, and cotija, tossed in a smoky chipotle-lime vinaigrette. Vegetarian as written.",
+      ingredients: ['1/2 cup quinoa, uncooked','1 cup water','3 tbsp olive oil, divided','1 cup corn kernels (fresh or frozen, thawed)','4 cups romaine lettuce, chopped','3 cups curly kale, stemmed and chopped','1 cup black beans, drained and rinsed','1 cup cherry tomatoes, halved','1/4 cup red onion, thinly sliced','2 ripe avocados, diced','1/3 cup cotija cheese, crumbled','1/4 cup fresh cilantro, chopped','2 chipotle peppers in adobo sauce','1/2 cup olive oil (for dressing)','2 garlic cloves','1/4 cup red wine vinegar','3 tbsp honey','1/2 tsp dried oregano','1/2 tsp ground cumin','1 lime, juiced'],
+      steps: [
+        {title:'Cook the quinoa', content:'Combine the quinoa and water in a small saucepan. Bring to a boil, cover, reduce heat to low, and simmer 15 minutes until the liquid is absorbed. Remove from heat, let stand covered 5 minutes, then fluff with a fork.'},
+        {title:'Crisp the quinoa', content:'Preheat oven to 400°F. Toss the cooked quinoa with 1 tbsp of the olive oil and spread in a thin, even layer on a lined sheet pan. Bake 15 minutes, flip with a spatula, then bake another 10 to 15 minutes until crunchy and golden. Let cool.'},
+        {title:'Char the corn', content:'Heat the remaining olive oil in a skillet over medium-high heat. Add the corn in an even layer and cook, stirring occasionally, 5 to 7 minutes until lightly charred in spots. Set aside to cool.'},
+        {title:'Make the vinaigrette', content:'In a blender, combine the chipotle peppers, olive oil, garlic, red wine vinegar, honey, oregano, cumin, and lime juice. Blend until smooth. Season to taste with salt.'},
+        {title:'Assemble the salad', content:'In a large bowl, combine the romaine, kale, black beans, cherry tomatoes, red onion, avocados, and the charred corn. Top with the crispy quinoa, cotija, and cilantro.'},
+        {title:'Dress and serve', content:'Drizzle with the chipotle-lime vinaigrette (start with about half and add more to taste), toss gently, and serve right away so the quinoa stays crispy.'},
+      ],
+      notes: 'For a pescatarian boost, top with grilled or seared shrimp or salmon. Store dressing separately — the salad keeps 3 to 4 days refrigerated, but the quinoa loses its crunch once dressed.',
+    },
+    'Crispy Tofu Banh Mi': {
+      servings: 4,
+      description: "A vegetarian take on the Vietnamese classic, with crisp pan-fried tofu and quick-pickled vegetables.",
+      ingredients: ['14 oz extra-firm tofu, pressed and cubed','2 tbsp cornstarch','2 tbsp soy sauce','2 tbsp vegetable oil','4 small baguettes or banh mi rolls','5 tbsp mayonnaise','1 carrot, julienned','1 daikon radish, julienned','3 tbsp rice vinegar','1 tbsp granulated sugar','1/2 tsp salt','1/2 cucumber, thinly sliced','1 jalapeño, thinly sliced','1/4 cup fresh cilantro','1 tbsp sriracha, to taste'],
+      steps: [
+        {title:'Quick-pickle the vegetables', content:'Combine the carrot, daikon, rice vinegar, sugar, and salt in a bowl. Let sit at least 20 minutes.'},
+        {title:'Crisp the tofu', content:'Toss the tofu with cornstarch and soy sauce. Pan-fry in the vegetable oil over medium-high heat, turning occasionally, until crisp on all sides, about 8 minutes.'},
+        {title:'Prep the bread', content:'Split and lightly toast the rolls. Spread with mayonnaise.'},
+        {title:'Assemble', content:'Layer the crispy tofu, pickled vegetables, cucumber, jalapeño, and cilantro onto the rolls. Drizzle with sriracha and serve.'},
+      ],
+    },
+    'Scallion Egg Salad': {
+      servings: 4,
+      description: "A quick, classic egg salad brightened up with scallions and a little lemon juice.",
+      ingredients: ['6 large eggs','3 scallions, thinly sliced','5 tbsp mayonnaise','1 tsp Dijon mustard','1 tbsp fresh lemon juice','1 pinch salt','1 pinch black pepper'],
+      steps: [
+        {title:'Boil the eggs', content:'Place the eggs in a pot and cover with cold water by an inch. Bring to a boil, then cover, remove from heat, and let sit about 11 minutes.'},
+        {title:'Cool and peel', content:'Transfer the eggs to a bowl of ice water to cool, then peel and chop into small pieces.'},
+        {title:'Mix', content:'Combine the chopped eggs with the scallions, mayonnaise, Dijon mustard, lemon juice, salt, and pepper. Stir until well combined.'},
+        {title:'Serve', content:'Serve on bread, in lettuce cups, or on its own.'},
+      ],
+      notes: 'For firmer, easier-to-chop yolks, use eggs that are a few days old rather than very fresh.',
+    },
+    'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing': {
+      servings: 4,
+      description: "A cold noodle salad that's fast, light, and packed with texture.",
+      ingredients: ['8 oz soba noodles','1 1/2 cups shelled edamame, thawed if frozen','1 carrot, julienned','1/2 cucumber, julienned','2 scallions, sliced','1 tbsp sesame seeds','3 tbsp soy sauce','2 tbsp rice vinegar','1 tbsp toasted sesame oil','1 tbsp fresh ginger, grated','1 garlic clove, minced','1 tbsp honey','1 lime, juiced'],
+      steps: [
+        {title:'Cook the noodles', content:'Cook the soba noodles per package directions. Drain and rinse under cold water until fully cool.'},
+        {title:'Make the dressing', content:'Whisk together the soy sauce, rice vinegar, sesame oil, ginger, garlic, honey, and lime juice.'},
+        {title:'Toss', content:'Toss the noodles with the edamame, carrot, cucumber, and the dressing.'},
+        {title:'Serve', content:'Top with scallions and sesame seeds. Serve chilled or at room temperature.'},
+      ],
+    },
+    'Chirashi-Style Rice Bowl': {
+      servings: 2,
+      description: "A homemade nod to Sugarfish — seasoned sushi rice topped with sashimi-grade fish and simple garnishes.",
+      ingredients: ['1 cup sushi rice, uncooked','1 1/4 cups water (for cooking rice)','2 tbsp rice vinegar','1 tbsp granulated sugar','1/2 tsp salt','8 oz sashimi-grade tuna or salmon, sliced','1 avocado, sliced','1/2 cucumber, thinly sliced','2 scallions, sliced','1 nori sheet, cut into thin strips','1 tbsp sesame seeds'],
+      steps: [
+        {title:'Cook the rice', content:'Rinse the sushi rice until the water runs clear. Cook with the water per package directions or in a rice cooker.'},
+        {title:'Season the rice', content:'Warm the rice vinegar, sugar, and salt until dissolved. Fold into the hot cooked rice and let cool to room temperature.'},
+        {title:'Assemble', content:'Divide the seasoned rice between two bowls. Arrange the tuna or salmon, avocado, and cucumber on top.'},
+        {title:'Garnish and serve', content:'Top with scallions, nori strips, and sesame seeds. Serve with soy sauce, pickled ginger, and wasabi on the side.'},
+      ],
+      notes: "Buy sashimi-grade fish fresh and close to when you'll eat it — it's best used the same day.",
+    },
+    'Fish Tacos with Cabbage Slaw': {
+      servings: 4,
+      description: "Casual, bar-food energy — built to use the salmon you already have in the freezer.",
+      ingredients: ['1 lb salmon (or other firm fish), thawed','1 tsp chili powder','1 tsp ground cumin','1/2 tsp smoked paprika','1/2 tsp salt','1 tbsp olive oil','8 small corn tortillas','2 cups green or purple cabbage, thinly shredded','3 tbsp mayonnaise','1 tbsp lime juice','1/4 cup fresh cilantro, chopped','1/4 cup crema or sour cream, to serve','1 tbsp hot sauce, to serve'],
+      steps: [
+        {title:'Make the slaw', content:'Toss the cabbage with the mayonnaise, lime juice, and half the cilantro. Season with salt and set aside.'},
+        {title:'Season the fish', content:'Season the salmon with the chili powder, cumin, smoked paprika, and salt.'},
+        {title:'Cook the fish', content:'Heat the olive oil in a skillet over medium-high heat. Cook the fish 3 to 4 minutes per side until just cooked through and flaky. Break into large chunks.'},
+        {title:'Assemble and serve', content:'Warm the tortillas. Fill with the fish, slaw, remaining cilantro, crema, and hot sauce.'},
+      ],
+    },
+    'Miso-Glazed Salmon': {
+      servings: 4,
+      description: "A fast, sweet-savory glaze for salmon — built to use the salmon you already have in the freezer.",
+      ingredients: ['4 salmon fillets, thawed (about 6 oz each)','3 tbsp white miso paste','2 tbsp mirin','1 tbsp rice vinegar (or sake)','1 tbsp soy sauce','1 tbsp brown sugar or honey','2 scallions, sliced, for garnish','1 tsp sesame seeds, for garnish'],
+      steps: [
+        {title:'Make the glaze', content:'Whisk the miso, mirin, rice vinegar, soy sauce, and brown sugar or honey in a small bowl until smooth.'},
+        {title:'Marinate', content:'Coat the salmon in the glaze and marinate at least 20 minutes, up to overnight refrigerated.'},
+        {title:'Cook', content:'Broil on high 6 to 8 minutes, or bake at 425°F for 10 to 12 minutes, until glazed and just cooked through.'},
+        {title:'Serve', content:'Garnish with scallions and sesame seeds.'},
+      ],
+    },
+    'Mushroom Risotto': {
+      servings: 4,
+      description: "Creamy arborio rice with browned mushrooms and parmesan.",
+      ingredients: ['1 1/2 cups arborio rice','1 lb mixed mushrooms (cremini, shiitake), sliced','4 cups vegetable broth','1/2 cup dry white wine (optional)','1 shallot, minced','2 garlic cloves, minced','1/2 cup parmesan cheese, grated','2 tbsp unsalted butter','2 tbsp olive oil, divided','1 tbsp fresh thyme leaves (or parsley, chopped)'],
+      steps: [
+        {title:'Warm the broth', content:'Warm the vegetable broth in a saucepan and keep it at a low simmer.'},
+        {title:'Brown the mushrooms', content:'Sauté the mushrooms in 1 tbsp of the olive oil over medium-high heat until browned, 6 to 8 minutes. Remove and set aside.'},
+        {title:'Start the risotto', content:'Add the remaining oil, shallot, and garlic to the pot; cook 2 minutes until soft. Add the rice and toast, stirring, 1 to 2 minutes until edges look translucent.'},
+        {title:'Deglaze', content:'Add the white wine, if using, and stir until absorbed.'},
+        {title:'Cook the rice', content:'Add the warm broth one ladle at a time, stirring frequently and waiting for each addition to absorb before adding more, about 20 to 25 minutes total, until the rice is creamy and al dente.'},
+        {title:'Finish', content:'Stir in the mushrooms, butter, and parmesan. Season with salt and pepper and garnish with thyme.'},
+      ],
+    },
+    'Spicy Tuna Hand Rolls': {
+      servings: 4,
+      description: "A build-your-own hand roll spread inspired by Sugarfish's Trust Me omakase, starting with steamed edamame.",
+      ingredients: ['2 cups sushi rice, uncooked','2 1/2 cups water (for cooking rice)','3 tbsp rice vinegar','1 1/2 tbsp granulated sugar','3/4 tsp salt','12 oz sashimi-grade tuna, diced small','3 tbsp mayonnaise','1 tbsp sriracha','1 tsp toasted sesame oil','6 nori sheets, halved','1 avocado, sliced','1/2 cucumber, julienned','2 scallions, sliced','1 tbsp sesame seeds','8 oz edamame, in shell (steamed, to start)'],
+      steps: [
+        {title:'Cook and season the rice', content:'Rinse the sushi rice until the water runs clear and cook with the water per package directions. Warm the rice vinegar, sugar, and salt until dissolved, then fold into the hot rice and let cool to room temperature.'},
+        {title:'Steam the edamame', content:'Steam the edamame per package directions and sprinkle with a little salt. Serve as a starter while you assemble the rest.'},
+        {title:'Make the spicy tuna', content:'Mix the tuna with mayonnaise, sriracha, and toasted sesame oil.'},
+        {title:'Assemble hand rolls', content:'Hold a half-sheet of nori in your palm, spread a thin layer of rice over it, then add a spoonful of spicy tuna, avocado, and cucumber. Roll into a cone.'},
+        {title:'Garnish and serve', content:'Top with scallions and sesame seeds. Serve with soy sauce, pickled ginger, and wasabi.'},
+      ],
+      notes: "Buy the tuna fresh and sashimi-grade, ideally the day you're serving it.",
+    },
+    'Vegetarian Pad Thai': {
+      servings: 4,
+      description: "A vegetarian version of the classic — no fish sauce, just a tangy tamarind-lime sauce.",
+      ingredients: ['8 oz pad thai rice noodles','14 oz extra-firm tofu, cubed','2 tbsp vegetable oil, divided','2 large eggs, lightly beaten','3 garlic cloves, minced','2 cups bean sprouts','1 carrot, julienned','3 scallions, cut into 1-inch pieces','3 tbsp soy sauce','2 tbsp tamarind paste','2 tbsp brown sugar','1 lime, juiced (plus wedges to serve)','1/4 cup roasted peanuts, crushed','1/4 tsp red pepper flakes, to taste'],
+      steps: [
+        {title:'Soak the noodles', content:'Soak the noodles in warm water per package directions until pliable. Drain.'},
+        {title:'Make the sauce', content:'Whisk together the soy sauce, tamarind paste, brown sugar, and lime juice.'},
+        {title:'Fry the tofu', content:'Heat 1 tbsp of the vegetable oil in a large skillet or wok over medium-high heat. Fry the tofu until golden, about 5 minutes; remove and set aside.'},
+        {title:'Scramble the eggs', content:'Add the remaining oil, garlic, and eggs to the pan; scramble briefly.'},
+        {title:'Combine', content:'Add the noodles and sauce; toss to combine and coat, 2 to 3 minutes.'},
+        {title:'Add vegetables', content:'Add the tofu, bean sprouts, carrot, and scallions; toss another 1 to 2 minutes until just wilted.'},
+        {title:'Serve', content:'Top with crushed peanuts and red pepper flakes. Serve with extra lime wedges.'},
+      ],
+    },
+    'Veggie Burgers with Special Sauce and Fries': {
+      servings: 4,
+      description: "A good veggie burger, dressed up with a tangy special sauce, plus fries on the side.",
+      ingredients: ['4 veggie burger patties (your favorite brand)','4 burger buns','4 lettuce leaves','1 tomato, sliced','1/4 red onion, sliced','8 pickles','1/3 cup mayonnaise','2 tbsp ketchup','1 tbsp yellow mustard','1 tbsp pickle relish','1/2 tsp garlic powder','1/4 tsp smoked paprika','1 lb frozen French fries'],
+      steps: [
+        {title:'Bake the fries', content:'Bake the frozen French fries according to package directions.'},
+        {title:'Make the special sauce', content:'Mix the mayonnaise, ketchup, yellow mustard, pickle relish, garlic powder, and smoked paprika in a small bowl.'},
+        {title:'Cook the patties', content:'Cook the veggie burger patties according to package directions (pan-fry, grill, or bake).'},
+        {title:'Assemble', content:'Toast the buns lightly and spread with the special sauce. Build burgers with the lettuce, tomato, red onion, and pickles. Serve with the fries.'},
+      ],
+    },
+    'Nutella Framboise Cookie': {
+      servings: 14,
+      description: "A copycat take on the bakery's signature stuffed cookie — a thick, chewy dark chocolate cookie studded with real raspberry couverture and hiding a molten Nutella center, finished with flaky sea salt.",
+      ingredients: ['1 cup unsalted butter, softened','3/4 cup granulated sugar','3/4 cup brown sugar, packed','2 large eggs','2 tsp vanilla extract','2 3/4 cups all-purpose flour','1 tsp baking soda','1/2 tsp baking powder','1 tsp fine sea salt','6 oz 70% dark chocolate, chopped into chunks','1/2 cup Nutella','4 oz Valrhona Inspiration Framboise (raspberry couverture), chopped into chunks','1 tsp flaky sea salt, for topping'],
+      steps: [
+        {title:'Freeze the Nutella filling', content:'Scoop the Nutella into 14 small teaspoon-size dollops onto a parchment-lined tray. Freeze until solid, at least 1 hour (or overnight).'},
+        {title:'Cream butter and sugars', content:'Beat the butter, granulated sugar, and brown sugar together until light and fluffy, about 2 to 3 minutes.'},
+        {title:'Add eggs and vanilla', content:'Beat in the eggs one at a time, then mix in the vanilla.'},
+        {title:'Mix dry ingredients', content:'Whisk together the flour, baking soda, baking powder, and salt. Gradually add to the butter mixture, mixing just until combined.'},
+        {title:'Fold in chocolate', content:'Fold in the dark chocolate and most of the raspberry couverture, reserving a small handful for the filling.'},
+        {title:'Assemble stuffed cookies', content:'Scoop about 3 tablespoons of dough and flatten into a disc in your palm. Place one frozen Nutella dollop and 2 to 3 reserved chunks of raspberry couverture in the center, then wrap the dough around and roll into a ball, sealing well.'},
+        {title:'Chill the dough balls', content:'Chill on a tray for at least 30 minutes — this keeps the cookies thick and bakery-style.'},
+        {title:'Bake', content:'Preheat oven to 375°F. Bake dough balls 5 to 6 inches apart for 12 to 14 minutes, until edges are set but centers still look slightly underdone.'},
+        {title:'Finish with sea salt', content:'Sprinkle each cookie with a pinch of flaky sea salt right out of the oven. Cool on the tray 5 minutes before transferring.'},
+      ],
+      notes: "Valrhona Inspiration Framboise chops and melts like chocolate but has a tart-sweet raspberry flavor and pink color. If you can't find it, white chocolate chunks plus a spoonful of seedless raspberry jam gets you close, though color and tartness won't be as vivid.",
+    },
+    'Matcha Nuage Bar': {
+      servings: 9,
+      description: 'A copycat of the bakery\'s matcha cheesecake bar — a graham cracker crust, a dense matcha cheesecake layer, and a piped whipped cream "cloud" dusted with more matcha on top.',
+      ingredients: ['1 1/2 cups graham cracker crumbs','6 tbsp unsalted butter, melted','3 tbsp granulated sugar','16 oz cream cheese, softened','12 tbsp granulated sugar (3/4 cup)','2 large eggs','6 tbsp sour cream','1 tsp vanilla extract','3 tbsp culinary-grade matcha powder, sifted','1 cup heavy cream, cold','3 tbsp powdered sugar','1/2 tsp vanilla extract, for the topping','1 tbsp matcha powder, for dusting'],
+      steps: [
+        {title:'Make the crust', content:'Preheat oven to 325°F. Mix the graham cracker crumbs, melted butter, and sugar together until it looks like wet sand. Press firmly into the bottom of a parchment-lined 8x8-inch pan.'},
+        {title:'Pre-bake the crust', content:'Bake for 8 to 10 minutes, then set aside to cool slightly while you make the filling.'},
+        {title:'Beat the cream cheese and sugar', content:'In a large bowl, beat the cream cheese and sugar together until smooth and creamy, with no lumps.'},
+        {title:'Add eggs and sour cream', content:'Beat in the eggs one at a time, then mix in the sour cream and vanilla until just combined.'},
+        {title:'Add the matcha', content:'Sift the matcha into the batter and mix until fully incorporated and streak-free.'},
+        {title:'Bake the cheesecake layer', content:'Pour the filling over the crust and smooth the top. Bake 25 to 30 minutes, until the edges are set and the center still jiggles slightly when nudged.'},
+        {title:'Cool and chill', content:'Let the bars cool completely at room temperature, then chill in the fridge at least 4 hours (overnight is best) before topping.'},
+        {title:'Whip the cloud topping', content:'Beat the heavy cream, powdered sugar, and vanilla together until stiff peaks form.'},
+        {title:'Pipe the clouds', content:'Transfer the whipped cream to a piping bag fitted with a large round tip. Pipe wavy, overlapping mounds across the top of the chilled bars to mimic a cloud.'},
+        {title:'Dust with matcha', content:'Sift matcha powder generously over the whipped cream clouds. Slice into 9 bars with a hot, clean knife wiped between cuts, and serve chilled.'},
+      ],
+      notes: 'Bars keep covered in the fridge up to 4 days — pipe the cream and dust with matcha the same day you plan to serve, since matcha dulls in color as it sits on the moist cream.',
+    },
+    'Honey Apple Galette': {
+      servings: 8,
+      description: 'A rustic free-form apple tart with a flaky butter crust, sweetened only with honey.',
+      ingredients: ['1 1/4 cups all-purpose flour','1/2 tsp fine salt','8 tbsp cold unsalted butter, cubed','1/4 cup ice water','5 Fuji apples, peeled, cored, thinly sliced','3 tbsp honey, plus more for finishing','1 tbsp lemon juice','1 tsp ground cinnamon','1/8 tsp ground nutmeg','1 tbsp cornstarch','1 pinch salt, for the filling','1 egg, beaten (or milk, for brushing the crust)'],
+      steps: [
+        {title:'Make the dough', content:'Combine the flour and salt. Add the cold butter and cut in until the mixture looks like coarse crumbs with pea-sized butter pieces. Drizzle in the ice water a little at a time until the dough just comes together.'},
+        {title:'Chill the dough', content:'Shape the dough into a disk, wrap, and refrigerate at least 30 minutes (up to 2 days, or freeze up to a month).'},
+        {title:'Toss the filling', content:'Toss the apple slices with the honey, lemon juice, cinnamon, nutmeg, cornstarch, and a pinch of salt until evenly coated.'},
+        {title:'Roll out the dough', content:'Preheat oven to 400°F. On a floured surface, roll the chilled dough into a rough 12-inch circle, about 1/8-inch thick. Transfer to a parchment-lined baking sheet.'},
+        {title:'Assemble the galette', content:'Arrange the apple slices in the center, overlapping slightly, leaving a 2-inch border. Fold the border up and over the edge, pleating as you go. Brush the crust with the egg wash.'},
+        {title:'Bake', content:'Bake about 45 minutes, until the crust is deep golden brown and the apples are tender when pierced with a knife — start checking at 35 to 40 minutes.'},
+        {title:'Finish and serve', content:'Let cool about 10 minutes, then drizzle with a little extra honey before slicing and serving warm.'},
+      ],
+      notes: "For Ruby's portion, serve a piece from the center where the apple is softest, away from the firmer crimped edge, cut into small, soft pieces. Dough can be made a day ahead and refrigerated, or frozen up to a month.",
+    },
+    'No-Churn Mango Ice Cream': {
+      servings: 8,
+      description: "A simple three-ingredient ice cream that needs no ice cream maker — just a blender and a freezer.",
+      ingredients: ['20 oz frozen mango chunks','14 oz sweetened condensed milk','1 cup heavy cream','1 tbsp fresh lime juice','1 pinch salt'],
+      steps: [
+        {title:'Blend the mango base', content:'In a blender or food processor, blend the frozen mango, condensed milk, and lime juice until smooth, scraping down the sides as needed.'},
+        {title:'Whip the cream', content:'In a separate bowl, whip the heavy cream with a pinch of salt to soft peaks.'},
+        {title:'Fold together', content:'Gently fold the mango purée into the whipped cream until no streaks remain.'},
+        {title:'Freeze', content:'Pour into a loaf pan or airtight container, cover, and freeze until firm, about 6 hours.'},
+        {title:'Serve', content:'Let sit at room temperature for 5 minutes before scooping.'},
+      ],
+      notes: 'Makes about 1 quart. Frozen mango straight from the freezer works best — no need to thaw first.',
+    },
+    'Olive Oil Cake with Lemon and Whipped Cream': {
+      servings: 8,
+      description: "A moist, tender citrus olive oil cake, finished with a simple homemade whipped cream.",
+      ingredients: ['220 g (about 1 3/4 cups) all-purpose flour','1 1/2 tsp baking powder','1/2 tsp baking soda','1/2 tsp salt','3 large eggs','250 g (about 1 1/4 cups) granulated sugar','1 lemon, zested','2 tbsp fresh lemon juice','1 cup extra virgin olive oil','3/4 cup whole milk','1 tsp vanilla extract','1 cup heavy whipping cream','2 tbsp powdered sugar','1/2 tsp vanilla extract, for the whipped cream'],
+      steps: [
+        {title:'Prep the pan', content:'Preheat oven to 350°F. Grease and flour a 9-inch round cake pan.'},
+        {title:'Mix dry ingredients', content:'Whisk together the flour, baking powder, baking soda, and salt in a medium bowl.'},
+        {title:'Mix wet ingredients', content:'In a large bowl, whisk the eggs and sugar until pale, about 2 minutes. Whisk in the lemon zest, lemon juice, olive oil, milk, and vanilla until smooth.'},
+        {title:'Combine', content:"Fold the dry ingredients into the wet ingredients just until no streaks of flour remain — don't overmix."},
+        {title:'Bake', content:'Pour the batter into the prepared pan and bake about 42 minutes, until a toothpick inserted in the center comes out clean.'},
+        {title:'Cool', content:'Let the cake cool completely in the pan on a rack before topping.'},
+        {title:'Whip the cream', content:'Beat the heavy whipping cream, powdered sugar, and vanilla together until soft peaks form.'},
+        {title:'Serve', content:'Slice the cake and top each piece with a dollop of whipped cream.'},
+      ],
+      notes: "Any good fruity extra virgin olive oil works well here. Add a touch more powdered sugar to the cream if you'd like it sweeter.",
+    },
+    'Turkish Yogurt Cake': {
+      servings: 8,
+      description: "Adapted from Claudia Roden, via NYT Cooking (Melissa Clark). A light, soufflé-like cake made mostly of yogurt and eggs — it puffs in the oven, then settles as it cools.",
+      ingredients: ['4 large eggs, separated','1/2 cup granulated sugar','3 tbsp all-purpose flour','400 g (about 1 3/4 cups) plain whole-milk Greek yogurt','1 lemon, zested and juiced','1 tbsp unsalted butter, for greasing the pan'],
+      steps: [
+        {title:'Prep the pan', content:'Preheat oven to 350°F. Grease a 9-inch round cake pan (springform works well) with the butter and line the bottom with parchment.'},
+        {title:'Whip the whites', content:'In a clean bowl, whisk the egg whites to soft peaks. Set aside.'},
+        {title:'Beat yolks and sugar', content:'In another bowl, beat the egg yolks with the sugar until pale and thickened, about 5 minutes.'},
+        {title:'Add yogurt and lemon', content:'Beat in the flour, yogurt, and the lemon zest and juice until smooth and well blended.'},
+        {title:'Fold in the whites', content:'Gently fold the whipped egg whites into the yogurt mixture in two additions, until just combined and no streaks remain.'},
+        {title:'Bake', content:'Pour the batter into the prepared pan and bake about 45 minutes, until puffed and golden brown on top.'},
+        {title:'Cool and serve', content:'Let the cake cool in the pan on a rack — it will deflate somewhat as it cools, which is normal. Serve warm or at room temperature, plain or with fresh berries.'},
+      ],
+      notes: 'Texture is closer to a light cheesecake/soufflé than a typical layer cake. Good with lightly macerated strawberries on the side.',
+    },
+  };
+
+  // Structured ingredient data (amount/unit/name) used only for grocery-list math.
+  // Kept separate from RECIPE_DETAILS.ingredients, which stays as full display text for the recipe modal.
+  const RECIPE_GROCERY = {
+    'Whole Wheat Lemon-Poppyseed Pancakes': [
+      {amount:1.25, unit:'cup', name:'whole wheat flour'},
+      {amount:1.5, unit:'tbsp', name:'granulated sugar'},
+      {amount:1.5, unit:'tsp', name:'baking powder'},
+      {amount:0.25, unit:'tsp', name:'baking soda'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:1, unit:'tbsp', name:'poppy seeds'},
+      {amount:1, unit:'cup', name:'buttermilk'},
+      {amount:1, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:2, unit:'tbsp', name:'unsalted butter'},
+      {amount:1, unit:null, name:'lemon', namePlural:'lemons'},
+      {amount:1, unit:'tsp', name:'vanilla extract'},
+      {amount:0.75, unit:'cup', name:'maple syrup'},
+    ],
+    'Miso-Butter Scrambled Eggs with Scallions': [
+      {amount:6, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:2, unit:'tbsp', name:'unsalted butter'},
+      {amount:1.5, unit:'tbsp', name:'white miso paste'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:0.25, unit:'tsp', name:'black pepper'},
+    ],
+    'Shakshuka with Feta': [
+      {amount:2, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:null, name:'yellow onion', namePlural:'yellow onions'},
+      {amount:1, unit:null, name:'red bell pepper', namePlural:'red bell peppers'},
+      {amount:4, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tsp', name:'ground cumin'},
+      {amount:1, unit:'tsp', name:'smoked paprika'},
+      {amount:0.25, unit:'tsp', name:'red pepper flakes'},
+      {amount:28, unit:'oz', name:'crushed tomatoes'},
+      {amount:0.75, unit:'tsp', name:'salt'},
+      {amount:6, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:4, unit:'oz', name:'feta cheese'},
+      {amount:0.25, unit:'cup', name:'fresh parsley or cilantro'},
+    ],
+    'Sweet Potato Breakfast Hash with Fried Eggs': [
+      {amount:2, unit:null, name:'sweet potato', namePlural:'sweet potatoes'},
+      {amount:2, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:null, name:'small onion', namePlural:'small onions'},
+      {amount:1, unit:null, name:'red bell pepper', namePlural:'red bell peppers'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tsp', name:'smoked paprika'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:0.25, unit:'tsp', name:'black pepper'},
+      {amount:4, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1, unit:null, name:'avocado', namePlural:'avocados'},
+    ],
+    'Curried Couscous Salad': [
+      {amount:1, unit:'cup', name:'Israeli pearl couscous'},
+      {amount:1.25, unit:'cup', name:'water'},
+      {amount:3, unit:'tbsp', name:'olive oil'},
+      {amount:2, unit:'cup', name:'cauliflower florets'},
+      {amount:1, unit:'cup', name:'carrots'},
+      {amount:1.5, unit:'tsp', name:'curry powder'},
+      {amount:0.5, unit:'tsp', name:'ground turmeric'},
+      {amount:0.5, unit:'tsp', name:'ground cumin'},
+      {amount:0.5, unit:'tsp', name:'ground coriander'},
+      {amount:0.25, unit:'tsp', name:'cayenne pepper'},
+      {amount:1, unit:'tbsp', name:'brown sugar'},
+      {amount:1, unit:'tsp', name:'salt'},
+      {amount:0.333333, unit:'cup', name:'mayonnaise'},
+      {amount:1, unit:null, name:'lime', namePlural:'limes'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:0.333333, unit:'cup', name:'golden raisins'},
+    ],
+    'Avocado & Quinoa Superfood Ensalada': [
+      {amount:0.5, unit:'cup', name:'quinoa'},
+      {amount:1, unit:'cup', name:'water'},
+      {amount:3, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:'cup', name:'corn kernels'},
+      {amount:4, unit:'cup', name:'romaine lettuce'},
+      {amount:3, unit:'cup', name:'curly kale'},
+      {amount:1, unit:'cup', name:'black beans'},
+      {amount:1, unit:'cup', name:'cherry tomatoes'},
+      {amount:0.25, unit:'cup', name:'red onion'},
+      {amount:2, unit:null, name:'ripe avocado', namePlural:'ripe avocados'},
+      {amount:0.333333, unit:'cup', name:'cotija cheese'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:2, unit:null, name:'chipotle pepper in adobo sauce', namePlural:'chipotle peppers in adobo sauce'},
+      {amount:0.5, unit:'cup', name:'olive oil'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:0.25, unit:'cup', name:'red wine vinegar'},
+      {amount:3, unit:'tbsp', name:'honey'},
+      {amount:0.5, unit:'tsp', name:'dried oregano'},
+      {amount:0.5, unit:'tsp', name:'ground cumin'},
+      {amount:1, unit:null, name:'lime', namePlural:'limes'},
+    ],
+    'Crispy Tofu Banh Mi': [
+      {amount:14, unit:'oz', name:'extra-firm tofu'},
+      {amount:2, unit:'tbsp', name:'cornstarch'},
+      {amount:2, unit:'tbsp', name:'soy sauce'},
+      {amount:2, unit:'tbsp', name:'vegetable oil'},
+      {amount:4, unit:null, name:'baguette or banh mi roll', namePlural:'baguettes or banh mi rolls'},
+      {amount:5, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:null, name:'carrot', namePlural:'carrots'},
+      {amount:1, unit:null, name:'daikon radish', namePlural:'daikon radishes'},
+      {amount:3, unit:'tbsp', name:'rice vinegar'},
+      {amount:1, unit:'tbsp', name:'granulated sugar'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:0.5, unit:null, name:'cucumber'},
+      {amount:1, unit:null, name:'jalapeño', namePlural:'jalapeños'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:1, unit:'tbsp', name:'sriracha'},
+    ],
+    'Scallion Egg Salad': [
+      {amount:6, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:3, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:5, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:'tsp', name:'Dijon mustard'},
+      {amount:1, unit:'tbsp', name:'fresh lemon juice'},
+      {amount:1, unit:'pinch', name:'salt'},
+      {amount:1, unit:'pinch', name:'black pepper'},
+    ],
+    'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing': [
+      {amount:8, unit:'oz', name:'soba noodles'},
+      {amount:1.5, unit:'cup', name:'shelled edamame'},
+      {amount:1, unit:null, name:'carrot', namePlural:'carrots'},
+      {amount:0.5, unit:null, name:'cucumber'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1, unit:'tbsp', name:'sesame seeds'},
+      {amount:3, unit:'tbsp', name:'soy sauce'},
+      {amount:2, unit:'tbsp', name:'rice vinegar'},
+      {amount:1, unit:'tbsp', name:'toasted sesame oil'},
+      {amount:1, unit:'tbsp', name:'fresh ginger'},
+      {amount:1, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tbsp', name:'honey'},
+      {amount:1, unit:null, name:'lime', namePlural:'limes'},
+    ],
+    'Chirashi-Style Rice Bowl': [
+      {amount:1, unit:'cup', name:'sushi rice'},
+      {amount:1.25, unit:'cup', name:'water'},
+      {amount:2, unit:'tbsp', name:'rice vinegar'},
+      {amount:1, unit:'tbsp', name:'granulated sugar'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:8, unit:'oz', name:'sashimi-grade tuna or salmon'},
+      {amount:1, unit:null, name:'avocado', namePlural:'avocados'},
+      {amount:0.5, unit:null, name:'cucumber'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1, unit:null, name:'nori sheet', namePlural:'nori sheets'},
+      {amount:1, unit:'tbsp', name:'sesame seeds'},
+    ],
+    'Fish Tacos with Cabbage Slaw': [
+      {amount:1, unit:'lb', name:'salmon (or other firm fish)'},
+      {amount:1, unit:'tsp', name:'chili powder'},
+      {amount:1, unit:'tsp', name:'ground cumin'},
+      {amount:0.5, unit:'tsp', name:'smoked paprika'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:1, unit:'tbsp', name:'olive oil'},
+      {amount:8, unit:null, name:'corn tortilla', namePlural:'corn tortillas'},
+      {amount:2, unit:'cup', name:'green or purple cabbage'},
+      {amount:3, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:'tbsp', name:'lime juice'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:0.25, unit:'cup', name:'crema or sour cream'},
+      {amount:1, unit:'tbsp', name:'hot sauce'},
+    ],
+    'Miso-Glazed Salmon': [
+      {amount:4, unit:null, name:'salmon fillet', namePlural:'salmon fillets'},
+      {amount:3, unit:'tbsp', name:'white miso paste'},
+      {amount:2, unit:'tbsp', name:'mirin'},
+      {amount:1, unit:'tbsp', name:'rice vinegar (or sake)'},
+      {amount:1, unit:'tbsp', name:'soy sauce'},
+      {amount:1, unit:'tbsp', name:'brown sugar or honey'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1, unit:'tsp', name:'sesame seeds'},
+    ],
+    'Mushroom Risotto': [
+      {amount:1.5, unit:'cup', name:'arborio rice'},
+      {amount:1, unit:'lb', name:'mixed mushrooms (cremini, shiitake)'},
+      {amount:4, unit:'cup', name:'vegetable broth'},
+      {amount:0.5, unit:'cup', name:'dry white wine'},
+      {amount:1, unit:null, name:'shallot', namePlural:'shallots'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:0.5, unit:'cup', name:'parmesan cheese'},
+      {amount:2, unit:'tbsp', name:'unsalted butter'},
+      {amount:2, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:'tbsp', name:'fresh thyme leaves (or parsley)'},
+    ],
+    'Olive Oil Cake with Lemon and Whipped Cream': [
+      {amount:220, unit:'g', name:'all-purpose flour'},
+      {amount:1.5, unit:'tsp', name:'baking powder'},
+      {amount:0.5, unit:'tsp', name:'baking soda'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:3, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:250, unit:'g', name:'granulated sugar'},
+      {amount:1, unit:null, name:'lemon', namePlural:'lemons'},
+      {amount:2, unit:'tbsp', name:'fresh lemon juice'},
+      {amount:1, unit:'cup', name:'extra virgin olive oil'},
+      {amount:0.75, unit:'cup', name:'whole milk'},
+      {amount:1, unit:'tsp', name:'vanilla extract'},
+      {amount:1, unit:'cup', name:'heavy whipping cream'},
+      {amount:2, unit:'tbsp', name:'powdered sugar'},
+      {amount:0.5, unit:'tsp', name:'vanilla extract'},
+    ],
+    'Turkish Yogurt Cake': [
+      {amount:4, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:0.5, unit:'cup', name:'granulated sugar'},
+      {amount:3, unit:'tbsp', name:'all-purpose flour'},
+      {amount:400, unit:'g', name:'plain whole-milk Greek yogurt'},
+      {amount:1, unit:null, name:'lemon', namePlural:'lemons'},
+      {amount:1, unit:'tbsp', name:'unsalted butter'},
+    ],
+    'Vegetarian Pad Thai': [
+      {amount:8, unit:'oz', name:'pad thai rice noodles'},
+      {amount:14, unit:'oz', name:'extra-firm tofu'},
+      {amount:2, unit:'tbsp', name:'vegetable oil'},
+      {amount:2, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:3, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:2, unit:'cup', name:'bean sprouts'},
+      {amount:1, unit:null, name:'carrot', namePlural:'carrots'},
+      {amount:3, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:3, unit:'tbsp', name:'soy sauce'},
+      {amount:2, unit:'tbsp', name:'tamarind paste'},
+      {amount:2, unit:'tbsp', name:'brown sugar'},
+      {amount:1, unit:null, name:'lime', namePlural:'limes'},
+      {amount:0.25, unit:'cup', name:'roasted peanuts'},
+      {amount:0.25, unit:'tsp', name:'red pepper flakes'},
+    ],
+    'Veggie Burgers with Special Sauce and Fries': [
+      {amount:4, unit:null, name:'veggie burger patty', namePlural:'veggie burger patties'},
+      {amount:4, unit:null, name:'burger bun', namePlural:'burger buns'},
+      {amount:4, unit:null, name:'lettuce leaf', namePlural:'lettuce leaves'},
+      {amount:1, unit:null, name:'tomato', namePlural:'tomatoes'},
+      {amount:0.25, unit:null, name:'red onion'},
+      {amount:8, unit:null, name:'pickle', namePlural:'pickles'},
+      {amount:0.333333, unit:'cup', name:'mayonnaise'},
+      {amount:2, unit:'tbsp', name:'ketchup'},
+      {amount:1, unit:'tbsp', name:'yellow mustard'},
+      {amount:1, unit:'tbsp', name:'pickle relish'},
+      {amount:0.5, unit:'tsp', name:'garlic powder'},
+      {amount:0.25, unit:'tsp', name:'smoked paprika'},
+      {amount:1, unit:'lb', name:'frozen French fries'},
+    ],
+    'Spicy Tuna Hand Rolls': [
+      {amount:2, unit:'cup', name:'sushi rice'},
+      {amount:2.5, unit:'cup', name:'water'},
+      {amount:3, unit:'tbsp', name:'rice vinegar'},
+      {amount:1.5, unit:'tbsp', name:'granulated sugar'},
+      {amount:0.75, unit:'tsp', name:'salt'},
+      {amount:12, unit:'oz', name:'sashimi-grade tuna'},
+      {amount:3, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:'tbsp', name:'sriracha'},
+      {amount:1, unit:'tsp', name:'toasted sesame oil'},
+      {amount:6, unit:null, name:'nori sheet', namePlural:'nori sheets'},
+      {amount:1, unit:null, name:'avocado', namePlural:'avocados'},
+      {amount:0.5, unit:null, name:'cucumber'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1, unit:'tbsp', name:'sesame seeds'},
+      {amount:8, unit:'oz', name:'edamame, in shell'},
+    ],
+    'Nutella Framboise Cookie': [
+      {amount:1, unit:'cup', name:'unsalted butter'},
+      {amount:0.75, unit:'cup', name:'granulated sugar'},
+      {amount:0.75, unit:'cup', name:'brown sugar'},
+      {amount:2, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:2, unit:'tsp', name:'vanilla extract'},
+      {amount:2.75, unit:'cup', name:'all-purpose flour'},
+      {amount:1, unit:'tsp', name:'baking soda'},
+      {amount:0.5, unit:'tsp', name:'baking powder'},
+      {amount:1, unit:'tsp', name:'fine sea salt'},
+      {amount:6, unit:'oz', name:'70% dark chocolate'},
+      {amount:0.5, unit:'cup', name:'Nutella'},
+      {amount:4, unit:'oz', name:'Valrhona Inspiration Framboise (raspberry couverture)'},
+      {amount:1, unit:'tsp', name:'flaky sea salt'},
+    ],
+    'Matcha Nuage Bar': [
+      {amount:1.5, unit:'cup', name:'graham cracker crumbs'},
+      {amount:6, unit:'tbsp', name:'unsalted butter'},
+      {amount:3, unit:'tbsp', name:'granulated sugar'},
+      {amount:16, unit:'oz', name:'cream cheese'},
+      {amount:12, unit:'tbsp', name:'granulated sugar'},
+      {amount:2, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:6, unit:'tbsp', name:'sour cream'},
+      {amount:1, unit:'tsp', name:'vanilla extract'},
+      {amount:3, unit:'tbsp', name:'culinary-grade matcha powder'},
+      {amount:1, unit:'cup', name:'heavy cream'},
+      {amount:3, unit:'tbsp', name:'powdered sugar'},
+      {amount:0.5, unit:'tsp', name:'vanilla extract'},
+      {amount:1, unit:'tbsp', name:'matcha powder'},
+    ],
+    'Honey Apple Galette': [
+      {amount:1.25, unit:'cup', name:'all-purpose flour'},
+      {amount:0.5, unit:'tsp', name:'fine salt'},
+      {amount:8, unit:'tbsp', name:'cold unsalted butter'},
+      {amount:0.25, unit:'cup', name:'ice water'},
+      {amount:5, unit:null, name:'Fuji apple', namePlural:'Fuji apples'},
+      {amount:3, unit:'tbsp', name:'honey'},
+      {amount:1, unit:'tbsp', name:'lemon juice'},
+      {amount:1, unit:'tsp', name:'ground cinnamon'},
+      {amount:0.125, unit:'tsp', name:'ground nutmeg'},
+      {amount:1, unit:'tbsp', name:'cornstarch'},
+      {amount:1, unit:'pinch', name:'salt'},
+      {amount:1, unit:null, name:'egg (beaten, or milk for brushing)', namePlural:'eggs (beaten, or milk for brushing)'},
+    ],
+    'No-Churn Mango Ice Cream': [
+      {amount:20, unit:'oz', name:'frozen mango chunks'},
+      {amount:14, unit:'oz', name:'sweetened condensed milk'},
+      {amount:1, unit:'cup', name:'heavy cream'},
+      {amount:1, unit:'tbsp', name:'fresh lime juice'},
+      {amount:1, unit:'pinch', name:'salt'},
+    ],
+  };
+
+  const SKIP_GROCERY_NAMES = new Set(['water', 'ice water']);
+
+  const weekEl = document.getElementById('week');
+  const weekCountLabel = document.getElementById('weekCountLabel');
+  const recipeBoxScroll = document.getElementById('recipeBoxScroll');
+  const clearWeekBtn = document.getElementById('clearWeekBtn');
+  const recipeModalBackdrop = document.getElementById('recipeModalBackdrop');
+  const recipeModalCard = document.getElementById('recipeModalCard');
+
+  let weekEntries = [];
+  let weekLoaded = false;
+
+  async function saveWeek(){
+    try{
+      const res = await window.storage.set(WEEK_STORAGE_KEY, JSON.stringify(weekEntries), false);
+      if (!res) console.error('Week save returned no result');
+    }catch(e){ console.error('Week storage save error', e); }
+  }
+  async function loadWeek(){
+    try{
+      const res = await window.storage.get(WEEK_STORAGE_KEY, false);
+      if (res && res.value) weekEntries = JSON.parse(res.value);
+    }catch(e){ weekEntries = []; }
+    weekLoaded = true;
+    maybeInitialRender();
+  }
+
+  function findRecipeGroceryIngredients(text){
+    if (RECIPE_GROCERY[text]) return RECIPE_GROCERY[text];
+    const lower = text.trim().toLowerCase();
+    const key = Object.keys(RECIPE_GROCERY).find(k => k.toLowerCase() === lower);
+    return key ? RECIPE_GROCERY[key] : null;
+  }
+
+  // Recomputes the recipe-derived portion of the grocery list from scratch: sums ingredient
+  // needs across every currently-planned, not-yet-made meal, subtracts whatever's in pantry
+  // stock, and keeps only the real shortfall. Full rebuild (rather than incremental patching)
+  // so it stays correct no matter what changed — a meal added, removed, marked made, or stock
+  // updated via download.
+  function recomputeDerivedGroceryItems(){
+    const neededTotals = {};
+    weekEntries.filter(e => !e.done).forEach(entry => {
+      const ingredients = findRecipeGroceryIngredients(entry.text);
+      if (!ingredients) return;
+      ingredients.forEach(ing => {
+        if (SKIP_GROCERY_NAMES.has(ing.name.toLowerCase())) return;
+        const key = ing.name.toLowerCase();
+        if (!neededTotals[key]){
+          neededTotals[key] = { amount: ing.amount, unit: ing.unit, name: ing.name, namePlural: ing.namePlural || null };
+        } else {
+          const fam1 = unitFamily(neededTotals[key].unit);
+          const fam2 = unitFamily(ing.unit);
+          if (fam1 === fam2 && fam1 !== 'other'){
+            neededTotals[key].amount += convertAmount(ing.amount, ing.unit, neededTotals[key].unit);
+          }
+          // mismatched unit families for the same ingredient name is rare; keep the first total
+        }
+      });
+    });
+
+    const shortfalls = [];
+    Object.keys(neededTotals).forEach(key => {
+      const need = neededTotals[key];
+      const stock = pantryStock[key];
+      let remaining = need.amount;
+      if (stock){
+        const fam1 = unitFamily(need.unit);
+        const fam2 = unitFamily(stock.unit);
+        if (fam1 === fam2 && fam1 !== 'other'){
+          remaining = need.amount - convertAmount(stock.amount, stock.unit, need.unit);
+        }
+      }
+      const epsilon = unitFamily(need.unit) === 'count' ? 0.05 : 0.01;
+      if (remaining > epsilon){
+        shortfalls.push({ ...need, amount: remaining });
+      }
+    });
+
+    derivedItems = shortfalls.map(ing => {
+      const key = ing.name.toLowerCase();
+      const item = {
+        id: uid('i'),
+        category: categorize(ing.name),
+        checked: !!derivedChecked[key],
+        unit: ing.unit,
+        name: ing.name,
+        namePlural: ing.namePlural,
+        amount: ing.amount,
+        derived: true,
+        text: '',
+      };
+      item.text = formatGroceryLine(item);
+      return item;
+    });
+
+    renderGrocery();
+  }
+
+  function snapshotDerivedAmounts(){
+    const map = {};
+    derivedItems.forEach(i => { map[i.name.toLowerCase()] = i.amount; });
+    return map;
+  }
+
+  function addWeekEntry(day, text, meal){
+    const trimmed = (text || '').trim();
+    if (!trimmed) return;
+    const before = snapshotDerivedAmounts();
+    weekEntries.push({ id: uid('e'), day, text: trimmed, meal: meal || 'dinner', done:false });
+    renderWeek();
+    saveWeek();
+    const hasRecipeData = !!findRecipeGroceryIngredients(trimmed);
+    if (hasRecipeData){
+      recomputeDerivedGroceryItems();
+      const after = snapshotDerivedAmounts();
+      const changed = Object.keys(after).some(k => !(k in before) || after[k] > before[k] + 1e-6);
+      showToast(changed ? 'Added to your grocery list 🌱' : 'Your pantry already covers this recipe ✅');
+    }
+  }
+
+  // Marking a meal "made" consumes its ingredients from pantry stock; un-marking gives them back.
+  function adjustPantryStock(ing, sign){
+    const key = ing.name.toLowerCase();
+    if (!pantryStock[key]){
+      pantryStock[key] = { amount: 0, unit: ing.unit, name: ing.name, namePlural: ing.namePlural || null };
+    }
+    const fam1 = unitFamily(pantryStock[key].unit);
+    const fam2 = unitFamily(ing.unit);
+    if (fam1 === fam2 && fam1 !== 'other'){
+      pantryStock[key].amount += sign * convertAmount(ing.amount, ing.unit, pantryStock[key].unit);
+    } else {
+      pantryStock[key].amount += sign * ing.amount;
+    }
+  }
+
+  function toggleWeekEntry(id){
+    const e = weekEntries.find(x => x.id === id);
+    if (!e) return;
+    e.done = !e.done;
+    const ingredients = findRecipeGroceryIngredients(e.text);
+    if (ingredients){
+      const sign = e.done ? -1 : 1; // made = consume stock; un-made = give it back
+      ingredients.forEach(ing => {
+        if (SKIP_GROCERY_NAMES.has(ing.name.toLowerCase())) return;
+        adjustPantryStock(ing, sign);
+      });
+      savePantryStock();
+    }
+    renderWeek();
+    saveWeek();
+    recomputeDerivedGroceryItems();
+  }
+  function deleteWeekEntry(id){
+    weekEntries = weekEntries.filter(x => x.id !== id);
+    renderWeek();
+    saveWeek();
+    recomputeDerivedGroceryItems();
+  }
+  function cycleMeal(id){
+    const e = weekEntries.find(x => x.id === id);
+    if (!e) return;
+    const idx = MEAL_TYPES.indexOf(e.meal);
+    e.meal = MEAL_TYPES[(idx + 1) % MEAL_TYPES.length];
+    renderWeek();
+    saveWeek();
+  }
+  function clearWeek(){
+    if (weekEntries.length === 0) return;
+    if (window.confirm('Clear all meals planned for this week?')){
+      weekEntries = [];
+      renderWeek();
+      saveWeek();
+      recomputeDerivedGroceryItems();
+    }
+  }
+
+  function renderRecipeBox(){
+    recipeBoxScroll.innerHTML = '';
+    MEAL_TYPES.forEach(meal => {
+      const inMeal = RECIPE_BOX.filter(r => r.meal === meal);
+      if (inMeal.length === 0) return;
+      const groupWrap = document.createElement('div');
+      groupWrap.className = 'rb-group';
+      const title = document.createElement('div');
+      title.className = 'rb-group-title';
+      title.textContent = MEAL_LABELS[meal];
+      groupWrap.appendChild(title);
+
+      const chipsWrap = document.createElement('div');
+      chipsWrap.className = 'rb-chips';
+
+      inMeal.forEach(r => {
+        const wrap = document.createElement('div');
+        wrap.style.position = 'relative';
+        wrap.style.display = 'inline-block';
+
+        const chip = document.createElement('button');
+        chip.className = 'rb-chip';
+        chip.type = 'button';
+        chip.textContent = '+ ' + r.name;
+        chip.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          togglePopover(wrap, r);
+        });
+
+        wrap.appendChild(chip);
+        chipsWrap.appendChild(wrap);
+      });
+
+      groupWrap.appendChild(chipsWrap);
+      recipeBoxScroll.appendChild(groupWrap);
+    });
+  }
+
+  function togglePopover(anchorEl, recipe){
+    const existing = anchorEl.querySelector('.day-popover');
+    closeAllPopovers();
+    if (existing) return;
+
+    const pop = document.createElement('div');
+    pop.className = 'day-popover';
+    let html = '<div class="hint">add to which day?</div>';
+    DAY_ABBR.forEach((abbr, i) => {
+      html += '<button type="button" data-day-index="' + i + '">' + abbr + '</button>';
+    });
+    pop.innerHTML = html;
+    anchorEl.appendChild(pop);
+
+    pop.querySelectorAll('button[data-day-index]').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const dayIdx = parseInt(btn.getAttribute('data-day-index'), 10);
+        addWeekEntry(DAYS[dayIdx], recipe.name, recipe.meal);
+        closeAllPopovers();
+      });
+    });
+  }
+  function closeAllPopovers(){
+    document.querySelectorAll('.day-popover').forEach(p => p.remove());
+  }
+  document.addEventListener('click', closeAllPopovers);
+
+  function renderWeek(){
+    renderRecipeBox();
+
+    if (!weekLoaded){
+      weekEl.innerHTML = '<div class="status">Loading your week…</div>';
+      return;
+    }
+
+    let html = '';
+    DAYS.forEach(day => {
+      const dayEntries = weekEntries.filter(e => e.day === day);
+      html += '<div class="day-card">';
+      html += '<div class="day-header">' + day + '</div>';
+      if (dayEntries.length > 0){
+        html += '<ul class="entries">';
+        dayEntries.forEach(e => {
+          html += '<li class="entry' + (e.done ? ' done' : '') + '">' +
+            '<button class="check' + (e.done ? ' checked' : '') + '" data-action="toggle" data-id="' + e.id + '" aria-label="Mark ' + escapeAttr(e.text) + (e.done ? ' not made' : ' made') + '">' + checkIconSvg() + '</button>' +
+            '<span class="entry-text clickable" data-action="view" data-id="' + e.id + '" role="button" tabindex="0">' + escapeHtml(e.text) + '</span>' +
+            '<button class="meal-tag tag-' + e.meal + '" data-action="cycle" data-id="' + e.id + '">' + MEAL_LABELS[e.meal] + '</button>' +
+            '<button class="del" data-action="delete" data-id="' + e.id + '" aria-label="Remove ' + escapeAttr(e.text) + '">✕</button>' +
+          '</li>';
+        });
+        html += '</ul>';
+      }
+      html += '<div class="week-add-row">' +
+        '<input type="text" placeholder="Add a recipe…" data-day="' + day + '" autocomplete="off" />' +
+        '<button class="week-add-btn" data-action="add" data-day="' + day + '" aria-label="Add recipe to ' + day + '">+</button>' +
+      '</div>';
+      html += '</div>';
+    });
+    weekEl.innerHTML = html;
+
+    const totalCount = weekEntries.length;
+    const doneCount = weekEntries.filter(e => e.done).length;
+    weekCountLabel.textContent = totalCount + (totalCount === 1 ? ' meal planned' : ' meals planned') +
+      (doneCount > 0 ? ' · ' + doneCount + ' made' : '');
+  }
+
+  weekEl.addEventListener('click', (e) => {
+    const viewEl = e.target.closest('[data-action="view"]');
+    if (viewEl){
+      openRecipeModal(viewEl.getAttribute('data-id'));
+      return;
+    }
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const id = btn.getAttribute('data-id');
+    if (action === 'toggle') toggleWeekEntry(id);
+    if (action === 'delete') deleteWeekEntry(id);
+    if (action === 'cycle') cycleMeal(id);
+    if (action === 'add'){
+      const day = btn.getAttribute('data-day');
+      const input = weekEl.querySelector('input[data-day="' + day + '"]');
+      addWeekEntry(day, input.value);
+      input.value = '';
+      input.focus();
+    }
+  });
+  weekEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.matches('input[data-day]')){
+      const day = e.target.getAttribute('data-day');
+      addWeekEntry(day, e.target.value);
+      e.target.value = '';
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-action="view"]')){
+      e.preventDefault();
+      openRecipeModal(e.target.getAttribute('data-id'));
+    }
+  });
+  clearWeekBtn.addEventListener('click', clearWeek);
+
+  /* ---------- recipe modal ---------- */
+  function findRecipeDetails(text){
+    if (RECIPE_DETAILS[text]) return RECIPE_DETAILS[text];
+    const lower = text.trim().toLowerCase();
+    const key = Object.keys(RECIPE_DETAILS).find(k => k.toLowerCase() === lower);
+    return key ? RECIPE_DETAILS[key] : null;
+  }
+
+  function openRecipeModal(entryId){
+    const entry = weekEntries.find(x => x.id === entryId);
+    if (!entry) return;
+    const details = findRecipeDetails(entry.text);
+
+    let html = '<button class="modal-close" id="modalCloseBtn" aria-label="Close recipe">✕</button>';
+    html += '<span class="modal-meal-tag tag-' + entry.meal + '">' + MEAL_LABELS[entry.meal] + '</span>';
+    html += '<h2 class="modal-title">' + escapeHtml(entry.text) + '</h2>';
+
+    if (!details){
+      html += '<div class="modal-empty">🌿 No saved recipe details for this one yet.<br>Add it to the recipe box to see it here next time.</div>';
+    } else {
+      if (details.description) html += '<p class="modal-desc">' + escapeHtml(details.description) + '</p>';
+      if (details.servings) html += '<div class="modal-servings">Makes ' + details.servings + (details.servings === 1 ? ' serving' : ' servings') + '</div>';
+
+      html += '<div class="modal-section-title">Ingredients</div>';
+      html += '<ul class="modal-ingredients">';
+      details.ingredients.forEach(ing => { html += '<li>' + escapeHtml(ing) + '</li>'; });
+      html += '</ul>';
+
+      html += '<div class="modal-section-title">Steps</div>';
+      html += '<ol class="modal-steps">';
+      details.steps.forEach(step => {
+        html += '<li><div class="modal-step-body"><div class="modal-step-title">' + escapeHtml(step.title) + '</div><div class="modal-step-content">' + escapeHtml(step.content) + '</div></div></li>';
+      });
+      html += '</ol>';
+
+      if (details.notes){
+        html += '<div class="modal-notes"><strong>Notes:</strong> ' + escapeHtml(details.notes) + '</div>';
+      }
+    }
+
+    recipeModalCard.innerHTML = html;
+    recipeModalBackdrop.hidden = false;
+    document.getElementById('modalCloseBtn').addEventListener('click', closeRecipeModal);
+    recipeModalCard.scrollTop = 0;
+  }
+
+  function closeRecipeModal(){
+    recipeModalBackdrop.hidden = true;
+    recipeModalCard.innerHTML = '';
+  }
+
+  recipeModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === recipeModalBackdrop) closeRecipeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !recipeModalBackdrop.hidden) closeRecipeModal();
+  });
+
+  /* ---------- init ---------- */
+  loadGrocery();
+  loadPantryStock();
+  loadDerivedChecked();
+  loadWeek();
+})();
+</script>
+</body>
+</html>
