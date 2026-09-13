@@ -493,7 +493,22 @@
     font-size: 13px;
     color: var(--matcha-deep);
     font-weight:600;
-    margin: 10px 0 18px;
+    margin: 10px 0 4px;
+  }
+
+  .modal-times{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+
+  .modal-times strong{
+    color: var(--ink);
+    font-weight:600;
+    margin-right:4px;
   }
 
   .modal-section-title{
@@ -1110,6 +1125,9 @@
   const RECIPE_DETAILS = {
     'Whole Wheat Lemon-Poppyseed Pancakes': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "15 min",
+      totalTime: "25 min",
       description: "Fluffy whole wheat pancakes brightened with lemon zest and poppy seeds. Makes about 10-11 pancakes.",
       ingredients: ['1 1/4 cups whole wheat flour','1 1/2 tbsp granulated sugar','1 1/2 tsp baking powder','1/4 tsp baking soda','1/2 tsp salt','1 tbsp poppy seeds','1 cup buttermilk','1 large egg','2 tbsp unsalted butter, melted','1 lemon, zested','1 tsp vanilla extract','3/4 cup maple syrup, to serve'],
       steps: [
@@ -1122,6 +1140,9 @@
     },
     'Miso-Butter Scrambled Eggs with Scallions': {
       servings: 3,
+      prepTime: "5 min",
+      cookTime: "5 min",
+      totalTime: "10 min",
       description: "Silky scrambled eggs with a savory, umami depth from miso butter.",
       ingredients: ['9 large eggs','3 tbsp unsalted butter','2 tbsp white miso paste','3 scallions, thinly sliced','1/4 tsp black pepper'],
       steps: [
@@ -1134,6 +1155,9 @@
     },
     'Shakshuka with Feta': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "25 min",
+      totalTime: "35 min",
       description: "Eggs poached in a spiced tomato-pepper sauce, finished with feta. A Cookie and Kate-style weekend breakfast.",
       ingredients: ['1 1/2 tbsp olive oil','1 small yellow onion, diced','1 small red bell pepper, diced','3 garlic cloves, minced','3/4 tsp ground cumin','3/4 tsp smoked paprika','1/4 tsp red pepper flakes (optional)','28 oz crushed tomatoes','1/2 tsp salt','4 large eggs','3 oz feta cheese, crumbled','3 tbsp fresh parsley or cilantro, chopped'],
       steps: [
@@ -1147,6 +1171,9 @@
     },
     'Sweet Potato Breakfast Hash with Fried Eggs': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "20 min",
+      totalTime: "30 min",
       description: "A hearty, savory hash with crisp-edged sweet potatoes, topped with a fried egg.",
       ingredients: ['1 large sweet potato, diced small','1 1/2 tbsp olive oil, divided','1 small onion, diced','1 small red bell pepper, diced','2 garlic cloves, minced','3/4 tsp smoked paprika','1/4 tsp salt','1/4 tsp black pepper','3 large eggs','2 scallions, sliced, for garnish','1 avocado, sliced (optional)'],
       steps: [
@@ -1158,6 +1185,9 @@
     },
     'Curried Couscous Salad': {
       servings: 3,
+      prepTime: "15 min",
+      cookTime: "25 min",
+      totalTime: "40 min",
       description: "Cold, tangy pearl couscous salad with curry-roasted cauliflower and carrots, brightened with lime and cilantro. Vegetarian as written.",
       ingredients: ['1/2 cup Israeli pearl couscous','1/2 cup plus 2 tbsp water','1 1/2 tbsp olive oil','1 cup cauliflower florets, chopped small','1/2 cup carrots, peeled and diced small','3/4 tsp curry powder','1/4 tsp ground turmeric','1/4 tsp ground cumin','1/4 tsp ground coriander','1/8 tsp cayenne pepper','1/2 tbsp brown sugar','1/2 tsp salt','2 1/2 tbsp mayonnaise','1/2 fresh lime, juiced','2 tbsp fresh cilantro, chopped','2 1/2 tbsp golden raisins (optional)'],
       steps: [
@@ -1171,6 +1201,9 @@
     },
     'Avocado & Quinoa Superfood Ensalada': {
       servings: 3,
+      prepTime: "20 min",
+      cookTime: "15 min",
+      totalTime: "35 min",
       description: "A hearty, crunchy salad with crispy baked quinoa, romaine and kale, roasted corn, black beans, avocado, and cotija, tossed in a smoky chipotle-lime vinaigrette. Vegetarian as written.",
       ingredients: ['1/3 cup quinoa, uncooked','2/3 cup water','2 tbsp olive oil, divided','3/4 cup corn kernels (fresh or frozen, thawed)','3 cups romaine lettuce, chopped','2 cups curly kale, stemmed and chopped','3/4 cup black beans, drained and rinsed','3/4 cup cherry tomatoes, halved','3 tbsp red onion, thinly sliced','1 1/2 avocados, diced','1/4 cup cotija cheese, crumbled','3 tbsp fresh cilantro, chopped','1 to 2 chipotle peppers in adobo sauce, to taste','6 tbsp olive oil (for dressing)','2 garlic cloves','3 tbsp red wine vinegar','2 tbsp honey','1/4 tsp dried oregano','1/4 tsp ground cumin','1 lime, juiced'],
       steps: [
@@ -1185,6 +1218,9 @@
     },
     'Crispy Tofu Banh Mi': {
       servings: 3,
+      prepTime: "20 min",
+      cookTime: "15 min",
+      totalTime: "35 min",
       description: "A vegetarian take on the Vietnamese classic, with crisp pan-fried tofu and quick-pickled vegetables.",
       ingredients: ['10 oz extra-firm tofu, pressed and cubed','1 1/2 tbsp cornstarch','1 1/2 tbsp soy sauce','1 1/2 tbsp vegetable oil','3 small baguettes or banh mi rolls','4 tbsp mayonnaise','1 carrot, julienned','1 small daikon radish, julienned','2 tbsp rice vinegar','3/4 tbsp granulated sugar','1/4 tsp salt','1/2 cucumber, thinly sliced','1 jalapeño, thinly sliced','3 tbsp fresh cilantro','3/4 tbsp sriracha, to taste'],
       steps: [
@@ -1196,6 +1232,9 @@
     },
     'Scallion Egg Salad': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "12 min",
+      totalTime: "25 min",
       description: "A quick, classic egg salad brightened up with scallions and a little lemon juice.",
       ingredients: ['4 large eggs','2 scallions, thinly sliced','4 tbsp mayonnaise','3/4 tsp Dijon mustard','3/4 tbsp fresh lemon juice','1 pinch salt','1 pinch black pepper'],
       steps: [
@@ -1208,6 +1247,9 @@
     },
     'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing': {
       servings: 3,
+      prepTime: "15 min",
+      cookTime: "8 min",
+      totalTime: "25 min",
       description: "A cold noodle salad that's fast, light, and packed with texture.",
       ingredients: ['6 oz soba noodles','1 cup shelled edamame, thawed if frozen','1 carrot, julienned','1/2 cucumber, julienned','2 scallions, sliced','3/4 tbsp sesame seeds','2 tbsp soy sauce','1 1/2 tbsp rice vinegar','3/4 tbsp toasted sesame oil','3/4 tbsp fresh ginger, grated','1 garlic clove, minced','3/4 tbsp honey','1 lime, juiced'],
       steps: [
@@ -1219,6 +1261,9 @@
     },
     'Chirashi-Style Rice Bowl': {
       servings: 3,
+      prepTime: "15 min",
+      cookTime: "20 min",
+      totalTime: "35 min",
       description: "A homemade nod to Sugarfish — seasoned sushi rice topped with sashimi-grade fish and simple garnishes.",
       ingredients: ['1 1/2 cups sushi rice, uncooked','2 cups water (for cooking rice)','3 tbsp rice vinegar','1 1/2 tbsp granulated sugar','3/4 tsp salt','12 oz sashimi-grade tuna or salmon, sliced','1 1/2 avocados, sliced','1 cucumber, thinly sliced','3 scallions, sliced','2 nori sheets, cut into thin strips','1 1/2 tbsp sesame seeds'],
       steps: [
@@ -1231,6 +1276,9 @@
     },
     'Fish Tacos with Cabbage Slaw': {
       servings: 3,
+      prepTime: "15 min",
+      cookTime: "15 min",
+      totalTime: "30 min",
       description: "Casual, bar-food energy — built to use the salmon you already have in the freezer.",
       ingredients: ['12 oz salmon (or other firm fish), thawed','3/4 tsp chili powder','3/4 tsp ground cumin','1/4 tsp smoked paprika','1/4 tsp salt','3/4 tbsp olive oil','6 small corn tortillas','1 1/2 cups green or purple cabbage, thinly shredded','2 tbsp mayonnaise','3/4 tbsp lime juice','3 tbsp fresh cilantro, chopped','3 tbsp crema or sour cream, to serve','3/4 tbsp hot sauce, to serve'],
       steps: [
@@ -1242,6 +1290,9 @@
     },
     'Miso-Glazed Salmon': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "15 min",
+      totalTime: "25 min",
       description: "A fast, sweet-savory glaze for salmon — built to use the salmon you already have in the freezer.",
       ingredients: ['3 salmon fillets, thawed (about 6 oz each)','2 tbsp white miso paste','1 1/2 tbsp mirin','3/4 tbsp rice vinegar (or sake)','3/4 tbsp soy sauce','3/4 tbsp brown sugar or honey','2 scallions, sliced, for garnish','3/4 tsp sesame seeds, for garnish'],
       steps: [
@@ -1253,6 +1304,9 @@
     },
     'Mushroom Risotto': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "35 min",
+      totalTime: "45 min",
       description: "Creamy arborio rice with browned mushrooms and parmesan.",
       ingredients: ['1 cup arborio rice','12 oz mixed mushrooms (cremini, shiitake), sliced','3 cups vegetable broth','1/3 cup dry white wine (optional)','1 shallot, minced','2 garlic cloves, minced','1/3 cup parmesan cheese, grated','1 1/2 tbsp unsalted butter','1 1/2 tbsp olive oil, divided','3/4 tbsp fresh thyme leaves (or parsley, chopped)'],
       steps: [
@@ -1266,6 +1320,9 @@
     },
     'Spicy Tuna Hand Rolls': {
       servings: 3,
+      prepTime: "20 min",
+      cookTime: "20 min",
+      totalTime: "40 min",
       description: "A build-your-own hand roll spread inspired by Sugarfish's Trust Me omakase, starting with steamed edamame.",
       ingredients: ['1 1/2 cups sushi rice, uncooked','2 cups water (for cooking rice)','2 tbsp rice vinegar','1 tbsp granulated sugar','1/2 tsp salt','9 oz sashimi-grade tuna, diced small','2 tbsp mayonnaise','3/4 tbsp sriracha','3/4 tsp toasted sesame oil','5 nori sheets, halved','1 avocado, sliced','1/2 cucumber, julienned','2 scallions, sliced','3/4 tbsp sesame seeds','6 oz edamame, in shell (steamed, to start)'],
       steps: [
@@ -1279,6 +1336,9 @@
     },
     'Vegetarian Pad Thai': {
       servings: 3,
+      prepTime: "15 min",
+      cookTime: "15 min",
+      totalTime: "30 min",
       description: "A vegetarian version of the classic — no fish sauce, just a tangy tamarind-lime sauce.",
       ingredients: ['6 oz pad thai rice noodles','10 oz extra-firm tofu, cubed','1 1/2 tbsp vegetable oil, divided','2 large eggs, lightly beaten','2 garlic cloves, minced','1 1/2 cups bean sprouts','1 carrot, julienned','2 scallions, cut into 1-inch pieces','2 tbsp soy sauce','1 1/2 tbsp tamarind paste','1 1/2 tbsp brown sugar','1 lime, juiced (plus wedges to serve)','3 tbsp roasted peanuts, crushed','1/4 tsp red pepper flakes, to taste'],
       steps: [
@@ -1293,6 +1353,9 @@
     },
     'Veggie Burgers with Special Sauce and Fries': {
       servings: 3,
+      prepTime: "10 min",
+      cookTime: "20 min",
+      totalTime: "30 min",
       description: "A good veggie burger, dressed up with a tangy special sauce, plus fries on the side.",
       ingredients: ['3 veggie burger patties (your favorite brand)','3 burger buns','3 lettuce leaves','1 tomato, sliced','1/4 red onion, sliced','6 pickles','1/4 cup mayonnaise','1 1/2 tbsp ketchup','3/4 tbsp yellow mustard','3/4 tbsp pickle relish','1/4 tsp garlic powder','1/4 tsp smoked paprika','1 lb frozen French fries'],
       steps: [
@@ -1304,6 +1367,9 @@
     },
     'Nutella Framboise Cookie': {
       servings: 14,
+      prepTime: "30 min",
+      cookTime: "14 min",
+      totalTime: "2 hr 15 min (includes freezing and chilling)",
       description: "A copycat take on the bakery's signature stuffed cookie — a thick, chewy dark chocolate cookie studded with real raspberry couverture and hiding a molten Nutella center, finished with flaky sea salt.",
       ingredients: ['1 cup unsalted butter, softened','3/4 cup granulated sugar','3/4 cup brown sugar, packed','2 large eggs','2 tsp vanilla extract','2 3/4 cups all-purpose flour','1 tsp baking soda','1/2 tsp baking powder','1 tsp fine sea salt','6 oz 70% dark chocolate, chopped into chunks','1/2 cup Nutella','4 oz Valrhona Inspiration Framboise (raspberry couverture), chopped into chunks','1 tsp flaky sea salt, for topping'],
       steps: [
@@ -1321,6 +1387,9 @@
     },
     'Matcha Nuage Bar': {
       servings: 9,
+      prepTime: "25 min",
+      cookTime: "35 min",
+      totalTime: "About 5 hr (includes 4+ hr chilling)",
       description: 'A copycat of the bakery\'s matcha cheesecake bar — a graham cracker crust, a dense matcha cheesecake layer, and a piped whipped cream "cloud" dusted with more matcha on top.',
       ingredients: ['1 1/2 cups graham cracker crumbs','6 tbsp unsalted butter, melted','3 tbsp granulated sugar','16 oz cream cheese, softened','12 tbsp granulated sugar (3/4 cup)','2 large eggs','6 tbsp sour cream','1 tsp vanilla extract','3 tbsp culinary-grade matcha powder, sifted','1 cup heavy cream, cold','3 tbsp powdered sugar','1/2 tsp vanilla extract, for the topping','1 tbsp matcha powder, for dusting'],
       steps: [
@@ -1339,6 +1408,9 @@
     },
     'Honey Apple Galette': {
       servings: 8,
+      prepTime: "30 min",
+      cookTime: "45 min",
+      totalTime: "1 hr 45 min (includes 30 min chilling)",
       description: 'A rustic free-form apple tart with a flaky butter crust, sweetened only with honey.',
       ingredients: ['1 1/4 cups all-purpose flour','1/2 tsp fine salt','8 tbsp cold unsalted butter, cubed','1/4 cup ice water','5 Fuji apples, peeled, cored, thinly sliced','3 tbsp honey, plus more for finishing','1 tbsp lemon juice','1 tsp ground cinnamon','1/8 tsp ground nutmeg','1 tbsp cornstarch','1 pinch salt, for the filling','1 egg, beaten (or milk, for brushing the crust)'],
       steps: [
@@ -1354,6 +1426,9 @@
     },
     'No-Churn Mango Ice Cream': {
       servings: 8,
+      prepTime: "15 min",
+      cookTime: "No cook",
+      totalTime: "6 hr 15 min (includes 6 hr freezing)",
       description: "A simple three-ingredient ice cream that needs no ice cream maker — just a blender and a freezer.",
       ingredients: ['20 oz frozen mango chunks','14 oz sweetened condensed milk','1 cup heavy cream','1 tbsp fresh lime juice','1 pinch salt'],
       steps: [
@@ -1367,6 +1442,9 @@
     },
     'Olive Oil Cake with Lemon and Whipped Cream': {
       servings: 8,
+      prepTime: "15 min",
+      cookTime: "42 min",
+      totalTime: "1 hr 15 min (includes cooling)",
       description: "A moist, tender citrus olive oil cake, finished with a simple homemade whipped cream.",
       ingredients: ['220 g (about 1 3/4 cups) all-purpose flour','1 1/2 tsp baking powder','1/2 tsp baking soda','1/2 tsp salt','3 large eggs','250 g (about 1 1/4 cups) granulated sugar','1 lemon, zested','2 tbsp fresh lemon juice','1 cup extra virgin olive oil','3/4 cup whole milk','1 tsp vanilla extract','1 cup heavy whipping cream','2 tbsp powdered sugar','1/2 tsp vanilla extract, for the whipped cream'],
       steps: [
@@ -1383,6 +1461,9 @@
     },
     'Turkish Yogurt Cake': {
       servings: 8,
+      prepTime: "15 min",
+      cookTime: "45 min",
+      totalTime: "1 hr",
       description: "Adapted from Claudia Roden, via NYT Cooking (Melissa Clark). A light, soufflé-like cake made mostly of yogurt and eggs — it puffs in the oven, then settles as it cools.",
       ingredients: ['4 large eggs, separated','1/2 cup granulated sugar','3 tbsp all-purpose flour','400 g (about 1 3/4 cups) plain whole-milk Greek yogurt','1 lemon, zested and juiced','1 tbsp unsalted butter, for greasing the pan'],
       steps: [
@@ -2042,6 +2123,13 @@
     } else {
       if (details.description) html += '<p class="modal-desc">' + escapeHtml(details.description) + '</p>';
       if (details.servings) html += '<div class="modal-servings">Makes ' + details.servings + (details.servings === 1 ? ' serving' : ' servings') + '</div>';
+      if (details.prepTime || details.cookTime || details.totalTime){
+        html += '<div class="modal-times">';
+        if (details.prepTime) html += '<span><strong>Prep</strong> ' + escapeHtml(details.prepTime) + '</span>';
+        if (details.cookTime) html += '<span><strong>Cook</strong> ' + escapeHtml(details.cookTime) + '</span>';
+        if (details.totalTime) html += '<span><strong>Total</strong> ' + escapeHtml(details.totalTime) + '</span>';
+        html += '</div>';
+      }
 
       html += '<div class="modal-section-title">Ingredients</div>';
       html += '<ul class="modal-ingredients">';
