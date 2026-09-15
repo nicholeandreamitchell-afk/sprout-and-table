@@ -403,12 +403,15 @@
   .week-footer button{
     background:none; border:none;
     font-family:'Figtree', sans-serif; font-size: 13px;
-    color: var(--framboise); cursor:pointer;
+    color: var(--matcha-deep); cursor:pointer;
     text-decoration: underline; text-decoration-color: transparent;
     transition: text-decoration-color 0.15s ease;
   }
-  .week-footer button:hover{ text-decoration-color: var(--framboise); }
-  .week-footer button:focus-visible{ outline: 2px solid var(--framboise); outline-offset:2px; }
+  .week-footer button:hover{ text-decoration-color: var(--matcha-deep); }
+  .week-footer button:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:2px; }
+  .week-footer button.danger{ color: var(--framboise); }
+  .week-footer button.danger:hover{ text-decoration-color: var(--framboise); }
+  .week-footer button.danger:focus-visible{ outline-color: var(--framboise); }
 
   @media (max-width: 380px){
     h1{ font-size: 26px; }
@@ -676,7 +679,10 @@
 
     <div class="week-footer">
       <span id="weekCountLabel">0 meals planned</span>
-      <button id="clearWeekBtn">Clear week</button>
+      <div class="footer-actions">
+        <button id="downloadWeekRecipesBtn">Download this week's recipes</button>
+        <button id="clearWeekBtn" class="danger">Clear week</button>
+      </div>
     </div>
   </div>
 </div>
@@ -733,10 +739,10 @@
   const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry' };
 
   const CATEGORIES = [
-    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant'] },
-    { id:'dairy',     label:'Dairy & Eggs',       color:'#E0A22E', keywords:['milk','cream','butter','cheese','yogurt','egg','sour cream','mascarpone','ricotta','buttermilk'] },
+    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean'] },
+    { id:'dairy',     label:'Dairy & Eggs',       color:'#E0A22E', keywords:['milk','cream','butter','cheese','yogurt','egg','sour cream','mascarpone','ricotta','buttermilk','queso'] },
     { id:'bakery',    label:'Bakery',             color:'#C24C79', keywords:['bread','bagel','croissant','roll','bun','tortilla','pita','baguette','brioche','graham cracker'] },
-    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko'] },
+    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','pappardelle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','chile','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko','hominy','gochujang','sambal','togarashi','spaghetti','coffee','candy','sprinkle','wrapper'] },
     { id:'seafood',   label:'Seafood',            color:'#3F7C8A', keywords:['salmon','tuna','shrimp','fish','cod','halibut','scallop','crab','ahi','unagi','roe','uni','anchov'] },
     { id:'frozen',    label:'Frozen',             color:'#6B84A8', keywords:['frozen','ice cream','popsicle','sorbet','edamame'] },
     { id:'other',     label:'Other',              color:'#8A897A', keywords:[] },
@@ -1117,6 +1123,11 @@
     { name:'Vegetable, Shrimp & Tofu Dumplings', meal:'dinner' },
     { name:'Vegetarian Pad Thai', meal:'dinner' },
     { name:'Veggie Burgers with Special Sauce and Fries', meal:'dinner' },
+    { name:'Pinto Bean and Hominy Pozole Rojo', meal:'dinner' },
+    { name:'Mushroom Tostadas with Pinto Beans and Cabbage Slaw', meal:'dinner' },
+    { name:'Fresh Pappardelle Verde with Sweet Pea Pistou', meal:'dinner' },
+    { name:'Japanese Mushroom Rice with Green Beans in Sesame Dressing', meal:'dinner' },
+    { name:'Japanese Omelet Rice Bowls with Maitake Mushrooms', meal:'dinner' },
     // Dessert
     { name:'Nutella Framboise Cookie', meal:'dessert' },
     { name:'Matcha Nuage Bar', meal:'dessert' },
@@ -1691,6 +1702,87 @@
       ],
       notes: "For a toddler's portion, mash the banana instead of slicing it, and use just a few softened, broken-up wafers to reduce choking risk. Skip the whipped cream topping for the youngest eaters if you'd like to keep it simpler.",
     },
+    'Pinto Bean and Hominy Pozole Rojo': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "20 min",
+      totalTime: "35 min",
+      description: "A cozy Mexican soup rebuilt from a Sunbasket favorite — hominy and pinto beans in a smoky tomato-chile broth, topped with crunchy cabbage slaw and queso fresco.",
+      ingredients: ['1 tbsp olive oil, plus more for the slaw','1 yellow onion, diced','3 garlic cloves, minced','1 tsp chili powder','1 tsp smoked paprika','3/4 tsp ground coriander','3/4 tsp ground cumin','1/2 tsp dried oregano','3/4 cup crushed tomatoes','1 1/2 cups vegetable broth','1 1/2 cups cooked hominy, drained and rinsed','1 1/2 cups cooked pinto beans, drained and rinsed','1 1/2 tbsp apple cider vinegar','2 1/4 tsp honey','1/4 cup fresh cilantro, chopped, divided','6 oz green cabbage, shredded','12 corn tortillas','2 oz queso fresco, crumbled'],
+      steps: [
+        {title:'Sauté the aromatics', content:'Warm the olive oil in a large pot over medium-high heat. Add the onion, season with salt and pepper, and cook, stirring occasionally, until softened, 3 to 4 minutes.'},
+        {title:'Bloom the spices', content:'Add the garlic, chili powder, smoked paprika, coriander, cumin, and oregano; cook 1 minute until fragrant.'},
+        {title:'Simmer the pozole', content:'Stir in the crushed tomatoes, vegetable broth, hominy, pinto beans, and vinegar. Season generously with salt and pepper, bring to a boil, then reduce to a simmer and cook, stirring occasionally, until slightly thickened, 4 to 6 minutes. Stir in the honey and season to taste.'},
+        {title:'Make the slaw', content:'Toss the cabbage with half the cilantro and a drizzle of olive oil; season to taste with salt and pepper.'},
+        {title:'Warm the tortillas', content:'Warm the tortillas directly over a flame or in a dry skillet, turning once, about 30 seconds per side. Wrap in a towel to keep warm.'},
+        {title:'Serve', content:'Ladle the pozole into bowls. Top with the slaw, remaining cilantro, and queso fresco. Serve with the warm tortillas.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their proprietary simmer sauce base and quick-pickle brine are rebuilt here from standard pantry spices, canned tomatoes, and vinegar plus honey.",
+    },
+    'Mushroom Tostadas with Pinto Beans and Cabbage Slaw': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "15 min",
+      totalTime: "30 min",
+      description: "Crisped corn tortillas piled with smoky mashed pinto beans and mushrooms, cabbage slaw, radish, and a sweet-spicy mango relish — rebuilt from a Sunbasket favorite. Vegan as written.",
+      ingredients: ['3 tbsp olive oil, divided','12 corn tortillas','8 oz cremini mushrooms, thinly sliced','2 1/4 cups cooked pinto beans, drained and rinsed','3 garlic cloves, minced','1 tbsp chili powder (or ancho chile powder)','1/2 tsp ground coriander','1/2 tsp dried oregano','3 tbsp water','2 radishes, thinly sliced','10 oz green cabbage, thinly sliced','1/4 cup fresh cilantro, chopped, divided','1 mango, diced','1 1/2 tbsp gochujang (or sriracha)'],
+      steps: [
+        {title:'Crisp the tortillas', content:'Warm 2 tbsp of the olive oil in a large frying pan over medium heat. Working in batches, cook the tortillas, turning once, until crisp, 2 to 4 minutes per side. Transfer to a paper-towel-lined plate and season with salt.'},
+        {title:'Cook the mushrooms', content:'In the same pan, warm the remaining 1 tbsp olive oil over medium-high heat. Add the mushrooms, season with salt and pepper, and cook, stirring occasionally, until softened, 4 to 5 minutes.'},
+        {title:'Make the beans', content:'Add the garlic, chili powder, coriander, and oregano to the mushrooms; cook 1 minute until fragrant. Stir in the beans and water and cook until heated through, 2 to 3 minutes. Mash coarsely with a fork, season to taste, and cover to keep warm.'},
+        {title:'Make the slaw and relish', content:'Toss the cabbage with half the cilantro and a drizzle of olive oil; season to taste. In a small bowl, stir together the mango and gochujang.'},
+        {title:'Serve', content:'Top the tortillas with the mushroom-bean mash, cabbage slaw, radishes, and mango relish. Garnish with the remaining cilantro.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their New Mexican chile salsa and chile-mango blend are rebuilt here from pantry chili powder, fresh mango, and gochujang.",
+    },
+    'Fresh Pappardelle Verde with Sweet Pea Pistou': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "10 min",
+      totalTime: "20 min",
+      description: "Wide egg pasta tossed with a bright pea-and-spinach pistou, snap peas, and Parmesan — a green, spring-forward dinner rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['10 1/2 oz fresh pappardelle (or wide egg noodles)','9 oz sugar snap peas, halved on the diagonal','1 cup fresh or thawed frozen peas, divided','1 cup baby spinach','3 garlic cloves','1/4 cup olive oil, plus more for cooking','1/3 cup grated Parmesan, plus more for serving','1/4 cup fresh mint, chopped, divided','3/4 tsp red chile flakes (optional)'],
+      steps: [
+        {title:'Cook the pasta', content:'Bring a large pot of generously salted water to a boil. Add the pappardelle and cook, stirring occasionally, until just tender, 3 to 5 minutes. Reserve 3/4 cup pasta water, then drain.'},
+        {title:'Make the pistou', content:'While the pasta cooks, blend 3/4 cup of the peas, the spinach, garlic, olive oil, and Parmesan until smooth. Season with salt and pepper.'},
+        {title:'Cook the snap peas', content:'Warm a drizzle of olive oil in a large frying pan over medium-high heat. Add the snap peas, season with salt and pepper, and cook, stirring occasionally, until crisp-tender, 2 to 3 minutes.'},
+        {title:'Finish the pasta', content:'Stir in the pappardelle, reserved pasta water, remaining peas, and the pistou. Cook until the pasta is coated and everything is heated through, 1 to 2 minutes. Stir in half the mint and season to taste.'},
+        {title:'Serve', content:'Top with Parmesan, remaining mint, and chile flakes to taste.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their sweet pea pistou is rebuilt here as a quick blended sauce of peas, spinach, garlic, olive oil, and Parmesan.",
+    },
+    'Japanese Mushroom Rice with Green Beans in Sesame Dressing': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "25 min",
+      totalTime: "40 min",
+      description: "Umami-rich mushroom rice with edamame, finished with crisp-tender green beans in a sesame-soy dressing — rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['1 tbsp vegetable oil','7 1/2 oz cremini mushrooms, thinly sliced','3 tbsp soy sauce, divided','1 1/8 cups short-grain white rice, rinsed','3/8 cup shelled edamame','3 scallions, thinly sliced, light and dark green parts separated','1 3/4 cups vegetable broth','1 1/2 tsp toasted sesame oil','2 garlic cloves, minced','1 tbsp fresh ginger, grated','9 oz green beans, trimmed and cut into 1-inch pieces','1 tbsp rice vinegar','1 tbsp honey','1 tbsp sesame seeds'],
+      steps: [
+        {title:'Cook the mushrooms', content:'Warm the vegetable oil in a medium pot over medium heat. Add the mushrooms, garlic, ginger, and half the soy sauce; cook, stirring occasionally, until the mushrooms are tender and the liquid has thickened, 5 to 6 minutes.'},
+        {title:'Cook the rice', content:'Stir in the rice, edamame, vegetable broth, light parts of the scallions, remaining soy sauce, and sesame oil. Bring to a boil, reduce to a simmer, cover, and cook until the rice is tender and the liquid is absorbed, 15 to 20 minutes. Fluff with a fork and season to taste.'},
+        {title:'Cook the green beans', content:'Meanwhile, bring a pot of salted water to a boil. Add the green beans and cook until crisp-tender, 4 to 5 minutes. Drain and rinse under cold water.'},
+        {title:'Make the dressing and toss', content:'Whisk together the rice vinegar, honey, and sesame seeds with a splash of soy sauce. Toss with the green beans and season to taste.'},
+        {title:'Serve', content:'Top the mushroom rice with the dressed green beans. Garnish with the dark green scallions.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their tamari seasoning and sesame dressing are rebuilt here from soy sauce, sesame oil, rice vinegar, garlic, ginger, and honey.",
+    },
+    'Japanese Omelet Rice Bowls with Maitake Mushrooms': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "25 min",
+      totalTime: "40 min",
+      description: "Rice bowls topped with thin egg-ribbon omelet, seared maitake mushrooms, edamame, avocado, and a spicy sambal mayo — rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['1 1/8 cups short-grain white rice, rinsed','2 cups water','1 tbsp vegetable oil, divided','5 1/4 oz maitake mushrooms (or shiitake), torn into small clusters','3/4 cup shelled edamame','2 avocados, sliced','4 scallions, chopped, light and dark green parts separated','3 large eggs','1 1/2 tbsp mayonnaise','3 tbsp sambal oelek (or sriracha)','3 oz green cabbage, shredded','3/4 tsp shichimi togarashi'],
+      steps: [
+        {title:'Cook the rice', content:'Rinse the rice. Combine with the water in a small pot, bring to a boil, reduce to a simmer, cover, and cook until the rice is tender and the liquid is absorbed, 15 to 20 minutes. Fluff with a fork and keep warm.'},
+        {title:'Cook the mushrooms and edamame', content:'Warm half the vegetable oil in a frying pan over medium-high heat. Add the mushrooms and edamame; cook, stirring occasionally, until the mushrooms are just softened, 2 to 3 minutes. Season and transfer to a plate.'},
+        {title:'Make the omelet', content:'Whisk the eggs with the light parts of the scallions and season with salt and pepper. In the same pan, warm the remaining oil over medium-low heat. Pour in the eggs, swirling to coat, and cook without stirring until just set, 1 to 2 minutes; flip and cook 10 to 15 seconds more. Cool slightly, roll up, and slice into ribbons.'},
+        {title:'Make the sambal mayo', content:'Stir together the mayonnaise and sambal oelek.'},
+        {title:'Assemble', content:'Divide the rice between bowls. Top with the egg ribbons, cabbage, mushrooms, edamame, avocado, and dark green scallions. Finish with sambal mayo and shichimi togarashi to taste.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe. If maitake mushrooms aren't available, shiitake or oyster mushrooms work well. Shichimi togarashi is found in the Asian foods aisle; a pinch of chili flakes and sesame seeds is a reasonable substitute.",
+    },
   };
 
   // Structured ingredient data (amount/unit/name) used only for grocery-list math.
@@ -2157,6 +2249,80 @@
       {amount:1, unit:'cup', name:'vanilla wafer cookies'},
       {amount:0.5, unit:'cup', name:'heavy cream'},
     ],
+    'Pinto Bean and Hominy Pozole Rojo': [
+      {amount:1, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:null, name:'yellow onion', namePlural:'yellow onions'},
+      {amount:3, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tsp', name:'chili powder'},
+      {amount:1, unit:'tsp', name:'smoked paprika'},
+      {amount:0.75, unit:'tsp', name:'ground coriander'},
+      {amount:0.75, unit:'tsp', name:'ground cumin'},
+      {amount:0.5, unit:'tsp', name:'dried oregano'},
+      {amount:0.75, unit:'cup', name:'crushed tomatoes'},
+      {amount:1.5, unit:'cup', name:'vegetable broth'},
+      {amount:1.5, unit:'cup', name:'cooked hominy'},
+      {amount:1.5, unit:'cup', name:'cooked pinto beans'},
+      {amount:1.5, unit:'tbsp', name:'apple cider vinegar'},
+      {amount:2.25, unit:'tsp', name:'honey'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:6, unit:'oz', name:'green cabbage'},
+      {amount:12, unit:null, name:'corn tortilla', namePlural:'corn tortillas'},
+      {amount:2, unit:'oz', name:'queso fresco'},
+    ],
+    'Mushroom Tostadas with Pinto Beans and Cabbage Slaw': [
+      {amount:3, unit:'tbsp', name:'olive oil'},
+      {amount:12, unit:null, name:'corn tortilla', namePlural:'corn tortillas'},
+      {amount:8, unit:'oz', name:'cremini mushrooms'},
+      {amount:2.25, unit:'cup', name:'cooked pinto beans'},
+      {amount:3, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tbsp', name:'chili powder'},
+      {amount:0.5, unit:'tsp', name:'ground coriander'},
+      {amount:0.5, unit:'tsp', name:'dried oregano'},
+      {amount:2, unit:null, name:'radish', namePlural:'radishes'},
+      {amount:10, unit:'oz', name:'green cabbage'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:1, unit:null, name:'mango', namePlural:'mangoes'},
+      {amount:1.5, unit:'tbsp', name:'gochujang'},
+    ],
+    'Fresh Pappardelle Verde with Sweet Pea Pistou': [
+      {amount:10.5, unit:'oz', name:'fresh pappardelle'},
+      {amount:9, unit:'oz', name:'sugar snap peas'},
+      {amount:1, unit:'cup', name:'peas'},
+      {amount:1, unit:'cup', name:'baby spinach'},
+      {amount:3, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:0.25, unit:'cup', name:'olive oil'},
+      {amount:0.333333, unit:'cup', name:'parmesan cheese'},
+      {amount:0.25, unit:'cup', name:'fresh mint'},
+      {amount:0.75, unit:'tsp', name:'red chile flakes'},
+    ],
+    'Japanese Mushroom Rice with Green Beans in Sesame Dressing': [
+      {amount:1, unit:'tbsp', name:'vegetable oil'},
+      {amount:7.5, unit:'oz', name:'cremini mushrooms'},
+      {amount:3, unit:'tbsp', name:'soy sauce'},
+      {amount:1.125, unit:'cup', name:'short-grain white rice'},
+      {amount:0.375, unit:'cup', name:'shelled edamame'},
+      {amount:3, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:1.75, unit:'cup', name:'vegetable broth'},
+      {amount:1.5, unit:'tsp', name:'toasted sesame oil'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tbsp', name:'fresh ginger'},
+      {amount:9, unit:'oz', name:'green beans'},
+      {amount:1, unit:'tbsp', name:'rice vinegar'},
+      {amount:1, unit:'tbsp', name:'honey'},
+      {amount:1, unit:'tbsp', name:'sesame seeds'},
+    ],
+    'Japanese Omelet Rice Bowls with Maitake Mushrooms': [
+      {amount:1.125, unit:'cup', name:'short-grain white rice'},
+      {amount:5.25, unit:'oz', name:'maitake mushrooms'},
+      {amount:0.75, unit:'cup', name:'shelled edamame'},
+      {amount:2, unit:null, name:'avocado', namePlural:'avocados'},
+      {amount:4, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:3, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:1.5, unit:'tbsp', name:'mayonnaise'},
+      {amount:3, unit:'tbsp', name:'sambal oelek'},
+      {amount:3, unit:'oz', name:'green cabbage'},
+      {amount:0.75, unit:'tsp', name:'shichimi togarashi'},
+    ],
   };
 
   const SKIP_GROCERY_NAMES = new Set(['water', 'ice water']);
@@ -2165,6 +2331,7 @@
   const weekCountLabel = document.getElementById('weekCountLabel');
   const recipeBoxScroll = document.getElementById('recipeBoxScroll');
   const clearWeekBtn = document.getElementById('clearWeekBtn');
+  const downloadWeekRecipesBtn = document.getElementById('downloadWeekRecipesBtn');
   const recipeModalBackdrop = document.getElementById('recipeModalBackdrop');
   const recipeModalCard = document.getElementById('recipeModalCard');
 
@@ -2481,6 +2648,68 @@
     const key = Object.keys(RECIPE_DETAILS).find(k => k.toLowerCase() === lower);
     return key ? RECIPE_DETAILS[key] : null;
   }
+
+  /* ---------- download this week's recipes (to hand to Claude in a chat) ---------- */
+  function buildWeekRecipesText(){
+    const dateStr = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    let lines = [
+      "Sprout & Table — This Week's Recipes (" + dateStr + ')',
+      'Upload this file in a chat with Claude — for a grocery list, questions about a recipe, or anything else.',
+      '',
+    ];
+
+    const notMade = weekEntries.filter(e => !e.done);
+    const made = weekEntries.filter(e => e.done);
+
+    if (notMade.length === 0){
+      lines.push('Nothing planned yet this week.');
+    } else {
+      DAYS.forEach(day => {
+        const dayEntries = notMade.filter(e => e.day === day);
+        if (dayEntries.length === 0) return;
+        lines.push(day.toUpperCase());
+        dayEntries.forEach(e => {
+          lines.push('  ' + MEAL_LABELS[e.meal] + ' — ' + e.text);
+          const details = findRecipeDetails(e.text);
+          if (details && details.ingredients && details.ingredients.length){
+            if (details.servings) lines.push('    Serves: ' + details.servings);
+            lines.push('    Ingredients: ' + details.ingredients.join('; '));
+            if (details.steps && details.steps.length){
+              lines.push('    Steps: ' + details.steps.map((s, i) => (i + 1) + '. ' + s.title + ' — ' + s.content).join(' '));
+            }
+            if (details.notes) lines.push('    Notes: ' + details.notes);
+          } else {
+            lines.push("    (no saved recipe on file — let Claude know what's in this one)");
+          }
+        });
+        lines.push('');
+      });
+    }
+
+    if (made.length > 0){
+      lines.push('Already made this week:');
+      made.forEach(e => lines.push('  - ' + e.text + ' (' + MEAL_LABELS[e.meal] + ', ' + e.day + ')'));
+      lines.push('');
+    }
+
+    return lines.join('\n').trim() + '\n';
+  }
+
+  function downloadWeekRecipes(){
+    const text = buildWeekRecipesText();
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const dateSlug = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'this-weeks-recipes-' + dateSlug + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Downloaded ' + a.download);
+  }
+  downloadWeekRecipesBtn.addEventListener('click', downloadWeekRecipes);
 
   function openRecipeModal(entryId){
     const entry = weekEntries.find(x => x.id === entryId);
