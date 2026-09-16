@@ -591,6 +591,19 @@
   }
   .modal-notes strong{ color: var(--matcha-deep); }
 
+  .modal-source-link{
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--matcha-deep);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s ease;
+  }
+  .modal-source-link:hover{ text-decoration-color: var(--matcha-deep); }
+  .modal-source-link:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset: 2px; }
+
   .modal-empty{
     text-align:center;
     padding: 30px 10px 10px;
@@ -736,13 +749,13 @@
   /* ================= GROCERY ================= */
   const GROCERY_STORAGE_KEY = 'grocery-items';
 
-  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry' };
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry' };
 
   const CATEGORIES = [
-    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula'] },
+    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo'] },
     { id:'dairy',     label:'Dairy & Eggs',       color:'#E0A22E', keywords:['milk','cream','butter','cheese','yogurt','egg','sour cream','mascarpone','ricotta','buttermilk','queso'] },
     { id:'bakery',    label:'Bakery',             color:'#C24C79', keywords:['bread','bagel','croissant','roll','bun','tortilla','pita','baguette','brioche','graham cracker'] },
-    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','pappardelle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','chile','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko','hominy','gochujang','sambal','togarashi','spaghetti','coffee','candy','sprinkle','wrapper','olive','granola','orzo'] },
+    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','pappardelle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','chile','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko','hominy','gochujang','sambal','togarashi','spaghetti','coffee','candy','sprinkle','wrapper','olive','granola','orzo','cavatelli','almond','thyme'] },
     { id:'seafood',   label:'Seafood',            color:'#3F7C8A', keywords:['salmon','tuna','shrimp','fish','cod','halibut','scallop','crab','ahi','unagi','roe','uni','anchov'] },
     { id:'frozen',    label:'Frozen',             color:'#6B84A8', keywords:['frozen','ice cream','popsicle','sorbet','edamame'] },
     { id:'other',     label:'Other',              color:'#8A897A', keywords:[] },
@@ -1134,6 +1147,10 @@
     { name:'Japanese Omelet Rice Bowls with Maitake Mushrooms', meal:'dinner' },
     { name:'Vietnamese Rice Noodle Salad with Crispy Tofu', meal:'dinner' },
     { name:'Garlic Butter Shrimp with Orzo', meal:'dinner' },
+    { name:'Deconstructed Samosas with Chickpeas, Potato, and Peas', meal:'dinner' },
+    { name:'Pappardelle with Artichokes, Butter Beans, and Basil Pistou', meal:'dinner' },
+    { name:'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado', meal:'dinner' },
+    { name:'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese', meal:'dinner' },
     // Dessert
     { name:'Nutella Framboise Cookie', meal:'dessert' },
     { name:'Matcha Nuage Bar', meal:'dessert' },
@@ -1710,6 +1727,7 @@
     },
     'Pinto Bean and Hominy Pozole Rojo': {
       servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/pinto-bean-and-hominy-pozole-rojo-with-warm-tortillas",
       prepTime: "15 min",
       cookTime: "20 min",
       totalTime: "35 min",
@@ -1727,6 +1745,7 @@
     },
     'Mushroom Tostadas with Pinto Beans and Cabbage Slaw': {
       servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/mushroom-tostadas-with-pinto-beans-and-cabbage-slaw",
       prepTime: "15 min",
       cookTime: "15 min",
       totalTime: "30 min",
@@ -1743,6 +1762,7 @@
     },
     'Fresh Pappardelle Verde with Sweet Pea Pistou': {
       servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/fresh-pappardelle-verde-with-sweet-pea-pistou-and-sugar-snap-peas",
       prepTime: "10 min",
       cookTime: "10 min",
       totalTime: "20 min",
@@ -1759,6 +1779,7 @@
     },
     'Japanese Mushroom Rice with Green Beans in Sesame Dressing': {
       servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/japanese-mushroom-rice-with-green-beans-in-sesame-dressing",
       prepTime: "15 min",
       cookTime: "25 min",
       totalTime: "40 min",
@@ -1775,6 +1796,7 @@
     },
     'Japanese Omelet Rice Bowls with Maitake Mushrooms': {
       servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/japanese-omelet-rice-bowls-with-maitake-mushrooms-and-sambal-mayo",
       prepTime: "15 min",
       cookTime: "25 min",
       totalTime: "40 min",
@@ -1880,6 +1902,74 @@
         {title:'Combine and serve', content:'Return the shrimp to the skillet along with the orzo and lemon juice. Toss to coat and warm through. Stir in the parsley and serve with lemon wedges.'},
       ],
       notes: "For Ruby's portion, chop the shrimp into smaller pieces and skip the red pepper flakes.",
+    },
+    'Deconstructed Samosas with Chickpeas, Potato, and Peas': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/deconstructed-samosas-with-chickpeas-new-potatoes-and-peas",
+      prepTime: "15 min",
+      cookTime: "20 min",
+      totalTime: "35 min",
+      description: "Tostada meets samosa — curried mashed potatoes and peas, saucy chickpeas, a tangy tamarind sauce, and a bright frisée salad, all piled onto crisped tortillas. Rebuilt from a Sunbasket favorite. Vegan as written.",
+      ingredients: ['1 1/4 lb russet potatoes, cut into 1-inch pieces','9 corn tortillas','4 tbsp olive oil, divided','1 1/2 cups cooked chickpeas, drained and rinsed','3/4 cup diced tomatoes','1 1/2 cups chopped frisée (or mixed baby greens)','1 tbsp fresh lime juice','1 1/2 tbsp tamarind paste','1 1/2 tbsp curry powder, divided','3/4 cup shelled peas (fresh or thawed frozen)'],
+      steps: [
+        {title:'Cook the potatoes', content:'Preheat oven to 400°F. Bring a pot of lightly salted water to a boil. Add the potatoes and cook until tender, 10 to 12 minutes. Drain and transfer to a large bowl.'},
+        {title:'Crisp the tortillas', content:'Meanwhile, brush the tortillas all over with 2 tablespoons of the olive oil and season with salt. Arrange in a single layer on a sheet pan and bake, turning halfway through, until crisp, 15 to 18 minutes.'},
+        {title:'Cook the chickpeas', content:'In a large skillet over medium heat, warm 1 tablespoon of the olive oil. Add the chickpeas, tomatoes, and 1/3 cup water; season with salt and pepper. Bring to a boil, then simmer, stirring occasionally, until the chickpeas are very tender and the liquid has thickened slightly, 6 to 8 minutes.'},
+        {title:'Make the salad and tamarind sauce', content:'Toss the frisée with the lime juice and remaining 1 tablespoon olive oil; season to taste. In a small bowl, stir the tamarind paste with 4 to 5 tablespoons hot water until smooth.'},
+        {title:'Finish the potato-pea filling', content:'Add half the curry powder to the potatoes; season with salt and pepper and toss to coat, adding more curry powder to taste. Lightly mash with a fork, then gently stir in the peas.'},
+        {title:'Serve', content:'Spread the crisped tortillas with the potato-pea filling. Top with the chickpea mixture, tamarind sauce, and salad.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their premixed spice base isn't used here; standard curry powder does the job. Frisée can be swapped for any baby lettuce mix.",
+    },
+    'Pappardelle with Artichokes, Butter Beans, and Basil Pistou': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/pappardelle-with-artichokes-butter-beans-and-basil-pistou",
+      prepTime: "10 min",
+      cookTime: "10 min",
+      totalTime: "20 min",
+      description: "Wide egg pasta with artichokes, butter beans, and roasted red pepper in a bright lemon-parsley pan sauce, finished with a basil pistou — a Mediterranean-leaning dinner rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['10 1/2 oz fresh pappardelle (or wide egg noodles)','4 scallions, thinly sliced, white and green parts separated','2 garlic cloves, minced, divided','1 1/2 cups cooked butter beans, drained and rinsed','3 oz roasted red pepper strips (jarred)','1 1/8 cups cooked artichoke hearts, quartered','1 lemon, zested and juiced','3 tbsp fresh parsley, chopped','1/4 cup olive oil, plus more for cooking','1 cup fresh basil leaves','1/4 cup grated Parmesan, plus more for serving'],
+      steps: [
+        {title:'Cook the pappardelle', content:"Bring a large pot of generously salted water to a boil. Separate the noodles so they don't clump, then cook, stirring occasionally, until just tender, 3 to 5 minutes. Drain, reserving 1 1/2 cups pasta water."},
+        {title:'Make the pistou', content:'While the pasta cooks, blend the basil, 1/4 cup olive oil, Parmesan, and 1 garlic clove until smooth. Season with salt.'},
+        {title:'Cook the vegetables', content:'Warm a drizzle of olive oil in a large skillet over medium-high heat. Add the white parts of the scallions, season with salt and pepper, and cook until starting to soften, 2 to 3 minutes. Stir in the remaining garlic and cook 30 seconds until fragrant.'},
+        {title:'Simmer the sauce', content:'Add the roasted red pepper, butter beans, artichokes, and half the reserved pasta water; season with salt. Bring to a boil, then simmer until about half the liquid has evaporated, 3 to 5 minutes. Stir in the pappardelle and remaining pasta water; cook until the sauce thickens, 1 to 2 minutes.'},
+        {title:'Finish and serve', content:'Stir in the lemon zest, lemon juice to taste, and parsley; season with salt and pepper. Divide between bowls, drizzle with the pistou, garnish with the green scallions and Parmesan, and serve with lemon wedges.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their basil pistou is rebuilt here as a quick blend of basil, olive oil, Parmesan, and garlic.",
+    },
+    'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/quick-pozole-verde-with-mild-chiles-red-radish-and-avocado",
+      prepTime: "10 min",
+      cookTime: "15 min",
+      totalTime: "25 min",
+      description: "A quick green pozole — hominy and pinto beans in a tangy tomatillo broth, topped with radish, avocado, and cabbage. Rebuilt from a Sunbasket favorite. Vegan as written.",
+      ingredients: ['2 tbsp olive oil, plus more for drizzling','1 large yellow onion, diced, divided','1 1/2 tsp chili powder','3/4 tsp ground coriander','3/4 tsp ground cumin','3/4 tsp smoked paprika','1/2 tsp garlic powder','1 1/2 cups cooked hominy, drained and rinsed','2 1/4 cups cooked pinto beans, drained and rinsed','2 1/4 cups crushed tomatillos (canned, or fresh tomatillos blended)','1/2 cup diced mild green chiles','2 1/4 cups vegetable broth','3 radishes, thinly sliced','2 avocados, sliced','1/4 cup fresh cilantro, chopped','3 oz green cabbage, shredded'],
+      steps: [
+        {title:'Start the pozole', content:'Warm the olive oil in a large pot over medium heat. Add most of the onion (reserving a couple tablespoons for garnish), the chili powder, coriander, cumin, smoked paprika, and garlic powder; season with salt and pepper. Cook, stirring occasionally, until the onion softens, 2 to 3 minutes.'},
+        {title:'Simmer', content:'Add the hominy, pinto beans, tomatillos, green chiles, and vegetable broth; season with salt and pepper. Bring to a boil, then reduce to a simmer and cook, stirring occasionally, until slightly thickened and heated through, 5 to 6 minutes. Season to taste.'},
+        {title:'Prep the garnishes', content:'Meanwhile, thinly slice the radishes, slice the avocados, and chop the cilantro.'},
+        {title:'Serve', content:'Ladle the pozole into bowls. Top with the cabbage, radishes, avocado, cilantro, and reserved onion. Drizzle with a little olive oil.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their chili spice blend is rebuilt here from chili powder, coriander, cumin, smoked paprika, and garlic powder. Canned crushed tomatillos and diced mild green chiles are usually found near the Mexican foods or canned tomatoes.",
+    },
+    'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/fresh-cavatelli-and-summer-squash-with-pesto-alla-trapanese",
+      prepTime: "10 min",
+      cookTime: "10 min",
+      totalTime: "20 min",
+      description: "A Sicilian-style pasta with browned summer squash and zucchini in a tomato-almond pesto (pesto alla trapanese), finished with wilted arugula. Rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['10 1/2 oz fresh cavatelli (or another short pasta, like orecchiette)','1 1/2 yellow summer squash, halved lengthwise and sliced into half-moons','1 1/2 zucchini, halved lengthwise and sliced into half-moons','3 tbsp fresh parsley, chopped','3/4 tsp garlic powder','3/4 tsp dried thyme','3/4 tsp dried oregano','3/4 cup cherry tomatoes','3 tbsp sun-dried tomatoes, oil-packed and drained','3 tbsp almonds','3 tbsp grated Parmesan, plus more for serving','1 garlic clove','2 tbsp olive oil, plus more for cooking','4 1/2 oz baby arugula'],
+      steps: [
+        {title:'Make the pesto', content:'Blend the cherry tomatoes, sun-dried tomatoes, almonds, Parmesan, garlic, and olive oil until mostly smooth — a little texture is good. Season with salt.'},
+        {title:'Cook the cavatelli', content:'Bring a pot of generously salted water to a boil. Add the cavatelli and cook, stirring occasionally, until just tender, 3 to 4 minutes. Drain, reserving 1/2 cup pasta water. Toss the cavatelli with a drizzle of olive oil to keep it from sticking.'},
+        {title:'Cook the squash', content:'Warm 2 tablespoons olive oil in a large skillet over medium-high heat. Add the garlic powder, thyme, and oregano; cook until fragrant, about 30 seconds. Add the squash and zucchini, season with salt and pepper, and cook, stirring occasionally, until lightly browned and starting to soften, 3 to 4 minutes.'},
+        {title:'Combine', content:'Stir in the pesto, cavatelli, and reserved pasta water; cook until heated through, 1 to 2 minutes. Remove from the heat, add the arugula, and stir until just wilted. Season to taste.'},
+        {title:'Serve', content:'Divide between bowls, top with Parmesan, and garnish with the parsley.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their pesto alla trapanese (a Sicilian tomato-almond pesto) is rebuilt here as a quick blend of tomatoes, sun-dried tomatoes, almonds, Parmesan, and garlic. Fresh cavatelli is usually found near other fresh pastas; dried shells or orecchiette work as a substitute.",
     },
   };
 
@@ -2502,6 +2592,65 @@
       {amount:1, unit:'tbsp', name:'lemon juice'},
       {amount:0.25, unit:'cup', name:'fresh parsley'},
     ],
+    'Deconstructed Samosas with Chickpeas, Potato, and Peas': [
+      {amount:1.25, unit:'lb', name:'russet potatoes'},
+      {amount:9, unit:null, name:'corn tortilla', namePlural:'corn tortillas'},
+      {amount:4, unit:'tbsp', name:'olive oil'},
+      {amount:1.5, unit:'cup', name:'cooked chickpeas'},
+      {amount:0.75, unit:'cup', name:'diced tomatoes'},
+      {amount:1.5, unit:'cup', name:'frisée'},
+      {amount:1, unit:'tbsp', name:'fresh lime juice'},
+      {amount:1.5, unit:'tbsp', name:'tamarind paste'},
+      {amount:1.5, unit:'tbsp', name:'curry powder'},
+      {amount:0.75, unit:'cup', name:'peas'},
+    ],
+    'Pappardelle with Artichokes, Butter Beans, and Basil Pistou': [
+      {amount:10.5, unit:'oz', name:'fresh pappardelle'},
+      {amount:4, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1.5, unit:'cup', name:'cooked butter beans'},
+      {amount:3, unit:'oz', name:'roasted red pepper strips'},
+      {amount:1.125, unit:'cup', name:'cooked artichoke hearts'},
+      {amount:1, unit:null, name:'lemon', namePlural:'lemons'},
+      {amount:3, unit:'tbsp', name:'fresh parsley'},
+      {amount:0.25, unit:'cup', name:'olive oil'},
+      {amount:1, unit:'cup', name:'fresh basil'},
+      {amount:0.25, unit:'cup', name:'parmesan cheese'},
+    ],
+    'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado': [
+      {amount:2, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:null, name:'large yellow onion', namePlural:'large yellow onions'},
+      {amount:1.5, unit:'tsp', name:'chili powder'},
+      {amount:0.75, unit:'tsp', name:'ground coriander'},
+      {amount:0.75, unit:'tsp', name:'ground cumin'},
+      {amount:0.75, unit:'tsp', name:'smoked paprika'},
+      {amount:0.5, unit:'tsp', name:'garlic powder'},
+      {amount:1.5, unit:'cup', name:'cooked hominy'},
+      {amount:2.25, unit:'cup', name:'cooked pinto beans'},
+      {amount:2.25, unit:'cup', name:'crushed tomatillos'},
+      {amount:0.5, unit:'cup', name:'diced mild green chiles'},
+      {amount:2.25, unit:'cup', name:'vegetable broth'},
+      {amount:3, unit:null, name:'radish', namePlural:'radishes'},
+      {amount:2, unit:null, name:'avocado', namePlural:'avocados'},
+      {amount:0.25, unit:'cup', name:'fresh cilantro'},
+      {amount:3, unit:'oz', name:'green cabbage'},
+    ],
+    'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese': [
+      {amount:10.5, unit:'oz', name:'fresh cavatelli'},
+      {amount:1.5, unit:null, name:'yellow summer squash', namePlural:'yellow summer squash'},
+      {amount:1.5, unit:null, name:'zucchini', namePlural:'zucchini'},
+      {amount:3, unit:'tbsp', name:'fresh parsley'},
+      {amount:0.75, unit:'tsp', name:'garlic powder'},
+      {amount:0.75, unit:'tsp', name:'dried thyme'},
+      {amount:0.75, unit:'tsp', name:'dried oregano'},
+      {amount:0.75, unit:'cup', name:'cherry tomatoes'},
+      {amount:3, unit:'tbsp', name:'sun-dried tomatoes'},
+      {amount:3, unit:'tbsp', name:'almonds'},
+      {amount:3, unit:'tbsp', name:'parmesan cheese'},
+      {amount:1, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:2, unit:'tbsp', name:'olive oil'},
+      {amount:4.5, unit:'oz', name:'baby arugula'},
+    ],
   };
 
   const SKIP_GROCERY_NAMES = new Set(['water', 'ice water']);
@@ -2926,6 +3075,10 @@
 
       if (details.notes){
         html += '<div class="modal-notes"><strong>Notes:</strong> ' + escapeHtml(details.notes) + '</div>';
+      }
+
+      if (details.sourceUrl){
+        html += '<a class="modal-source-link" href="' + escapeAttr(details.sourceUrl) + '" target="_blank" rel="noopener noreferrer">View original inspiration ↗</a>';
       }
     }
 
