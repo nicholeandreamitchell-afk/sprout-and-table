@@ -749,7 +749,7 @@
   /* ================= GROCERY ================= */
   const GROCERY_STORAGE_KEY = 'grocery-items';
 
-  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry' };
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry' };
 
   const CATEGORIES = [
     { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo'] },
@@ -1381,17 +1381,17 @@
       notes: "Buy the tuna fresh and sashimi-grade, ideally the day you're serving it.",
     },
     'Vegetarian Pad Thai': {
-      servings: 3,
+      servings: 4,
       prepTime: "15 min",
       cookTime: "15 min",
       totalTime: "30 min",
       description: "A vegetarian version of the classic — no fish sauce, just a tangy tamarind-lime sauce.",
-      ingredients: ['6 oz pad thai rice noodles','10 oz extra-firm tofu, cubed','1 1/2 tbsp vegetable oil, divided','2 large eggs, lightly beaten','2 garlic cloves, minced','1 1/2 cups bean sprouts','1 carrot, julienned','2 scallions, cut into 1-inch pieces','2 tbsp soy sauce','1 1/2 tbsp tamarind paste','1 1/2 tbsp brown sugar','1 lime, juiced (plus wedges to serve)','3 tbsp roasted peanuts, crushed','1/4 tsp red pepper flakes, to taste'],
+      ingredients: ['8 oz pad thai rice noodles','14 oz extra-firm tofu, cubed','2 tbsp avocado oil, divided','2 large eggs, lightly beaten','3 garlic cloves, minced','2 cups bean sprouts','1 carrot, julienned','3 scallions, cut into 1-inch pieces','3 tbsp soy sauce','2 tbsp tamarind paste','2 tbsp brown sugar','1 lime, juiced (plus wedges to serve)','1/4 cup roasted peanuts, crushed','1/4 tsp red pepper flakes, to taste'],
       steps: [
         {title:'Soak the noodles', content:'Soak the noodles in warm water per package directions until pliable. Drain.'},
         {title:'Make the sauce', content:'Whisk together the soy sauce, tamarind paste, brown sugar, and lime juice.'},
-        {title:'Fry the tofu', content:'Heat 1 tbsp of the vegetable oil in a large skillet or wok over medium-high heat. Fry the tofu until golden, about 5 minutes; remove and set aside.'},
-        {title:'Scramble the eggs', content:'Add the remaining oil, garlic, and eggs to the pan; scramble briefly.'},
+        {title:'Fry the tofu', content:'Heat 1 tbsp of the avocado oil in a large skillet or wok over medium-high heat. Fry the tofu until golden, about 5 minutes; remove and set aside.'},
+        {title:'Scramble the eggs', content:'Add the remaining oil and the garlic to the pan and cook until fragrant, about 30 seconds. Pour in the eggs and let them sit undisturbed until they just start to set around the edges, about 30 seconds, then gently scramble until softly set but still a little glossy, about 1 minute more. They will finish cooking when you add the noodles.'},
         {title:'Combine', content:'Add the noodles and sauce; toss to combine and coat, 2 to 3 minutes.'},
         {title:'Add vegetables', content:'Add the tofu, bean sprouts, carrot, and scallions; toss another 1 to 2 minutes until just wilted.'},
         {title:'Serve', content:'Top with crushed peanuts and red pepper flakes. Serve with extra lime wedges.'},
@@ -2181,19 +2181,19 @@
       {amount:1, unit:'tbsp', name:'unsalted butter'},
     ],
     'Vegetarian Pad Thai': [
-      {amount:6, unit:'oz', name:'pad thai rice noodles'},
-      {amount:10, unit:'oz', name:'extra-firm tofu'},
-      {amount:1.5, unit:'tbsp', name:'vegetable oil'},
+      {amount:8, unit:'oz', name:'pad thai rice noodles'},
+      {amount:14, unit:'oz', name:'extra-firm tofu'},
+      {amount:2, unit:'tbsp', name:'avocado oil'},
       {amount:2, unit:null, name:'large egg', namePlural:'large eggs'},
-      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
-      {amount:1.5, unit:'cup', name:'bean sprouts'},
+      {amount:3, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:2, unit:'cup', name:'bean sprouts'},
       {amount:1, unit:null, name:'carrot', namePlural:'carrots'},
-      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
-      {amount:2, unit:'tbsp', name:'soy sauce'},
-      {amount:1.5, unit:'tbsp', name:'tamarind paste'},
-      {amount:1.5, unit:'tbsp', name:'brown sugar'},
+      {amount:3, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:3, unit:'tbsp', name:'soy sauce'},
+      {amount:2, unit:'tbsp', name:'tamarind paste'},
+      {amount:2, unit:'tbsp', name:'brown sugar'},
       {amount:1, unit:null, name:'lime', namePlural:'limes'},
-      {amount:3, unit:'tbsp', name:'roasted peanuts'},
+      {amount:0.25, unit:'cup', name:'roasted peanuts'},
       {amount:0.25, unit:'tsp', name:'red pepper flakes'},
     ],
     'Veggie Burgers with Special Sauce and Fries': [
