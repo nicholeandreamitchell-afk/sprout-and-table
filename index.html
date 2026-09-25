@@ -281,6 +281,49 @@
     margin-bottom: 10px;
   }
   .rb-group{ margin-bottom: 10px; }
+  .storage-warning{
+    background: #FBEFD6; border: 1px solid var(--honey); color: var(--ink);
+    border-radius: 12px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 14px;
+  }
+  .rb-tools{ display:flex; flex-direction:column; gap:8px; margin: 8px 0 10px; }
+  .rb-search-row{ display:flex; gap:8px; }
+  .rb-search{
+    flex:1; min-width:0; font-family:'Figtree', sans-serif; font-size:14px;
+    padding: 9px 12px; border:1px solid var(--line); border-radius: 10px; background:#fff; color: var(--ink);
+  }
+  .rb-search:focus{ outline: 2px solid var(--matcha); outline-offset: 0; border-color: transparent; }
+  .rb-cuisine{
+    font-family:'Figtree', sans-serif; font-size:13px; padding: 8px 8px;
+    border:1px solid var(--line); border-radius:10px; background:#fff; color: var(--ink);
+  }
+  .rb-filters{ display:flex; flex-wrap:wrap; gap:6px; }
+  .rb-filter{
+    font-family:'Figtree', sans-serif; font-size:12.5px; padding: 5px 11px; border-radius: 999px;
+    border:1px solid var(--line); background:#fff; color: var(--ink-soft); cursor:pointer;
+  }
+  .rb-filter[aria-pressed="true"]{ background: var(--matcha); border-color: var(--matcha); color:#fff; }
+  .rb-filter:focus-visible{ outline: 2px solid var(--matcha-deep); outline-offset:1px; }
+  .rb-count{ font-size: 12px; color: var(--ink-soft); }
+  .rb-empty{ font-size: 13.5px; color: var(--ink-soft); padding: 8px 2px; }
+  .rb-fav-mark{ color: var(--framboise); margin-right: 2px; }
+  .day-popover .pop-actions{ grid-column: 1 / -1; display:flex; gap:5px; }
+  .day-popover .pop-actions button{ flex:1; }
+  .day-popover .pop-actions button.fav-on{ color: var(--framboise); border-color: var(--framboise); }
+  .day-popover .pop-meta{ grid-column: 1 / -1; font-size: 11.5px; color: var(--ink-soft); text-align:center; padding-top: 2px; }
+  .entry .leftover-btn{
+    background:none; border:none; cursor:pointer; font-size: 15px; padding: 2px 4px; opacity: 0.75;
+  }
+  .entry .leftover-btn:hover{ opacity: 1; }
+  .entry.leftover .entry-text{ font-style: italic; }
+  .history-card{ margin-top: 16px; }
+  .history-list{ list-style:none; margin: 6px 0 0; padding:0; }
+  .history-list li{
+    display:flex; justify-content:space-between; gap:10px; font-size: 13.5px;
+    padding: 7px 2px; border-bottom: 1px solid var(--line);
+  }
+  .history-list li:last-child{ border-bottom:none; }
+  .history-list .h-when{ color: var(--ink-soft); white-space:nowrap; font-size: 12.5px; }
+  .history-empty{ font-size: 13.5px; color: var(--ink-soft); padding: 6px 2px; }
   .rb-group-title{
     font-size: 11.5px;
     font-weight:700;
@@ -692,6 +735,10 @@
     <p class="tagline">for Nikki, Rylan &amp; Ruby</p>
   </header>
 
+  <div class="storage-warning" id="storageWarning" hidden>
+    ⚠️ This browser is blocking storage (often private browsing), so changes won't be saved after you close the page.
+  </div>
+
   <div class="tabs">
     <button class="tab active" data-tab="grocery">Grocery List</button>
     <button class="tab" data-tab="week">This Week</button>
@@ -726,7 +773,30 @@
   <!-- WEEK PANEL -->
   <div class="panel" id="weekPanel" hidden>
     <div class="card recipe-box">
-      <div class="label">your recipe box — tap to add to a day</div>
+      <div class="label">your recipe box — tap a recipe to plan, view, or favorite it</div>
+      <div class="rb-tools">
+        <div class="rb-search-row">
+          <input id="rbSearch" class="rb-search" type="search" placeholder="Search recipes or ingredients…" autocomplete="off" aria-label="Search recipes or ingredients" />
+          <select id="rbCuisine" class="rb-cuisine" aria-label="Filter by cuisine">
+            <option value="">All cuisines</option>
+            <option value="japanese">Japanese</option>
+            <option value="asian">Pan-Asian</option>
+            <option value="mexican">Mexican</option>
+            <option value="italian">Italian</option>
+            <option value="mediterranean">Mediterranean</option>
+            <option value="indian">Indian</option>
+            <option value="american">American &amp; Bar Food</option>
+          </select>
+        </div>
+        <div class="rb-filters" id="rbFilters">
+          <button type="button" class="rb-filter" data-filter="fav" aria-pressed="false">♥ Favorites</button>
+          <button type="button" class="rb-filter" data-filter="quick" aria-pressed="false">30 min or less</button>
+          <button type="button" class="rb-filter" data-filter="veg" aria-pressed="false">Vegetarian</button>
+          <button type="button" class="rb-filter" data-filter="pesc" aria-pressed="false">Seafood</button>
+          <button type="button" class="rb-filter" data-filter="fresh" aria-pressed="false">Not made lately</button>
+        </div>
+        <div class="rb-count" id="rbCount"></div>
+      </div>
       <div class="rb-scroll" id="recipeBoxScroll"></div>
     </div>
 
@@ -738,6 +808,11 @@
         <button id="downloadWeekRecipesBtn">Download this week's recipes</button>
         <button id="clearWeekBtn" class="danger">Clear week</button>
       </div>
+    </div>
+
+    <div class="card history-card">
+      <div class="label">recently made</div>
+      <ul class="history-list" id="historyList"></ul>
     </div>
   </div>
 
@@ -780,6 +855,31 @@
     toastEl.classList.add('show');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { toastEl.classList.remove('show'); }, 2600);
+  }
+
+  /* ---------- persistence (browser localStorage) ----------
+     Everything the app saves lives in this browser's localStorage, namespaced so it can't
+     collide with other pages on the same github.io domain. Note: localStorage is per-device
+     and per-browser. Your phone and laptop each keep their own copy. */
+  const STORE_PREFIX = 'sprout-and-table:';
+  let storageOK = true;
+  try {
+    localStorage.setItem(STORE_PREFIX + '__test', '1');
+    localStorage.removeItem(STORE_PREFIX + '__test');
+  } catch(e){ storageOK = false; }
+  const store = {
+    async get(key){
+      const v = localStorage.getItem(STORE_PREFIX + key);
+      return v === null ? null : { key, value: v };
+    },
+    async set(key, value){
+      localStorage.setItem(STORE_PREFIX + key, value);
+      return { key, value };
+    },
+  };
+  if (!storageOK){
+    const warn = document.getElementById('storageWarning');
+    if (warn) warn.hidden = false;
   }
 
   /* ---------- tabs ---------- */
@@ -869,6 +969,56 @@
       ],
       tip: "Skip the microwave if you can — it's easy to melt part of the butter, which throws off creaming and can lead to flat cookies (like the early Nutella Framboise batches).",
     },
+    {
+      title: "Sushi Rice",
+      time: "1 hr (incl. soak & rest)",
+      description: "Sugarfish-style seasoned rice for nigiri, hand rolls, and chirashi: warm, loose, and a little vinegar-forward. 1 1/2 cups raw makes about 4 1/2 cups.",
+      steps: [
+        {title:"Rinse", content:"Rinse 1 1/2 cups sushi rice in a bowl of cold water, swirling and draining 4 to 5 times until the water is mostly clear. Drain in a sieve 15 minutes."},
+        {title:"Cook", content:"Combine the rice with 1 1/2 cups plus 2 tbsp water in a heavy pot. Bring to a boil, cover tightly, reduce to the lowest heat, and cook 15 minutes. Turn off the heat and rest, still covered, 10 minutes. A rice cooker works too; use its sushi setting."},
+        {title:"Make the seasoning", content:"Warm 3 tbsp rice vinegar, 1 tbsp sugar, and 1 tsp salt just until dissolved."},
+        {title:"Season", content:"Spread the hot rice in a wide bowl. Drizzle the seasoning over a spatula onto the rice and fold with gentle slicing motions, fanning the rice to cool it slightly and give it a gloss. Do not stir or mash."},
+        {title:"Hold", content:"Cover with a damp towel and use within 2 to 3 hours, at about body temperature."},
+      ],
+      tip: "Never refrigerate sushi rice, because it turns hard and dry. Sugarfish's signature is rice served warm and packed loosely, so the grains fall apart in your mouth.",
+    },
+    {
+      title: "Stovetop Rice & Grains",
+      time: "20–45 min",
+      description: "Reliable ratios for the everyday rice under curries, bowls, and stir-fries.",
+      steps: [
+        {title:"Rinse", content:"Rinse white rice in a sieve until the water runs mostly clear, so it cooks up fluffy instead of gummy. Quinoa needs a rinse too, to remove its bitter coating."},
+        {title:"Use the ratio", content:"Per 1 cup: basmati or jasmine, 1 1/2 cups water, 15 min. Long-grain white, 1 3/4 cups water, 18 min. Quinoa, 1 3/4 cups water, 15 min. Add 1/2 tsp salt per cup."},
+        {title:"Simmer covered", content:"Bring to a boil, cover tightly, and cook on the lowest heat for the time above. Do not lift the lid."},
+        {title:"Rest and fluff", content:"Rest off the heat, covered, 10 minutes, then fluff with a fork."},
+        {title:"Brown rice", content:"Boil it like pasta in plenty of salted water for 30 minutes, drain, return to the pot, cover, and steam off the heat 10 minutes."},
+      ],
+      tip: "1 cup of raw rice makes about 3 cups cooked, which is right for the three of you.",
+    },
+    {
+      title: "Kombu-Shiitake Dashi",
+      time: "10 min + 30 min soak",
+      description: "The vegetarian Japanese stock behind great miso soup, noodle broths, and Japanese mushroom rice. Makes 4 cups.",
+      steps: [
+        {title:"Soak", content:"Place a 4-inch piece of kombu and 4 dried shiitake mushrooms in 4 1/2 cups cold water. Soak at least 30 minutes, or overnight in the fridge for a deeper flavor."},
+        {title:"Heat gently", content:"Heat over medium until tiny bubbles form around the edge, then remove the kombu before the water boils, since boiled kombu turns slimy and bitter."},
+        {title:"Simmer the shiitake", content:"Simmer the shiitakes gently 5 minutes, then strain. Slice the rehydrated mushrooms into soup or rice."},
+        {title:"Make miso soup", content:"Off the heat, whisk 2 to 3 tbsp miso paste into 4 cups dashi through a small sieve. Add cubed silken tofu, sliced scallions, and wakame, and serve without boiling."},
+      ],
+      tip: "For a pescatarian dashi, add a big handful of bonito flakes after removing the kombu, steep 2 minutes, and strain. Dashi keeps 5 days in the fridge.",
+    },
+    {
+      title: "Overnight Pizza Dough",
+      time: "20 min + 24 hr rise",
+      description: "One pound of chewy, blistered-crust dough for Margherita Pizza Night. Makes two 10-inch pizzas.",
+      steps: [
+        {title:"Mix", content:"Stir 2 cups all-purpose or bread flour, 1 tsp salt, and 1/2 tsp instant yeast in a bowl. Add 3/4 cup lukewarm water and 1 tbsp olive oil and mix into a shaggy dough."},
+        {title:"Knead", content:"Rest 10 minutes, then knead 5 minutes on a lightly floured counter until smooth and springy."},
+        {title:"Cold rise", content:"Place in an oiled container, cover, and refrigerate 24 to 72 hours. The long, cold rise builds flavor. In a pinch, rise at room temperature 2 hours instead."},
+        {title:"Divide and rest", content:"Divide into 2 balls and let sit at room temperature, covered, 1 hour before stretching."},
+      ],
+      tip: "Dough balls freeze well for up to 3 months. Thaw overnight in the fridge, then rest 1 hour at room temperature.",
+    },
   ];
 
   function renderBasics(){
@@ -892,7 +1042,7 @@
   /* ================= GROCERY ================= */
   const GROCERY_STORAGE_KEY = 'grocery-items';
 
-  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry', 'old bay seasoning': 'pantry' };
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry', 'old bay seasoning': 'pantry', "old-fashioned rolled oats": 'pantry', "almond butter": 'pantry', "cottage cheese": 'dairy', "roasted red pepper strips": 'pantry', "salsa": 'pantry', "monterey jack cheese": 'dairy', "large flour tortilla": 'bakery', "anchovy paste": 'pantry', "head little gem lettuce": 'produce', "can cannellini beans": 'pantry', "can tuna in olive oil": 'pantry', "whole peeled tomatoes": 'pantry', "canned diced tomatoes": 'pantry', "diced tomatoes": 'pantry', "tomato paste": 'pantry', "sharp cheddar cheese": 'dairy', "red lentils": 'pantry', "whole grain spaghetti": 'pantry', "halloumi cheese": 'dairy', "pizza dough": 'bakery', "fresh mozzarella": 'dairy', "cornmeal": 'pantry', "fresh dill": 'produce', "lager beer or sparkling water": 'pantry', "cod fillet": 'seafood', "tortilla chips": 'pantry', "elbow macaroni": 'pantry', "gruyère cheese": 'dairy', "garam masala": 'pantry', "basmati rice": 'pantry', "dried chickpeas": 'pantry', "sashimi-grade salmon": 'seafood', "wasabi": 'pantry', "pickled sushi ginger": 'pantry', "bunch lacinato kale": 'produce', "head baby bok choy": 'produce', "shichimi togarashi": 'pantry', "chia seeds": 'pantry', "head broccoli": 'produce', "head cauliflower": 'produce', "cooked chickpeas": 'pantry', "bean sprouts": 'produce', "panko breadcrumbs": 'pantry' };
 
   const CATEGORIES = [
     { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo','beet'] },
@@ -946,13 +1096,13 @@
 
   async function saveGrocery(){
     try{
-      const res = await window.storage.set(GROCERY_STORAGE_KEY, JSON.stringify(groceryItems), false);
+      const res = await store.set(GROCERY_STORAGE_KEY, JSON.stringify(groceryItems), false);
       if (!res) console.error('Grocery save returned no result');
     }catch(e){ console.error('Grocery storage save error', e); }
   }
   async function loadGrocery(){
     try{
-      const res = await window.storage.get(GROCERY_STORAGE_KEY, false);
+      const res = await store.get(GROCERY_STORAGE_KEY, false);
       // Migration note: older saves may include items with a `derived` flag from a previous
       // version that auto-filled the list directly. Those are dropped here — recipe-driven
       // items are now recomputed fresh from the week plan + pantry stock instead.
@@ -964,13 +1114,13 @@
 
   async function savePantryStock(){
     try{
-      const res = await window.storage.set(PANTRY_STORAGE_KEY, JSON.stringify(pantryStock), false);
+      const res = await store.set(PANTRY_STORAGE_KEY, JSON.stringify(pantryStock), false);
       if (!res) console.error('Pantry save returned no result');
     }catch(e){ console.error('Pantry storage save error', e); }
   }
   async function loadPantryStock(){
     try{
-      const res = await window.storage.get(PANTRY_STORAGE_KEY, false);
+      const res = await store.get(PANTRY_STORAGE_KEY, false);
       if (res && res.value) pantryStock = JSON.parse(res.value);
     }catch(e){ pantryStock = {}; }
     pantryLoaded = true;
@@ -979,13 +1129,13 @@
 
   async function saveDerivedChecked(){
     try{
-      const res = await window.storage.set(DERIVED_CHECKED_STORAGE_KEY, JSON.stringify(derivedChecked), false);
+      const res = await store.set(DERIVED_CHECKED_STORAGE_KEY, JSON.stringify(derivedChecked), false);
       if (!res) console.error('Derived-checked save returned no result');
     }catch(e){ console.error('Derived-checked storage error', e); }
   }
   async function loadDerivedChecked(){
     try{
-      const res = await window.storage.get(DERIVED_CHECKED_STORAGE_KEY, false);
+      const res = await store.get(DERIVED_CHECKED_STORAGE_KEY, false);
       if (res && res.value) derivedChecked = JSON.parse(res.value);
     }catch(e){ derivedChecked = {}; }
     derivedCheckedLoaded = true;
@@ -1257,53 +1407,72 @@
 
   const RECIPE_BOX = [
     // Breakfast
-    { name:'Whole Wheat Lemon-Poppyseed Pancakes', meal:'breakfast' },
-    { name:'Miso-Butter Scrambled Eggs with Scallions', meal:'breakfast' },
-    { name:'Shakshuka with Feta', meal:'breakfast' },
-    { name:'Sweet Potato Breakfast Hash with Fried Eggs', meal:'breakfast' },
-    { name:'Dutch Baby Pancake with Berries', meal:'breakfast' },
-    { name:'Yogurt Parfait with Honey, Berries, and Granola', meal:'breakfast' },
+    { name:'Whole Wheat Lemon-Poppyseed Pancakes', meal:'breakfast', cuisine:'american' },
+    { name:'Miso-Butter Scrambled Eggs with Scallions', meal:'breakfast', cuisine:'japanese' },
+    { name:'Shakshuka with Feta', meal:'breakfast', cuisine:'mediterranean' },
+    { name:'Sweet Potato Breakfast Hash with Fried Eggs', meal:'breakfast', cuisine:'american' },
+    { name:'Dutch Baby Pancake with Berries', meal:'breakfast', cuisine:'american' },
+    { name:'Yogurt Parfait with Honey, Berries, and Granola', meal:'breakfast', cuisine:'american' },
+    { name:'Make-Ahead Overnight Oats with Berries and Almond Butter', meal:'breakfast', cuisine:'american' },
+    { name:'Spinach and Feta Egg Bites', meal:'breakfast', cuisine:'american' },
+    { name:'Freezer Black Bean Breakfast Burritos', meal:'breakfast', cuisine:'mexican' },
     // Lunch
-    { name:'Curried Couscous Salad', meal:'lunch' },
-    { name:'Avocado & Quinoa Superfood Ensalada', meal:'lunch' },
-    { name:'Scallion Egg Salad', meal:'lunch' },
-    { name:'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing', meal:'lunch' },
-    { name:'Baked Feta Pasta Salad', meal:'lunch' },
-    { name:'Quick Miso Ramen with Soft-Boiled Egg', meal:'lunch' },
-    { name:'Quinoa and Chickpea Bowls with Beets and Tahini Goddess Dressing', meal:'lunch' },
-    { name:'Tartine-Inspired Tuna Salad Sandwiches', meal:'lunch' },
+    { name:'Curried Couscous Salad', meal:'lunch', cuisine:'mediterranean' },
+    { name:'Avocado & Quinoa Superfood Ensalada', meal:'lunch', cuisine:'mexican' },
+    { name:'Scallion Egg Salad', meal:'lunch', cuisine:'american' },
+    { name:'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing', meal:'lunch', cuisine:'japanese' },
+    { name:'Baked Feta Pasta Salad', meal:'lunch', cuisine:'mediterranean' },
+    { name:'Quick Miso Ramen with Soft-Boiled Egg', meal:'lunch', cuisine:'japanese' },
+    { name:'Quinoa and Chickpea Bowls with Beets and Tahini Goddess Dressing', meal:'lunch', cuisine:'mediterranean' },
+    { name:'Tartine-Inspired Tuna Salad Sandwiches', meal:'lunch', cuisine:'american' },
+    { name:'Little Gem Caesar with Crispy Chickpeas', meal:'lunch', cuisine:'american' },
+    { name:'White Bean and Tuna Salad', meal:'lunch', cuisine:'mediterranean' },
+    { name:'15-Minute Miso Butter Udon', meal:'lunch', cuisine:'japanese' },
+    { name:'Tomato Soup with Grilled Cheese', meal:'lunch', cuisine:'american' },
+    { name:'Red Lentil Soup with Lemon and Cumin', meal:'lunch', cuisine:'mediterranean' },
     // Dinner
-    { name:'Chirashi-Style Rice Bowl', meal:'dinner' },
-    { name:'Crispy Tofu Banh Mi', meal:'dinner' },
-    { name:'Fish Tacos with Cabbage Slaw', meal:'dinner' },
-    { name:'Miso-Glazed Salmon', meal:'dinner' },
-    { name:'Miso Noodle Soup with Tofu', meal:'dinner' },
-    { name:'Mushroom Risotto', meal:'dinner' },
-    { name:'Ratatouille', meal:'dinner' },
-    { name:'Spicy Tuna Hand Rolls', meal:'dinner' },
-    { name:'Tuna Cacio e Pepe', meal:'dinner' },
-    { name:'Vegetable, Shrimp & Tofu Dumplings', meal:'dinner' },
-    { name:'Vegetarian Pad Thai', meal:'dinner' },
-    { name:'Veggie Burgers with Special Sauce and Fries', meal:'dinner' },
-    { name:'Pinto Bean and Hominy Pozole Rojo', meal:'dinner' },
-    { name:'Mushroom Tostadas with Pinto Beans and Cabbage Slaw', meal:'dinner' },
-    { name:'Fresh Pappardelle Verde with Sweet Pea Pistou', meal:'dinner' },
-    { name:'Japanese Mushroom Rice with Green Beans in Sesame Dressing', meal:'dinner' },
-    { name:'Japanese Omelet Rice Bowls with Maitake Mushrooms', meal:'dinner' },
-    { name:'Vietnamese Rice Noodle Salad with Crispy Tofu', meal:'dinner' },
-    { name:'Garlic Butter Shrimp with Orzo', meal:'dinner' },
-    { name:'Deconstructed Samosas with Chickpeas, Potato, and Peas', meal:'dinner' },
-    { name:'Pappardelle with Artichokes, Butter Beans, and Basil Pistou', meal:'dinner' },
-    { name:'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado', meal:'dinner' },
-    { name:'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese', meal:'dinner' },
-    { name:'Crispy Fish Sandwiches with Quick Slaw', meal:'dinner' },
-    { name:'Salt-and-Pepper Tofu Stir-Fry with Glass Noodles', meal:'dinner' },
-    { name:'Casareccia Pasta with Butternut Squash and Truffle Buttered Mushrooms', meal:'dinner' },
-    { name:'Thai-Style Salmon in Spicy Red Curry with Fresh Basil', meal:'dinner' },
+    { name:'Chirashi-Style Rice Bowl', meal:'dinner', cuisine:'japanese' },
+    { name:'Crispy Tofu Banh Mi', meal:'dinner', cuisine:'asian' },
+    { name:'Fish Tacos with Cabbage Slaw', meal:'dinner', cuisine:'mexican' },
+    { name:'Miso-Glazed Salmon', meal:'dinner', cuisine:'japanese' },
+    { name:'Miso Noodle Soup with Tofu', meal:'dinner', cuisine:'japanese' },
+    { name:'Mushroom Risotto', meal:'dinner', cuisine:'italian' },
+    { name:'Ratatouille', meal:'dinner', cuisine:'mediterranean' },
+    { name:'Spicy Tuna Hand Rolls', meal:'dinner', cuisine:'japanese' },
+    { name:'Tuna Cacio e Pepe', meal:'dinner', cuisine:'italian' },
+    { name:'Vegetable, Shrimp & Tofu Dumplings', meal:'dinner', cuisine:'asian' },
+    { name:'Vegetarian Pad Thai', meal:'dinner', cuisine:'asian' },
+    { name:'Veggie Burgers with Special Sauce and Fries', meal:'dinner', cuisine:'american' },
+    { name:'Pinto Bean and Hominy Pozole Rojo', meal:'dinner', cuisine:'mexican' },
+    { name:'Mushroom Tostadas with Pinto Beans and Cabbage Slaw', meal:'dinner', cuisine:'mexican' },
+    { name:'Fresh Pappardelle Verde with Sweet Pea Pistou', meal:'dinner', cuisine:'italian' },
+    { name:'Japanese Mushroom Rice with Green Beans in Sesame Dressing', meal:'dinner', cuisine:'japanese' },
+    { name:'Japanese Omelet Rice Bowls with Maitake Mushrooms', meal:'dinner', cuisine:'japanese' },
+    { name:'Vietnamese Rice Noodle Salad with Crispy Tofu', meal:'dinner', cuisine:'asian' },
+    { name:'Garlic Butter Shrimp with Orzo', meal:'dinner', cuisine:'italian' },
+    { name:'Deconstructed Samosas with Chickpeas, Potato, and Peas', meal:'dinner', cuisine:'indian' },
+    { name:'Pappardelle with Artichokes, Butter Beans, and Basil Pistou', meal:'dinner', cuisine:'italian' },
+    { name:'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado', meal:'dinner', cuisine:'mexican' },
+    { name:'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese', meal:'dinner', cuisine:'italian' },
+    { name:'Crispy Fish Sandwiches with Quick Slaw', meal:'dinner', cuisine:'american' },
+    { name:'Salt-and-Pepper Tofu Stir-Fry with Glass Noodles', meal:'dinner', cuisine:'asian' },
+    { name:'Casareccia Pasta with Butternut Squash and Truffle Buttered Mushrooms', meal:'dinner', cuisine:'italian' },
+    { name:'Thai-Style Salmon in Spicy Red Curry with Fresh Basil', meal:'dinner', cuisine:'asian' },
+    { name:'Vegan Spaghetti alla Puttanesca with Zucchini', meal:'dinner', cuisine:'italian' },
+    { name:'Crispy Halloumi with Honey and Chili', meal:'dinner', cuisine:'mediterranean' },
+    { name:'Margherita Pizza Night', meal:'dinner', cuisine:'italian' },
+    { name:'Buffalo Cauliflower Bites with Blue Cheese Dip', meal:'dinner', cuisine:'american' },
+    { name:'Beer-Battered Fish and Chips with Tartar Sauce', meal:'dinner', cuisine:'american' },
+    { name:'Sheet-Pan Black Bean Nachos', meal:'dinner', cuisine:'mexican' },
+    { name:'Baked Mac and Cheese with Crispy Panko', meal:'dinner', cuisine:'american' },
+    { name:'Chana Masala with Basmati Rice', meal:'dinner', cuisine:'indian' },
+    { name:'Crispy Tofu Bibimbap', meal:'dinner', cuisine:'asian' },
+    { name:'Baked Falafel Pitas with Tahini Sauce', meal:'dinner', cuisine:'mediterranean' },
+    { name:'Sushi Night: Salmon Nigiri and Cucumber-Avocado Maki', meal:'dinner', cuisine:'japanese' },
+    { name:'Tuscan White Bean and Kale Ribollita', meal:'dinner', cuisine:'italian' },
     // Dessert
     { name:'Nutella Framboise Cookie', meal:'dessert' },
     { name:'Matcha Nuage Bar', meal:'dessert' },
-    { name:'Honey Apple Galette', meal:'dessert' },
     { name:'Olive Oil Cake with Lemon and Whipped Cream', meal:'dessert' },
     { name:'Turkish Yogurt Cake', meal:'dessert' },
     { name:'Banana Cake with Cream Cheese Frosting', meal:'dessert' },
@@ -1599,24 +1768,6 @@
         {title:'Dust with matcha', content:'Sift matcha powder generously over the whipped cream clouds. Slice into 9 bars with a hot, clean knife wiped between cuts, and serve chilled.'},
       ],
       notes: 'Bars keep covered in the fridge up to 4 days — pipe the cream and dust with matcha the same day you plan to serve, since matcha dulls in color as it sits on the moist cream.',
-    },
-    'Honey Apple Galette': {
-      servings: 8,
-      prepTime: "30 min",
-      cookTime: "45 min",
-      totalTime: "1 hr 45 min (includes 30 min chilling)",
-      description: 'A rustic free-form apple tart with a flaky butter crust, sweetened only with honey.',
-      ingredients: ['1 1/4 cups all-purpose flour','1/2 tsp fine salt','8 tbsp cold unsalted butter, cubed','1/4 cup ice water','5 Fuji apples, peeled, cored, thinly sliced','3 tbsp honey, plus more for finishing','1 tbsp lemon juice','1 tsp ground cinnamon','1/8 tsp ground nutmeg','1 tbsp cornstarch','1 pinch salt, for the filling','1 egg, beaten (or milk, for brushing the crust)'],
-      steps: [
-        {title:'Make the dough', content:'Combine the flour and salt. Add the cold butter and cut in until the mixture looks like coarse crumbs with pea-sized butter pieces. Drizzle in the ice water a little at a time until the dough just comes together.'},
-        {title:'Chill the dough', content:'Shape the dough into a disk, wrap, and refrigerate at least 30 minutes (up to 2 days, or freeze up to a month).'},
-        {title:'Toss the filling', content:'Toss the apple slices with the honey, lemon juice, cinnamon, nutmeg, cornstarch, and a pinch of salt until evenly coated.'},
-        {title:'Roll out the dough', content:'Preheat oven to 400°F. On a floured surface, roll the chilled dough into a rough 12-inch circle, about 1/8-inch thick. Transfer to a parchment-lined baking sheet.'},
-        {title:'Assemble the galette', content:'Arrange the apple slices in the center, overlapping slightly, leaving a 2-inch border. Fold the border up and over the edge, pleating as you go. Brush the crust with the egg wash.'},
-        {title:'Bake', content:'Bake about 45 minutes, until the crust is deep golden brown and the apples are tender when pierced with a knife — start checking at 35 to 40 minutes.'},
-        {title:'Finish and serve', content:'Let cool about 10 minutes, then drizzle with a little extra honey before slicing and serving warm.'},
-      ],
-      notes: "For Ruby's portion, serve a piece from the center where the apple is softest, away from the firmer crimped edge, cut into small, soft pieces. Dough can be made a day ahead and refrigerated, or frozen up to a month.",
     },
     'Olive Oil Cake with Lemon and Whipped Cream': {
       servings: 8,
@@ -2204,6 +2355,321 @@
       ],
       notes: "Since this isn't from a published recipe, treat it as a starting point rather than an exact replica. For Ruby: mash a plain portion of tuna with a little extra mayo before adding the capers, mustard, and lemon, and serve it on soft bread or crackers instead.",
     },
+    'Make-Ahead Overnight Oats with Berries and Almond Butter': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "No cook",
+      totalTime: "10 min + overnight chill",
+      description: "Three grab-and-go jars mixed the night before, Cookie and Kate-style. Keeps up to 4 days, so one batch covers several mornings.",
+      ingredients: ["1 1/2 cups old-fashioned rolled oats","1 1/2 cups whole milk","3/4 cup plain whole-milk Greek yogurt","2 tbsp chia seeds","2 tbsp maple syrup","1/2 tsp vanilla extract","1/2 tsp ground cinnamon","1/8 tsp salt","3 tbsp almond butter","1 1/2 cups mixed berries"],
+      steps: [
+        {title:"Mix the base", content:"In a bowl or large measuring cup, stir together the oats, milk, yogurt, chia seeds, maple syrup, vanilla, cinnamon, and salt until no dry pockets remain."},
+        {title:"Portion into jars", content:"Divide among 3 jars or containers with lids."},
+        {title:"Chill overnight", content:"Refrigerate at least 6 hours or overnight. The oats and chia soak up the liquid and turn creamy. Jars keep up to 4 days."},
+        {title:"Top and serve", content:"In the morning, stir, loosen with a splash of milk if thick, then top each jar with 1 tbsp almond butter and 1/2 cup berries. Eat cold, or microwave 1 minute if you like it warm."},
+      ],
+      notes: "For Ruby's jar, stir in an extra splash of milk so it's loose and spoonable, quarter or mash the berries, and stir her almond butter in thinly rather than leaving a sticky dollop on top. The chia seeds are fully softened after soaking.",
+    },
+    'Spinach and Feta Egg Bites': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "25 min",
+      totalTime: "35 min",
+      description: "Custardy, Starbucks-style egg bites baked low and slow in a muffin pan. Makes 12, so bake on Sunday and reheat through the week.",
+      ingredients: ["1 tbsp olive oil, for the pan","8 large eggs","1/2 cup cottage cheese","1/4 tsp salt","1/8 tsp black pepper","2 cups baby spinach, finely chopped","1/2 cup roasted red pepper strips, chopped","2 oz feta cheese, crumbled","2 scallions, thinly sliced"],
+      steps: [
+        {title:"Heat the oven", content:"Preheat the oven to 325°F with a rack in the middle and a baking dish of hot water on the rack below (the steam keeps the eggs silky). Brush a 12-cup muffin pan well with the olive oil."},
+        {title:"Blend the eggs", content:"Blend the eggs, cottage cheese, salt, and pepper in a blender until completely smooth and slightly frothy, about 20 seconds."},
+        {title:"Fill the cups", content:"Divide the spinach, red pepper, feta, and scallions among the cups, then pour the egg mixture over the top, filling each about three-quarters full."},
+        {title:"Bake", content:"Bake 22 to 25 minutes, until just set in the center with no jiggle. Cool 5 minutes, then run a thin knife around each bite and lift out."},
+        {title:"Store and reheat", content:"Refrigerate in a container up to 4 days, or freeze up to 2 months. Reheat 30 to 45 seconds in the microwave."},
+      ],
+      notes: "Egg bites are great toddler finger food. Cut Ruby's into quarters. Feta is salty, so you can leave it out of two or three cups and mark those as hers. The Fat Daddio's pan releases these cleanly as long as it's well oiled.",
+    },
+    'Freezer Black Bean Breakfast Burritos': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "15 min",
+      totalTime: "30 min",
+      description: "Soft scrambled eggs, cumin-spiced black beans, peppers, and melty cheese rolled into six burritos. Eat a few now and freeze the rest for busy mornings.",
+      ingredients: ["1 tbsp olive oil","1 yellow onion, diced","1 red bell pepper, diced","1 1/2 cups black beans (one 15 oz can), rinsed","1/2 tsp ground cumin","1/2 tsp chili powder","1/2 tsp salt, divided","8 large eggs","2 tbsp unsalted butter","4 oz Monterey Jack cheese, shredded","6 large (10-inch) flour tortillas","1/2 cup salsa, plus more to serve"],
+      steps: [
+        {title:"Cook the filling", content:"Heat the olive oil in a large skillet over medium heat. Add the onion and bell pepper and cook 6 to 7 minutes until soft. Stir in the black beans, cumin, chili powder, and 1/4 tsp salt and cook 2 minutes. Transfer to a bowl."},
+        {title:"Scramble the eggs", content:"Whisk the eggs with the remaining 1/4 tsp salt. Melt the butter in the same skillet over medium-low heat, add the eggs, and stir gently until softly set, 3 to 4 minutes. Keep them slightly underdone, since they reheat later."},
+        {title:"Warm the tortillas", content:"Warm the tortillas 15 seconds each in a dry skillet or 30 seconds wrapped in a damp towel in the microwave so they fold without cracking."},
+        {title:"Roll", content:"Down the center of each tortilla layer eggs, the bean mixture, cheese, and a spoonful of salsa. Fold in the sides and roll up tightly."},
+        {title:"Serve or freeze", content:"Eat right away, or cool completely, wrap each in foil, and freeze in a bag up to 3 months. To reheat, unwrap, wrap in a damp paper towel, and microwave 2 minutes, flipping halfway. Or bake from frozen in foil at 375°F for 25 to 30 minutes."},
+      ],
+      notes: "Let Ruby's cool well, since the filling stays hot long after the outside feels warm. Slice it into rounds, and use mild salsa or skip it for her. Cooling the filling fully before wrapping keeps frozen burritos from getting soggy.",
+    },
+    'Little Gem Caesar with Crispy Chickpeas': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "25 min",
+      totalTime: "40 min",
+      description: "Crisp Little Gem hearts in a garlicky, lemony Caesar dressing, with smoky roasted chickpeas standing in for croutons.",
+      ingredients: ["1 1/2 cups cooked chickpeas (one 15 oz can), drained and patted very dry","1 tbsp olive oil","1/4 tsp smoked paprika","1/4 tsp garlic powder","1/4 tsp salt","1/3 cup mayonnaise","1/4 cup finely grated parmesan cheese, plus more to serve","1 lemon, juiced (about 2 tbsp), plus wedges to serve","1 tsp Dijon mustard","1 tsp anchovy paste (or 1 tsp minced capers for a vegetarian version)","1 garlic clove, finely grated","1/4 tsp black pepper","1 to 2 tbsp water","4 heads Little Gem lettuce, leaves separated"],
+      steps: [
+        {title:"Roast the chickpeas", content:"Preheat the oven to 425°F. Toss the chickpeas with the olive oil, smoked paprika, garlic powder, and salt on a sheet pan. Roast 20 to 25 minutes, shaking the pan halfway, until deep golden and crunchy."},
+        {title:"Make the dressing", content:"Whisk the mayonnaise, parmesan, 1 1/2 tbsp of the lemon juice, the Dijon, anchovy paste, garlic, and pepper. Thin with water until pourable, then taste and add more lemon if you like it sharper."},
+        {title:"Dress the lettuce", content:"Toss the Little Gem leaves with most of the dressing in a large bowl until every leaf is coated."},
+        {title:"Finish", content:"Pile onto plates, scatter the warm chickpeas over the top, and finish with more parmesan, the remaining dressing, and lemon wedges. A soft-boiled egg (see Basics) makes it heartier."},
+      ],
+      notes: "Crunchy roasted chickpeas are a choking risk for toddlers. Set aside a few plain, unroasted chickpeas for Ruby and flatten each one with a fork. Give her the soft inner lettuce leaves torn small with a little dressing, plus a piece of toast. The anchovy paste makes this pescatarian; the capers swap keeps it vegetarian.",
+    },
+    'White Bean and Tuna Salad': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "No cook",
+      totalTime: "15 min",
+      description: "An Italian-style no-cook lunch of creamy cannellini beans, good olive oil-packed tuna, celery, tomatoes, and herbs in a sharp red wine vinaigrette.",
+      ingredients: ["3 tbsp extra virgin olive oil","1 1/2 tbsp red wine vinegar","1 tsp Dijon mustard","1/4 tsp salt","1/8 tsp black pepper","1 (15 oz) can cannellini beans, rinsed and drained","2 (5 oz) cans tuna in olive oil, drained","1 celery rib, finely diced","1 cup cherry tomatoes, halved","1/4 red onion, finely diced (or quick-pickled red onions from Basics)","1 tbsp capers, rinsed","1/4 cup fresh parsley, chopped","2 cups baby arugula","Crusty bread, to serve (optional)"],
+      steps: [
+        {title:"Make the dressing", content:"In a large bowl, whisk the olive oil, red wine vinegar, Dijon, salt, and pepper."},
+        {title:"Mix the salad", content:"Add the beans, celery, tomatoes, onion, capers, and parsley and toss. Add the tuna last and fold gently so it stays in big flakes."},
+        {title:"Rest", content:"Let sit 5 minutes so the beans soak up some dressing. Taste for salt and vinegar."},
+        {title:"Serve", content:"Serve over the arugula with crusty bread on the side. It keeps well for 2 days, so hold the arugula separately if packing it for later."},
+      ],
+      notes: "For Ruby, flake her tuna finely, quarter the cherry tomatoes, and lightly mash the beans so they aren't whole and slippery. Skip the raw onion and capers in her portion.",
+    },
+    '15-Minute Miso Butter Udon': {
+      servings: 3,
+      prepTime: "5 min",
+      cookTime: "10 min",
+      totalTime: "15 min",
+      description: "Thick, chewy udon tossed in a glossy miso-butter sauce with seared shiitakes and bok choy. Fast, savory comfort food.",
+      ingredients: ["3 (7 oz) packs frozen udon noodles","2 heads baby bok choy, quartered lengthwise","3 tbsp unsalted butter, divided","6 oz shiitake mushrooms, stems removed, sliced","2 garlic cloves, minced","2 tbsp white miso paste","1 tbsp soy sauce","1 tbsp mirin","2 scallions, thinly sliced","1 tsp toasted sesame seeds","1/2 tsp shichimi togarashi (optional)"],
+      steps: [
+        {title:"Boil the noodles", content:"Bring a large pot of water to a boil. Cook the udon according to the package, usually 1 to 3 minutes, adding the bok choy for the last minute. Reserve 1/2 cup of the cooking water, then drain."},
+        {title:"Sear the mushrooms", content:"Meanwhile, melt 1 tbsp butter in a large skillet over medium-high heat. Add the shiitakes in one layer and cook without stirring 2 minutes, then stir and cook 2 minutes more until browned. Add the garlic and cook 30 seconds."},
+        {title:"Make the sauce", content:"Lower the heat. Add the remaining 2 tbsp butter, the miso, soy sauce, mirin, and 1/4 cup of the reserved water. Whisk until smooth and glossy."},
+        {title:"Toss", content:"Add the udon and bok choy and toss until coated, adding a little more water if it looks tight. Top with scallions, sesame seeds, and togarashi."},
+      ],
+      notes: "For Ruby, snip her noodles into short lengths with kitchen scissors, chop the bok choy and mushrooms small, and skip the togarashi. A soft-boiled egg (see Basics) on top makes this a fuller meal.",
+    },
+    'Tomato Soup with Grilled Cheese': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "30 min",
+      totalTime: "40 min",
+      description: "A silky, blended tomato soup with a touch of cream, served with crisp, buttery sourdough grilled cheese for dipping.",
+      ingredients: ["2 tbsp unsalted butter (for the soup)","1 tbsp olive oil","1 yellow onion, chopped","2 garlic cloves, smashed","1 (28 oz) can whole peeled tomatoes","1 1/2 cups vegetable broth","1 tsp granulated sugar","1/2 tsp salt","1/4 tsp black pepper","1/4 cup heavy cream","2 tbsp fresh basil, torn","6 slices country levain or sourdough bread","3 tbsp unsalted butter, softened (for the sandwiches)","6 oz sharp cheddar cheese, sliced or grated"],
+      steps: [
+        {title:"Start the soup", content:"Melt 2 tbsp butter with the olive oil in a pot over medium heat. Add the onion and cook 6 to 8 minutes until soft and golden. Add the garlic and cook 1 minute."},
+        {title:"Simmer", content:"Add the tomatoes and their juices, crushing them with a spoon, then the broth, sugar, salt, and pepper. Simmer uncovered 15 minutes."},
+        {title:"Blend", content:"Blend until smooth with an immersion blender, or in batches in a blender with the lid vented. Stir in the cream and basil and keep warm on low."},
+        {title:"Build the sandwiches", content:"Butter one side of each bread slice. Place 3 slices butter-side down, top with cheese, and close with the remaining slices, butter-side up."},
+        {title:"Griddle", content:"Cook in a skillet over medium-low heat 3 to 4 minutes per side, pressing gently, until deep golden and the cheese is melted. Slice and serve with the soup."},
+      ],
+      notes: "Let Ruby's soup cool to lukewarm and serve it in a cup for sipping or dipping. Cut her grilled cheese into strips. Medium-low heat is the trick: it gives the cheese time to melt before the bread burns.",
+    },
+    'Red Lentil Soup with Lemon and Cumin': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "30 min",
+      totalTime: "40 min",
+      description: "A Turkish-style red lentil soup, creamy without any cream, brightened with lemon and finished with a sizzle of paprika butter. Good fall lunch, and even better the next day.",
+      ingredients: ["2 tbsp olive oil","1 yellow onion, diced","1 carrot, diced","2 garlic cloves, minced","1 tbsp tomato paste","1 tsp ground cumin","1/2 tsp smoked paprika (for the soup)","1 cup red lentils, rinsed","4 cups vegetable broth","1 cup water","1/2 tsp salt","1 lemon, juiced","2 tbsp unsalted butter","1/2 tsp smoked paprika (for the butter)","1/8 tsp red pepper flakes","2 tbsp fresh parsley, chopped","3 pitas, warmed, to serve"],
+      steps: [
+        {title:"Sauté", content:"Heat the olive oil in a pot over medium heat. Cook the onion and carrot 6 to 7 minutes until soft. Add the garlic, tomato paste, cumin, and 1/2 tsp smoked paprika and stir 1 minute."},
+        {title:"Simmer", content:"Add the lentils, broth, water, and salt. Bring to a boil, then simmer partly covered 20 minutes, stirring now and then, until the lentils have fully broken down."},
+        {title:"Blend", content:"Blend about half the soup with an immersion blender for a creamy but still textured soup. Stir in most of the lemon juice, then taste and add more lemon or salt."},
+        {title:"Paprika butter", content:"Melt the butter in a small pan until foaming, then swirl in the remaining 1/2 tsp smoked paprika and the red pepper flakes for 15 seconds."},
+        {title:"Serve", content:"Ladle into bowls, drizzle with the paprika butter, and top with parsley. Serve with warm pita."},
+      ],
+      notes: "This is a perfect toddler texture. Scoop Ruby's portion before adding the paprika butter, since the pepper flakes are in there. It thickens overnight, so loosen leftovers with a splash of water or broth.",
+    },
+    'Vegan Spaghetti alla Puttanesca with Zucchini': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "20 min",
+      totalTime: "30 min",
+      description: "Cookie and Kate's briny, punchy pantry puttanesca with olives, capers, and garlic. Zucchini half-moons simmer right in the sauce until tender.",
+      ingredients: ["1 (28 oz) can chunky tomato sauce or diced tomatoes","1/4 cup Kalamata olives, chopped","1/4 cup capers","2 tsp Kalamata olive brine (from the jar)","2 tsp caper brine (from the jar)","3 garlic cloves, minced","1/8 tsp red pepper flakes, plus more to serve","1 tbsp olive oil","1/3 cup fresh parsley, chopped, divided","1 medium zucchini, halved lengthwise and cut into 1/4-inch half-moons","6 oz whole grain spaghetti","1/8 tsp black pepper","Salt, only if needed"],
+      steps: [
+        {title:"Start the sauce", content:"In a medium saucepan, combine the tomatoes, olives, capers, olive brine, caper brine, garlic, red pepper flakes, and olive oil. Bring to a simmer over medium heat."},
+        {title:"Simmer the zucchini", content:"Stir in the zucchini half-moons. Simmer uncovered, stirring now and then, about 15 minutes, until the zucchini is tender and the sauce has thickened."},
+        {title:"Cook the pasta", content:"Meanwhile, cook the spaghetti in well-salted boiling water until al dente. Reserve 1/2 cup of the pasta water, then drain."},
+        {title:"Finish", content:"Stir most of the parsley and the black pepper into the sauce and taste. It rarely needs salt because the olives and capers bring plenty. Toss with the spaghetti, loosening with pasta water if needed, and top with the remaining parsley."},
+      ],
+      notes: "Adapted from Cookie and Kate. The original spiralizes the zucchini; here it's cut into half-moons and simmered in the sauce instead. For Ruby, cut her spaghetti short, chop the olives and zucchini small, and hold back any extra pepper flakes. This sauce is salty, so a small portion goes a long way for her.",
+      sourceUrl: "https://cookieandkate.com/vegan-spaghetti-alla-puttanesca/",
+    },
+    'Crispy Halloumi with Honey and Chili': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "10 min",
+      totalTime: "25 min",
+      description: "Golden, squeaky seared halloumi drizzled with warm chili honey, with a chopped cucumber-tomato salad, garlicky yogurt, and warm pita.",
+      ingredients: ["1 cucumber, diced","1 1/2 cups cherry tomatoes, halved","1/4 red onion, thinly sliced","2 tbsp fresh mint, chopped","1 tbsp olive oil (for the salad)","1 lemon, halved","1/4 tsp salt","1/2 cup plain whole-milk Greek yogurt","1 garlic clove, finely grated","8 oz halloumi, sliced 1/2 inch thick","1 tbsp olive oil (for searing)","2 tbsp honey","1/4 tsp red pepper flakes","3 pitas, warmed"],
+      steps: [
+        {title:"Make the salad", content:"Toss the cucumber, tomatoes, red onion, and mint with 1 tbsp olive oil, the juice of half the lemon, and a pinch of the salt."},
+        {title:"Garlic yogurt", content:"Stir the yogurt with the garlic, the remaining salt, and a squeeze from the other lemon half."},
+        {title:"Sear the halloumi", content:"Pat the halloumi dry. Heat 1 tbsp olive oil in a nonstick skillet over medium-high heat and sear the slices 2 to 3 minutes per side until deeply golden."},
+        {title:"Chili honey", content:"Warm the honey and red pepper flakes together in a small pan or the microwave for 20 seconds until runny."},
+        {title:"Serve", content:"Spread the yogurt on plates, add the halloumi and salad, drizzle the chili honey over the halloumi, and serve with warm pita."},
+      ],
+      notes: "Halloumi gets rubbery as it cools, so serve it straight from the pan. For Ruby, cut her halloumi into thin, small strips (it's chewy and salty), skip the chili honey or give her a drizzle of plain honey, and quarter her tomatoes.",
+    },
+    'Margherita Pizza Night': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "20 min",
+      totalTime: "35 min (plus oven preheat)",
+      description: "Two 10-inch Margherita pizzas with a quick no-cook tomato sauce, fresh mozzarella, and basil, baked as hot as your oven goes.",
+      ingredients: ["1 lb pizza dough, store-bought or homemade (see Basics)","1 (14 oz) can whole peeled tomatoes","1 garlic clove, finely grated","1 tbsp olive oil, plus more to drizzle","1/2 tsp salt","8 oz fresh mozzarella, torn and patted dry","1/4 cup finely grated parmesan cheese","1/4 cup fresh basil leaves","1 tbsp cornmeal, for the pan","Red pepper flakes, to serve (optional)"],
+      steps: [
+        {title:"Heat the oven", content:"Place a pizza stone, steel, or upside-down sheet pan on the lowest rack and preheat to 500°F for at least 30 minutes. Let the dough sit at room temperature while it heats."},
+        {title:"Make the sauce", content:"Drain the tomatoes, reserving the juice for another use. Crush them by hand or pulse briefly with the garlic, olive oil, and salt. It should be thick, not watery."},
+        {title:"Shape", content:"Divide the dough in half. On a floured surface, press and stretch each piece into a 10-inch round, leaving a slightly thicker rim."},
+        {title:"Top", content:"Dust a sheet of parchment with cornmeal and set one round on it. Spread on half the sauce, then scatter on half the mozzarella and parmesan."},
+        {title:"Bake", content:"Slide the pizza, still on the parchment, onto the hot stone. Bake 8 to 10 minutes until the crust is browned and the cheese is bubbling. Top with basil and a drizzle of olive oil. Repeat with the second pizza."},
+      ],
+      notes: "Patting the mozzarella dry is what keeps the center from going soggy. For Ruby, let her slice cool well, since melted cheese holds heat, then cut it into strips and trim off the crispiest rim.",
+    },
+    'Buffalo Cauliflower Bites with Blue Cheese Dip': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "30 min",
+      totalTime: "45 min",
+      description: "Bar-food classic, oven-style: battered, roasted cauliflower tossed in buttery hot sauce, with a chunky blue cheese dip and crisp celery.",
+      ingredients: ["1 large head cauliflower, cut into bite-size florets","3/4 cup all-purpose flour","3/4 cup whole milk","1 tsp garlic powder","1/2 tsp smoked paprika","1/2 tsp salt","1/2 cup hot sauce (such as Frank’s RedHot)","3 tbsp unsalted butter, melted","1 tsp honey","1/2 cup sour cream","1/4 cup mayonnaise","2 oz blue cheese, crumbled","1 tsp fresh lemon juice","1/8 tsp black pepper","3 celery ribs, cut into sticks","2 carrots, cut into sticks"],
+      steps: [
+        {title:"Batter", content:"Preheat the oven to 450°F and line a sheet pan with parchment. Whisk the flour, milk, garlic powder, smoked paprika, and salt into a smooth batter, about as thick as pancake batter."},
+        {title:"First roast", content:"Toss the florets in the batter, let the excess drip off, and spread them on the pan with space between. Roast 20 minutes, flipping halfway, until set and golden at the edges."},
+        {title:"Sauce", content:"Whisk the hot sauce, melted butter, and honey in a large bowl."},
+        {title:"Toss and crisp", content:"Toss the roasted cauliflower in the sauce, return it to the pan, and roast 8 to 10 minutes more until the sauce is sticky."},
+        {title:"Dip and serve", content:"Stir together the sour cream, mayonnaise, blue cheese, lemon juice, and pepper. Serve the cauliflower hot with the dip, celery, and carrots."},
+      ],
+      notes: "Before saucing, set aside a handful of plain battered florets for Ruby. Roasted cauliflower on its own is great toddler finger food; serve it with a little plain sour cream for dipping. Raw carrot and celery sticks are choking hazards for toddlers, so steam hers until soft or skip them. Frozen French fries on a second pan round this out into a full pub-style dinner.",
+    },
+    'Beer-Battered Fish and Chips with Tartar Sauce': {
+      servings: 3,
+      prepTime: "20 min",
+      cookTime: "40 min",
+      totalTime: "1 hr",
+      description: "Pub-style fish and chips at home: shatteringly crisp beer-battered cod, oven-baked potato wedges, and a quick dill tartar sauce.",
+      ingredients: ["1 1/2 lb russet potatoes, cut into thick wedges","2 tbsp olive oil","1/2 tsp salt (for the chips)","1/2 cup mayonnaise","2 tbsp pickle relish","1 tsp capers, chopped","1 tbsp fresh dill, chopped","1 lemon (1 tsp juice for the tartar, the rest in wedges)","3 cups vegetable oil, for frying","1 lb cod fillets, cut into 6 pieces and patted dry","1 cup all-purpose flour, divided","1/2 tsp baking powder","1/2 tsp salt (for the batter)","1/4 tsp smoked paprika","3/4 cup cold lager or sparkling water"],
+      steps: [
+        {title:"Bake the chips", content:"Preheat the oven to 425°F. Toss the potato wedges with the olive oil and 1/2 tsp salt on a sheet pan. Roast 35 to 40 minutes, flipping halfway, until crisp."},
+        {title:"Tartar sauce", content:"Stir together the mayonnaise, relish, capers, dill, and 1 tsp lemon juice. Chill until serving."},
+        {title:"Heat the oil", content:"When the potatoes have about 15 minutes left, heat the vegetable oil (about 1 1/2 inches deep) in a heavy pot or Dutch oven to 350°F."},
+        {title:"Batter", content:"Put 1/4 cup of the flour on a plate. Whisk the remaining 3/4 cup flour with the baking powder, salt, and smoked paprika, then whisk in the cold lager until just smooth. Season the fish lightly with salt, dredge it in the plain flour, then dip it in the batter and let the excess drip off."},
+        {title:"Fry", content:"Lower the fish into the oil a few pieces at a time, laying each piece away from you. Fry 4 to 5 minutes, turning once, until deep golden and the fish flakes. Drain on a rack and sprinkle with salt. Serve with the chips, tartar sauce, and lemon wedges."},
+      ],
+      notes: "Keep Ruby well away from the stove while the oil is hot. For her plate, flake the fish into small pieces and check carefully for bones, give her chips cut into strips, and serve tartar sauce on the side or skip it. The alcohol in the lager cooks off in frying; sparkling water works just as well.",
+    },
+    'Sheet-Pan Black Bean Nachos': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "10 min",
+      totalTime: "25 min",
+      description: "Fully loaded, double-layered sheet-pan nachos with cumin black beans, corn, and melty Jack cheese, finished with quick pico and smashed avocado.",
+      ingredients: ["1 1/2 cups black beans (one 15 oz can), rinsed","1/2 tsp ground cumin","1/4 tsp chili powder","6 oz thick tortilla chips","6 oz Monterey Jack cheese, shredded","1 cup corn kernels (frozen and thawed is fine)","1 tomato, diced","1/4 red onion, finely diced","1 jalapeño, minced (optional)","1/4 cup fresh cilantro, chopped","1 lime","1 ripe avocado","1/2 cup sour cream"],
+      steps: [
+        {title:"Season the beans", content:"Preheat the oven to 425°F. Toss the black beans with the cumin and chili powder."},
+        {title:"Layer", content:"On a parchment-lined sheet pan, spread half the chips, then half the beans, corn, and cheese. Repeat with a second layer so every chip gets some topping."},
+        {title:"Bake", content:"Bake 8 to 10 minutes until the cheese is fully melted and bubbling at the edges."},
+        {title:"Pico and avocado", content:"While the nachos bake, mix the tomato, onion, jalapeño, and cilantro with the juice of half the lime and a pinch of salt. Mash the avocado with the remaining lime juice and a pinch of salt."},
+        {title:"Top and serve", content:"Spoon the pico, avocado, and sour cream over the hot nachos and serve right off the pan."},
+      ],
+      notes: "Hard tortilla chips can be tricky for toddlers. Build Ruby a small corner with just beans, corn, and cheese, and give her the soft, cheese-soaked chips from the middle, or warm a soft tortilla with the same fillings for her. Keep the jalapeño out of her section. Quick-pickled red onions (see Basics) are great on top.",
+    },
+    'Baked Mac and Cheese with Crispy Panko': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "35 min",
+      totalTime: "50 min",
+      description: "Creamy, sharp cheddar and Gruyère mac baked under a buttery panko crust, with roasted broccoli on the same oven rack.",
+      ingredients: ["8 oz elbow macaroni","1 head broccoli, cut into florets","1 tbsp olive oil","3 tbsp unsalted butter (for the sauce)","3 tbsp all-purpose flour","2 1/2 cups whole milk","1/2 tsp Dijon mustard","1/2 tsp salt","1/4 tsp smoked paprika","1/8 tsp ground nutmeg","6 oz sharp cheddar cheese, grated","2 oz Gruyère cheese, grated","1/2 cup panko breadcrumbs","1 tbsp unsalted butter, melted (for the topping)","2 tbsp finely grated parmesan cheese"],
+      steps: [
+        {title:"Boil the pasta", content:"Preheat the oven to 375°F. Cook the macaroni in salted boiling water 2 minutes less than the package says, then drain."},
+        {title:"Make the sauce", content:"Melt 3 tbsp butter in the same pot over medium heat. Whisk in the flour and cook 1 minute. Slowly whisk in the milk and simmer, whisking, 4 to 5 minutes until it coats a spoon. Off the heat, whisk in the Dijon, salt, smoked paprika, nutmeg, cheddar, and Gruyère until smooth."},
+        {title:"Assemble", content:"Stir the pasta into the sauce and pour into an 8x8 baking dish. Toss the panko with the melted butter and parmesan and scatter it over the top."},
+        {title:"Bake with the broccoli", content:"Toss the broccoli with the olive oil and a pinch of salt on a sheet pan. Bake the mac and the broccoli together 20 to 25 minutes, until the mac is bubbling with a golden top and the broccoli is tender and browned at the edges."},
+        {title:"Rest", content:"Let the mac rest 5 minutes before scooping so the sauce settles."},
+      ],
+      notes: "Mac and cheese is a toddler staple. Scoop Ruby's from the center, where it's softest, and let it cool a few minutes. Roast the broccoli until fully tender, then chop hers small.",
+    },
+    'Chana Masala with Basmati Rice': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "35 min",
+      totalTime: "45 min",
+      description: "A Cookie and Kate-style chickpea curry: warmly spiced, tomatoey, and bright with lemon, served over fluffy basmati.",
+      ingredients: ["1 cup basmati rice, rinsed","1 1/2 cups water (for the rice)","2 tbsp olive oil","1 yellow onion, finely diced","3 garlic cloves, minced","1 tbsp fresh ginger, grated","1 tsp garam masala","1 tsp ground cumin","1 tsp ground coriander","1/2 tsp ground turmeric","1/4 tsp cayenne pepper (optional; leave out for mild)","1 (15 oz) can diced tomatoes","3 cups cooked chickpeas (two 15 oz cans), rinsed","1/2 cup water (for the curry)","3/4 tsp salt","1 tbsp fresh lemon juice","1/4 cup fresh cilantro, chopped","1/2 cup plain whole-milk Greek yogurt, to serve"],
+      steps: [
+        {title:"Cook the rice", content:"Bring the rice, 1 1/2 cups water, and a pinch of salt to a boil. Cover, reduce to low, and cook 15 minutes. Rest off the heat, covered, 5 minutes, then fluff."},
+        {title:"Build the base", content:"Heat the olive oil in a large skillet over medium heat. Cook the onion 8 minutes until golden. Add the garlic and ginger and cook 1 minute, then the garam masala, cumin, coriander, turmeric, and cayenne for 30 seconds until fragrant."},
+        {title:"Simmer", content:"Add the tomatoes, chickpeas, 1/2 cup water, and salt. Simmer 15 minutes, mashing a few chickpeas against the pan to thicken the sauce."},
+        {title:"Finish", content:"Stir in the lemon juice and most of the cilantro, then taste for salt. Serve over the rice with yogurt and the remaining cilantro."},
+      ],
+      notes: "Whole chickpeas can be a choking risk for toddlers, so mash or flatten Ruby's with a fork and stir them into her rice with a spoonful of yogurt. Leaving out the cayenne keeps it family-mild; add hot sauce at the table instead. Leftovers are even better the next day.",
+    },
+    'Crispy Tofu Bibimbap': {
+      servings: 3,
+      prepTime: "25 min",
+      cookTime: "25 min",
+      totalTime: "50 min",
+      description: "Korean rice bowls with crispy tofu, sesame-seasoned vegetables, a runny fried egg, and a sweet-spicy gochujang sauce to mix it all together.",
+      ingredients: ["1 cup short-grain white rice, rinsed","1 1/4 cups water","14 oz extra-firm tofu, pressed and cut into 3/4-inch cubes","1 tbsp cornstarch","2 tbsp vegetable oil, divided","2 carrots, cut into matchsticks","1 zucchini, cut into matchsticks","4 oz shiitake mushrooms, sliced","4 cups baby spinach","1 garlic clove, minced","1 cup bean sprouts","1 tsp toasted sesame oil (for the vegetables)","1/4 tsp salt","3 large eggs","2 tbsp gochujang","1 tbsp toasted sesame oil (for the sauce)","1 tbsp rice vinegar","1 tbsp honey","1 tbsp soy sauce","1 tbsp water","1 tbsp toasted sesame seeds","2 scallions, thinly sliced"],
+      steps: [
+        {title:"Cook the rice", content:"Bring the rice and 1 1/4 cups water to a boil, cover, and cook on low 15 minutes. Rest covered 10 minutes."},
+        {title:"Crisp the tofu", content:"Toss the tofu with the cornstarch and a pinch of salt. Heat 1 tbsp vegetable oil in a large nonstick skillet over medium-high heat and cook the tofu, turning, 8 to 10 minutes until crisp on all sides. Transfer to a plate."},
+        {title:"Cook the vegetables", content:"In the same pan, cook each vegetable separately 1 to 3 minutes, keeping them in their own piles: carrots, zucchini, shiitakes, then the spinach with the garlic until just wilted. Blanch the bean sprouts 1 minute in boiling water. Toss the vegetables with 1 tsp sesame oil and the salt."},
+        {title:"Sauce and eggs", content:"Whisk the gochujang, 1 tbsp sesame oil, rice vinegar, honey, soy sauce, and water. Fry the eggs in the remaining 1 tbsp vegetable oil until the whites are crisp-edged and the yolks still runny."},
+        {title:"Assemble", content:"Divide the rice among bowls. Arrange the vegetables and tofu in sections on top, add an egg, and finish with sesame seeds and scallions. Mix everything together with sauce to taste."},
+      ],
+      notes: "Gochujang is spicy, so give Ruby's bowl a drizzle of soy sauce and sesame oil instead. Cook her egg until the yolk is firm, cut the tofu smaller, and chop the spinach and sprouts. Store-bought kimchi on the side is a nice addition for the grown-ups.",
+    },
+    'Baked Falafel Pitas with Tahini Sauce': {
+      servings: 3,
+      prepTime: "20 min",
+      cookTime: "30 min",
+      totalTime: "50 min + overnight soak",
+      description: "Herb-packed falafel made from soaked dried chickpeas (the secret to a fluffy, green inside), oven-baked until crisp and tucked into pitas with lemony tahini sauce.",
+      ingredients: ["1 cup dried chickpeas, soaked overnight in plenty of water","1/2 yellow onion, roughly chopped","3 garlic cloves","1 cup fresh parsley leaves","1/2 cup fresh cilantro leaves","1 tsp ground cumin","1 tsp ground coriander","3/4 tsp salt (for the falafel)","1/4 tsp black pepper","1/2 tsp baking powder","2 tbsp all-purpose flour","3 tbsp olive oil, divided","1/3 cup tahini","3 tbsp fresh lemon juice (from about 2 lemons)","1 small garlic clove, finely grated","1/4 tsp salt (for the sauce)","4 to 6 tbsp ice water","3 pitas, warmed","1 cucumber, diced","1 tomato, diced","1 cup romaine lettuce, shredded","Quick-pickled red onions (see Basics), to serve"],
+      steps: [
+        {title:"Process the mixture", content:"Drain the soaked chickpeas well and pat dry. Pulse them in a food processor with the onion, garlic, parsley, cilantro, cumin, coriander, 3/4 tsp salt, and pepper, scraping down the sides, until finely chopped and holding together, like coarse sand. Do not purée it."},
+        {title:"Bind and shape", content:"Pulse in the baking powder and flour. Chill 15 minutes, then scoop into about 18 balls and flatten slightly into patties."},
+        {title:"Bake", content:"Preheat the oven to 400°F. Brush a sheet pan with 2 tbsp olive oil, add the patties, and brush the tops with the remaining 1 tbsp. Bake 25 to 30 minutes, flipping halfway, until crisp and deep golden on both sides."},
+        {title:"Tahini sauce", content:"Whisk the tahini, lemon juice, grated garlic, and 1/4 tsp salt. It will seize up at first. Keep whisking in ice water a tablespoon at a time until smooth and pourable."},
+        {title:"Assemble", content:"Stuff the warm pitas with lettuce, falafel, cucumber, tomato, and pickled onions, and drizzle generously with tahini sauce."},
+      ],
+      notes: "Canned chickpeas are too wet and turn falafel mushy, so plan the overnight soak (the chickpeas are not cooked before blending). For Ruby, break a falafel into small pieces, serve it with thinned tahini sauce for dipping, and give her the cucumber diced small. Leftover falafel reheats well in a 375°F oven for 8 minutes.",
+    },
+    'Sushi Night: Salmon Nigiri and Cucumber-Avocado Maki': {
+      servings: 3,
+      prepTime: "40 min",
+      cookTime: "20 min",
+      totalTime: "1 hr 30 min (includes rice soak and rest)",
+      description: "A Sugarfish-inspired night at home: warm, loosely packed, vinegar-forward rice under silky salmon nigiri, plus simple cucumber-avocado rolls.",
+      ingredients: ["1 1/2 cups sushi rice, cooked and seasoned (see Sushi Rice in Basics)","3 tbsp rice vinegar","1 tbsp granulated sugar","1 tsp salt","8 oz sashimi-grade salmon, chilled","2 nori sheets, halved","1 cucumber, seeded and cut into long thin strips","1 ripe avocado, sliced","1 tsp toasted sesame seeds","1 tsp wasabi","1/4 cup pickled sushi ginger","3 tbsp soy sauce, for dipping","Flaky sea salt and lemon, to finish (optional)"],
+      steps: [
+        {title:"Make the rice", content:"Make the Sushi Rice from the Basics tab using the rice, vinegar, sugar, and salt. Keep it covered with a damp towel and use it warm, around body temperature."},
+        {title:"Slice the salmon", content:"With a very sharp knife, cut the salmon across the grain into about 16 slices, roughly 1/4 inch thick and 3 inches long, in one long pull per cut. Keep chilled until the rice is ready."},
+        {title:"Form the nigiri", content:"With damp hands, gently press about 1 1/2 tbsp rice into a small oblong. Press lightly so the rice holds together but stays loose, not dense. Dab a little wasabi on top if you like, drape a slice of salmon over it, and press gently to shape."},
+        {title:"Roll the maki", content:"Lay a half sheet of nori, shiny side down, on a bamboo mat. With damp fingers, spread a thin layer of rice over it, leaving 1 inch bare at the far edge. Lay cucumber, avocado, and sesame seeds along the near edge, roll tightly with the mat, and seal. Cut each roll into 6 pieces with a wet knife."},
+        {title:"Serve", content:"Serve right away with soy sauce, wasabi, and pickled ginger. At Sugarfish, the nigiri is eaten as soon as it is made, while the rice is still warm. Finish salmon pieces with a touch of flaky salt and a squeeze of lemon instead of soy."},
+      ],
+      notes: "Raw fish isn't recommended for toddlers. Give Ruby the cucumber-avocado maki cut in half, a few simple rice balls, and a small piece of salmon seared through in a hot pan for 1 to 2 minutes per side. Nori can be tough for little ones, so use thin, crisp sheets and cut her pieces small. Buy the salmon the day you plan to serve it and tell the fish counter it's for raw eating.",
+    },
+    'Tuscan White Bean and Kale Ribollita': {
+      servings: 3,
+      prepTime: "15 min",
+      cookTime: "45 min",
+      totalTime: "1 hr",
+      description: "A thick, rustic Tuscan bread soup of white beans, kale, and vegetables, the kind of pot you'll want on repeat once the weather turns.",
+      ingredients: ["3 tbsp olive oil, plus more to drizzle","1 yellow onion, diced","2 carrots, diced","2 celery ribs, diced","4 garlic cloves, minced","1/4 tsp red pepper flakes","1 tbsp tomato paste","1 (15 oz) can diced tomatoes","2 (15 oz) cans cannellini beans, rinsed","4 cups vegetable broth","1 bunch lacinato kale, stems removed, chopped","1 tsp salt","1/4 tsp black pepper","3 slices country levain or sourdough bread (day-old is best), torn","1/4 cup finely grated parmesan cheese, to serve"],
+      steps: [
+        {title:"Soffritto", content:"Heat the olive oil in a large pot over medium heat. Cook the onion, carrots, and celery 10 minutes, stirring now and then, until soft and sweet. Add the garlic, red pepper flakes, and tomato paste and cook 2 minutes."},
+        {title:"Simmer", content:"Add the tomatoes, beans, broth, salt, and pepper. Mash about a cup of the beans against the side of the pot to thicken the soup. Simmer 15 minutes."},
+        {title:"Add the kale", content:"Stir in the kale and simmer 10 minutes until very tender."},
+        {title:"Add the bread", content:"Stir in the torn bread and simmer 5 minutes more, until it breaks down and the soup turns thick and stew-like. Taste for salt."},
+        {title:"Serve", content:"Ladle into bowls, drizzle with good olive oil, and top with parmesan."},
+      ],
+      notes: "This is naturally soft and great for Ruby. Scoop hers before adding extra pepper flakes, and mash the beans a little more in her bowl. Ribollita means 'reboiled,' so it's even better reheated the next day, making it a great candidate for planned leftovers.",
+    },
   };
 
   // Structured ingredient data (amount/unit/name) used only for grocery-list math.
@@ -2489,20 +2955,6 @@
       {amount:3, unit:'tbsp', name:'powdered sugar'},
       {amount:0.5, unit:'tsp', name:'vanilla extract'},
       {amount:1, unit:'tbsp', name:'matcha powder'},
-    ],
-    'Honey Apple Galette': [
-      {amount:1.25, unit:'cup', name:'all-purpose flour'},
-      {amount:0.5, unit:'tsp', name:'fine salt'},
-      {amount:8, unit:'tbsp', name:'cold unsalted butter'},
-      {amount:0.25, unit:'cup', name:'ice water'},
-      {amount:5, unit:null, name:'Fuji apple', namePlural:'Fuji apples'},
-      {amount:3, unit:'tbsp', name:'honey'},
-      {amount:1, unit:'tbsp', name:'lemon juice'},
-      {amount:1, unit:'tsp', name:'ground cinnamon'},
-      {amount:0.125, unit:'tsp', name:'ground nutmeg'},
-      {amount:1, unit:'tbsp', name:'cornstarch'},
-      {amount:1, unit:'pinch', name:'salt'},
-      {amount:1, unit:null, name:'egg (beaten, or milk for brushing)', namePlural:'eggs (beaten, or milk for brushing)'},
     ],
     'Banana Cake with Cream Cheese Frosting': [
       {amount:3, unit:null, name:'ripe banana', namePlural:'ripe bananas'},
@@ -2964,6 +3416,315 @@
       {amount:2, unit:'tbsp', name:'butter'},
       {amount:3, unit:null, name:'lettuce leaf', namePlural:'lettuce leaves'},
     ],
+    'Make-Ahead Overnight Oats with Berries and Almond Butter': [
+      {amount:1.5, unit:'cup', name:"old-fashioned rolled oats"},
+      {amount:1.5, unit:'cup', name:"whole milk"},
+      {amount:0.75, unit:'cup', name:"plain whole-milk Greek yogurt"},
+      {amount:2, unit:'tbsp', name:"chia seeds"},
+      {amount:2, unit:'tbsp', name:"maple syrup"},
+      {amount:0.5, unit:'tsp', name:"vanilla extract"},
+      {amount:0.5, unit:'tsp', name:"ground cinnamon"},
+      {amount:0.125, unit:'tsp', name:"salt"},
+      {amount:3, unit:'tbsp', name:"almond butter"},
+      {amount:1.5, unit:'cup', name:"mixed berries"},
+    ],
+    'Spinach and Feta Egg Bites': [
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:8, unit:null, name:"large egg", namePlural:"large eggs"},
+      {amount:0.5, unit:'cup', name:"cottage cheese"},
+      {amount:0.25, unit:'tsp', name:"salt"},
+      {amount:0.125, unit:'tsp', name:"black pepper"},
+      {amount:2, unit:'cup', name:"baby spinach"},
+      {amount:0.5, unit:'cup', name:"roasted red pepper strips"},
+      {amount:2, unit:'oz', name:"feta cheese"},
+      {amount:2, unit:null, name:"scallion", namePlural:"scallions"},
+    ],
+    'Freezer Black Bean Breakfast Burritos': [
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:1, unit:null, name:"red bell pepper", namePlural:"red bell peppers"},
+      {amount:1.5, unit:'cup', name:"black beans"},
+      {amount:0.5, unit:'tsp', name:"ground cumin"},
+      {amount:0.5, unit:'tsp', name:"chili powder"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:8, unit:null, name:"large egg", namePlural:"large eggs"},
+      {amount:2, unit:'tbsp', name:"unsalted butter"},
+      {amount:4, unit:'oz', name:"Monterey Jack cheese"},
+      {amount:6, unit:null, name:"large flour tortilla", namePlural:"large flour tortillas"},
+      {amount:0.5, unit:'cup', name:"salsa"},
+    ],
+    'Little Gem Caesar with Crispy Chickpeas': [
+      {amount:1.5, unit:'cup', name:"cooked chickpeas"},
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:0.25, unit:'tsp', name:"smoked paprika"},
+      {amount:0.25, unit:'tsp', name:"garlic powder"},
+      {amount:0.25, unit:'tsp', name:"salt"},
+      {amount:0.333, unit:'cup', name:"mayonnaise"},
+      {amount:0.25, unit:'cup', name:"parmesan cheese"},
+      {amount:1, unit:null, name:"lemon", namePlural:"lemons"},
+      {amount:1, unit:'tsp', name:"Dijon mustard"},
+      {amount:1, unit:'tsp', name:"anchovy paste"},
+      {amount:1, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:0.25, unit:'tsp', name:"black pepper"},
+      {amount:1, unit:'tbsp', name:"water"},
+      {amount:4, unit:null, name:"head Little Gem lettuce", namePlural:"heads Little Gem lettuce"},
+    ],
+    'White Bean and Tuna Salad': [
+      {amount:3, unit:'tbsp', name:"extra virgin olive oil"},
+      {amount:1.5, unit:'tbsp', name:"red wine vinegar"},
+      {amount:1, unit:'tsp', name:"Dijon mustard"},
+      {amount:0.25, unit:'tsp', name:"salt"},
+      {amount:0.125, unit:'tsp', name:"black pepper"},
+      {amount:1, unit:null, name:"can cannellini beans", namePlural:"cans cannellini beans"},
+      {amount:2, unit:null, name:"can tuna in olive oil", namePlural:"cans tuna in olive oil"},
+      {amount:1, unit:null, name:"celery rib", namePlural:"celery ribs"},
+      {amount:1, unit:'cup', name:"cherry tomatoes"},
+      {amount:0.25, unit:null, name:"red onion", namePlural:"red onions"},
+      {amount:1, unit:'tbsp', name:"capers"},
+      {amount:0.25, unit:'cup', name:"fresh parsley"},
+      {amount:2, unit:'cup', name:"baby arugula"},
+    ],
+    '15-Minute Miso Butter Udon': [
+      {amount:3, unit:null, name:"pack frozen udon noodles", namePlural:"packs frozen udon noodles"},
+      {amount:2, unit:null, name:"head baby bok choy", namePlural:"heads baby bok choy"},
+      {amount:3, unit:'tbsp', name:"unsalted butter"},
+      {amount:6, unit:'oz', name:"shiitake mushrooms"},
+      {amount:2, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:2, unit:'tbsp', name:"white miso paste"},
+      {amount:1, unit:'tbsp', name:"soy sauce"},
+      {amount:1, unit:'tbsp', name:"mirin"},
+      {amount:2, unit:null, name:"scallion", namePlural:"scallions"},
+      {amount:1, unit:'tsp', name:"sesame seeds"},
+      {amount:0.5, unit:'tsp', name:"shichimi togarashi"},
+    ],
+    'Tomato Soup with Grilled Cheese': [
+      {amount:5, unit:'tbsp', name:"unsalted butter"},
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:2, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:28, unit:'oz', name:"whole peeled tomatoes"},
+      {amount:1.5, unit:'cup', name:"vegetable broth"},
+      {amount:1, unit:'tsp', name:"granulated sugar"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:0.25, unit:'tsp', name:"black pepper"},
+      {amount:0.25, unit:'cup', name:"heavy cream"},
+      {amount:2, unit:'tbsp', name:"fresh basil"},
+      {amount:6, unit:null, name:"slice country levain or sourdough bread", namePlural:"slices country levain or sourdough bread"},
+      {amount:6, unit:'oz', name:"sharp cheddar cheese"},
+    ],
+    'Red Lentil Soup with Lemon and Cumin': [
+      {amount:2, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:1, unit:null, name:"carrot", namePlural:"carrots"},
+      {amount:2, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:1, unit:'tbsp', name:"tomato paste"},
+      {amount:1, unit:'tsp', name:"ground cumin"},
+      {amount:1, unit:'tsp', name:"smoked paprika"},
+      {amount:1, unit:'cup', name:"red lentils"},
+      {amount:4, unit:'cup', name:"vegetable broth"},
+      {amount:1, unit:'cup', name:"water"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:1, unit:null, name:"lemon", namePlural:"lemons"},
+      {amount:2, unit:'tbsp', name:"unsalted butter"},
+      {amount:0.125, unit:'tsp', name:"red pepper flakes"},
+      {amount:2, unit:'tbsp', name:"fresh parsley"},
+      {amount:3, unit:null, name:"pita", namePlural:"pitas"},
+    ],
+    'Vegan Spaghetti alla Puttanesca with Zucchini': [
+      {amount:28, unit:'oz', name:"canned diced tomatoes"},
+      {amount:0.25, unit:'cup', name:"kalamata olives"},
+      {amount:0.25, unit:'cup', name:"capers"},
+      {amount:3, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:0.125, unit:'tsp', name:"red pepper flakes"},
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:0.333, unit:'cup', name:"fresh parsley"},
+      {amount:1, unit:null, name:"zucchini", namePlural:"zucchini"},
+      {amount:6, unit:'oz', name:"whole grain spaghetti"},
+      {amount:0.125, unit:'tsp', name:"black pepper"},
+    ],
+    'Crispy Halloumi with Honey and Chili': [
+      {amount:1, unit:null, name:"cucumber", namePlural:"cucumbers"},
+      {amount:1.5, unit:'cup', name:"cherry tomatoes"},
+      {amount:0.25, unit:null, name:"red onion", namePlural:"red onions"},
+      {amount:2, unit:'tbsp', name:"fresh mint"},
+      {amount:2, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"lemon", namePlural:"lemons"},
+      {amount:0.25, unit:'tsp', name:"salt"},
+      {amount:0.5, unit:'cup', name:"plain whole-milk Greek yogurt"},
+      {amount:1, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:8, unit:'oz', name:"halloumi cheese"},
+      {amount:2, unit:'tbsp', name:"honey"},
+      {amount:0.25, unit:'tsp', name:"red pepper flakes"},
+      {amount:3, unit:null, name:"pita", namePlural:"pitas"},
+    ],
+    'Margherita Pizza Night': [
+      {amount:1, unit:'lb', name:"pizza dough"},
+      {amount:14, unit:'oz', name:"whole peeled tomatoes"},
+      {amount:1, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:8, unit:'oz', name:"fresh mozzarella"},
+      {amount:0.25, unit:'cup', name:"parmesan cheese"},
+      {amount:0.25, unit:'cup', name:"fresh basil"},
+      {amount:1, unit:'tbsp', name:"cornmeal"},
+    ],
+    'Buffalo Cauliflower Bites with Blue Cheese Dip': [
+      {amount:1, unit:null, name:"head cauliflower", namePlural:"heads cauliflower"},
+      {amount:0.75, unit:'cup', name:"all-purpose flour"},
+      {amount:0.75, unit:'cup', name:"whole milk"},
+      {amount:1, unit:'tsp', name:"garlic powder"},
+      {amount:0.5, unit:'tsp', name:"smoked paprika"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:0.5, unit:'cup', name:"hot sauce"},
+      {amount:3, unit:'tbsp', name:"unsalted butter"},
+      {amount:1, unit:'tsp', name:"honey"},
+      {amount:0.5, unit:'cup', name:"sour cream"},
+      {amount:0.25, unit:'cup', name:"mayonnaise"},
+      {amount:2, unit:'oz', name:"blue cheese"},
+      {amount:1, unit:'tsp', name:"fresh lemon juice"},
+      {amount:0.125, unit:'tsp', name:"black pepper"},
+      {amount:3, unit:null, name:"celery rib", namePlural:"celery ribs"},
+      {amount:2, unit:null, name:"carrot", namePlural:"carrots"},
+    ],
+    'Beer-Battered Fish and Chips with Tartar Sauce': [
+      {amount:1.5, unit:'lb', name:"russet potatoes"},
+      {amount:2, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:'tsp', name:"salt"},
+      {amount:0.5, unit:'cup', name:"mayonnaise"},
+      {amount:2, unit:'tbsp', name:"pickle relish"},
+      {amount:1, unit:'tsp', name:"capers"},
+      {amount:1, unit:'tbsp', name:"fresh dill"},
+      {amount:1, unit:null, name:"lemon", namePlural:"lemons"},
+      {amount:3, unit:'cup', name:"vegetable oil"},
+      {amount:1, unit:'lb', name:"cod fillet"},
+      {amount:1, unit:'cup', name:"all-purpose flour"},
+      {amount:0.5, unit:'tsp', name:"baking powder"},
+      {amount:0.25, unit:'tsp', name:"smoked paprika"},
+      {amount:0.75, unit:'cup', name:"lager beer or sparkling water"},
+    ],
+    'Sheet-Pan Black Bean Nachos': [
+      {amount:1.5, unit:'cup', name:"black beans"},
+      {amount:0.5, unit:'tsp', name:"ground cumin"},
+      {amount:0.25, unit:'tsp', name:"chili powder"},
+      {amount:6, unit:'oz', name:"tortilla chips"},
+      {amount:6, unit:'oz', name:"Monterey Jack cheese"},
+      {amount:1, unit:'cup', name:"corn kernels"},
+      {amount:1, unit:null, name:"tomato", namePlural:"tomatoes"},
+      {amount:0.25, unit:null, name:"red onion", namePlural:"red onions"},
+      {amount:1, unit:null, name:"jalapeño", namePlural:"jalapeños"},
+      {amount:0.25, unit:'cup', name:"fresh cilantro"},
+      {amount:1, unit:null, name:"lime", namePlural:"limes"},
+      {amount:1, unit:null, name:"ripe avocado", namePlural:"ripe avocados"},
+      {amount:0.5, unit:'cup', name:"sour cream"},
+    ],
+    'Baked Mac and Cheese with Crispy Panko': [
+      {amount:8, unit:'oz', name:"elbow macaroni"},
+      {amount:1, unit:null, name:"head broccoli", namePlural:"heads broccoli"},
+      {amount:1, unit:'tbsp', name:"olive oil"},
+      {amount:4, unit:'tbsp', name:"unsalted butter"},
+      {amount:3, unit:'tbsp', name:"all-purpose flour"},
+      {amount:2.5, unit:'cup', name:"whole milk"},
+      {amount:0.5, unit:'tsp', name:"Dijon mustard"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:0.25, unit:'tsp', name:"smoked paprika"},
+      {amount:0.125, unit:'tsp', name:"ground nutmeg"},
+      {amount:6, unit:'oz', name:"sharp cheddar cheese"},
+      {amount:2, unit:'oz', name:"Gruyère cheese"},
+      {amount:0.5, unit:'cup', name:"panko breadcrumbs"},
+      {amount:2, unit:'tbsp', name:"parmesan cheese"},
+    ],
+    'Chana Masala with Basmati Rice': [
+      {amount:1, unit:'cup', name:"basmati rice"},
+      {amount:2, unit:'cup', name:"water"},
+      {amount:2, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:3, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:1, unit:'tbsp', name:"fresh ginger"},
+      {amount:1, unit:'tsp', name:"garam masala"},
+      {amount:1, unit:'tsp', name:"ground cumin"},
+      {amount:1, unit:'tsp', name:"ground coriander"},
+      {amount:0.5, unit:'tsp', name:"ground turmeric"},
+      {amount:0.25, unit:'tsp', name:"cayenne pepper"},
+      {amount:15, unit:'oz', name:"canned diced tomatoes"},
+      {amount:3, unit:'cup', name:"cooked chickpeas"},
+      {amount:0.75, unit:'tsp', name:"salt"},
+      {amount:1, unit:'tbsp', name:"fresh lemon juice"},
+      {amount:0.25, unit:'cup', name:"fresh cilantro"},
+      {amount:0.5, unit:'cup', name:"plain whole-milk Greek yogurt"},
+    ],
+    'Crispy Tofu Bibimbap': [
+      {amount:1, unit:'cup', name:"short-grain white rice"},
+      {amount:1.25, unit:'cup', name:"water"},
+      {amount:14, unit:'oz', name:"extra-firm tofu"},
+      {amount:1, unit:'tbsp', name:"cornstarch"},
+      {amount:2, unit:'tbsp', name:"vegetable oil"},
+      {amount:2, unit:null, name:"carrot", namePlural:"carrots"},
+      {amount:1, unit:null, name:"zucchini", namePlural:"zucchini"},
+      {amount:4, unit:'oz', name:"shiitake mushrooms"},
+      {amount:4, unit:'cup', name:"baby spinach"},
+      {amount:1, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:1, unit:'cup', name:"bean sprouts"},
+      {amount:4, unit:'tsp', name:"toasted sesame oil"},
+      {amount:0.25, unit:'tsp', name:"salt"},
+      {amount:3, unit:null, name:"large egg", namePlural:"large eggs"},
+      {amount:2, unit:'tbsp', name:"gochujang"},
+      {amount:1, unit:'tbsp', name:"rice vinegar"},
+      {amount:1, unit:'tbsp', name:"honey"},
+      {amount:1, unit:'tbsp', name:"soy sauce"},
+      {amount:1, unit:'tbsp', name:"sesame seeds"},
+      {amount:2, unit:null, name:"scallion", namePlural:"scallions"},
+    ],
+    'Baked Falafel Pitas with Tahini Sauce': [
+      {amount:1, unit:'cup', name:"dried chickpeas"},
+      {amount:0.5, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:4, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:1, unit:'cup', name:"fresh parsley"},
+      {amount:0.5, unit:'cup', name:"fresh cilantro"},
+      {amount:1, unit:'tsp', name:"ground cumin"},
+      {amount:1, unit:'tsp', name:"ground coriander"},
+      {amount:1, unit:'tsp', name:"salt"},
+      {amount:0.25, unit:'tsp', name:"black pepper"},
+      {amount:0.5, unit:'tsp', name:"baking powder"},
+      {amount:2, unit:'tbsp', name:"all-purpose flour"},
+      {amount:3, unit:'tbsp', name:"olive oil"},
+      {amount:0.333, unit:'cup', name:"tahini"},
+      {amount:2, unit:null, name:"lemon", namePlural:"lemons"},
+      {amount:3, unit:null, name:"pita", namePlural:"pitas"},
+      {amount:1, unit:null, name:"cucumber", namePlural:"cucumbers"},
+      {amount:1, unit:null, name:"tomato", namePlural:"tomatoes"},
+      {amount:1, unit:'cup', name:"romaine lettuce"},
+    ],
+    'Sushi Night: Salmon Nigiri and Cucumber-Avocado Maki': [
+      {amount:1.5, unit:'cup', name:"sushi rice"},
+      {amount:3, unit:'tbsp', name:"rice vinegar"},
+      {amount:1, unit:'tbsp', name:"granulated sugar"},
+      {amount:1, unit:'tsp', name:"salt"},
+      {amount:8, unit:'oz', name:"sashimi-grade salmon"},
+      {amount:2, unit:null, name:"nori sheet", namePlural:"nori sheets"},
+      {amount:1, unit:null, name:"cucumber", namePlural:"cucumbers"},
+      {amount:1, unit:null, name:"ripe avocado", namePlural:"ripe avocados"},
+      {amount:1, unit:'tsp', name:"sesame seeds"},
+      {amount:1, unit:'tsp', name:"wasabi"},
+      {amount:0.25, unit:'cup', name:"pickled sushi ginger"},
+      {amount:3, unit:'tbsp', name:"soy sauce"},
+    ],
+    'Tuscan White Bean and Kale Ribollita': [
+      {amount:3, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:2, unit:null, name:"carrot", namePlural:"carrots"},
+      {amount:2, unit:null, name:"celery rib", namePlural:"celery ribs"},
+      {amount:4, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:0.25, unit:'tsp', name:"red pepper flakes"},
+      {amount:1, unit:'tbsp', name:"tomato paste"},
+      {amount:15, unit:'oz', name:"canned diced tomatoes"},
+      {amount:2, unit:null, name:"can cannellini beans", namePlural:"cans cannellini beans"},
+      {amount:4, unit:'cup', name:"vegetable broth"},
+      {amount:1, unit:null, name:"bunch lacinato kale", namePlural:"bunches lacinato kale"},
+      {amount:1, unit:'tsp', name:"salt"},
+      {amount:0.25, unit:'tsp', name:"black pepper"},
+      {amount:3, unit:null, name:"slice country levain or sourdough bread", namePlural:"slices country levain or sourdough bread"},
+      {amount:0.25, unit:'cup', name:"parmesan cheese"},
+    ],
   };
 
   const SKIP_GROCERY_NAMES = new Set(['water', 'ice water']);
@@ -2979,15 +3740,135 @@
   let weekEntries = [];
   let weekLoaded = false;
 
+  /* ---------- favorites + meal history ---------- */
+  const FAVORITES_STORAGE_KEY = 'favorite-recipes';
+  const HISTORY_STORAGE_KEY = 'meal-history';
+  let favorites = new Set();
+  let mealHistory = [];   // [{ name, meal, date: ISO string, entryId }] newest last
+  (async function loadFavoritesAndHistory(){
+    try{
+      const f = await store.get(FAVORITES_STORAGE_KEY);
+      if (f && f.value) favorites = new Set(JSON.parse(f.value));
+    }catch(e){ favorites = new Set(); }
+    try{
+      const h = await store.get(HISTORY_STORAGE_KEY);
+      if (h && h.value) mealHistory = JSON.parse(h.value);
+    }catch(e){ mealHistory = []; }
+  })();
+  async function saveFavorites(){
+    try{ await store.set(FAVORITES_STORAGE_KEY, JSON.stringify([...favorites])); }
+    catch(e){ console.error('Favorites save error', e); }
+  }
+  async function saveHistory(){
+    try{ await store.set(HISTORY_STORAGE_KEY, JSON.stringify(mealHistory)); }
+    catch(e){ console.error('History save error', e); }
+  }
+  function toggleFavorite(name){
+    if (favorites.has(name)) favorites.delete(name); else favorites.add(name);
+    saveFavorites();
+    renderRecipeBox();
+  }
+  function historyFor(name){
+    const hits = mealHistory.filter(h => h.name === name);
+    return { count: hits.length, last: hits.length ? hits[hits.length - 1].date : null };
+  }
+  function formatWhen(iso){
+    const d = new Date(iso);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const that = new Date(d); that.setHours(0,0,0,0);
+    const days = Math.round((today - that) / 86400000);
+    if (days <= 0) return 'today';
+    if (days === 1) return 'yesterday';
+    if (days < 7) return days + ' days ago';
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  }
+  const historyListEl = document.getElementById('historyList');
+  function renderHistory(){
+    if (!historyListEl) return;
+    const recent = mealHistory.slice(-10).reverse();
+    if (recent.length === 0){
+      historyListEl.innerHTML = '<li class="history-empty">Check off a meal as made and it shows up here, so you can see what you\'ve had lately.</li>';
+      return;
+    }
+    historyListEl.innerHTML = recent.map(h =>
+      '<li><span>' + escapeHtml(h.name) + '</span><span class="h-when">' + escapeHtml(MEAL_LABELS[h.meal] || '') + ' · ' + formatWhen(h.date) + '</span></li>'
+    ).join('');
+  }
+
+  /* ---------- recipe box search + filters ---------- */
+  const rbSearch = document.getElementById('rbSearch');
+  const rbCuisine = document.getElementById('rbCuisine');
+  const rbFilters = document.getElementById('rbFilters');
+  const rbCount = document.getElementById('rbCount');
+  const activeFilters = new Set();
+  const NON_VEG_HINTS = ['fish sauce','bonito','katsuobushi','worcestershire'];
+  const SEAFOOD_RES = CATEGORIES.find(cat => cat.id === 'seafood').keywords.map(k => new RegExp('\\b' + k));
+  function isPescatarian(name){
+    const ings = RECIPE_GROCERY[name] || [];
+    return ings.some(i => {
+      const n = i.name.toLowerCase();
+      // check names directly (not the grocery aisle) so canned tuna or anchovy paste shelved in Pantry still counts
+      // word-start matching so e.g. "tahini" doesn't trip the "ahi" (tuna) keyword
+      return SEAFOOD_RES.some(re => re.test(n)) || NON_VEG_HINTS.some(k => n.includes(k));
+    });
+  }
+  function totalMinutes(name){
+    const d = RECIPE_DETAILS[name];
+    if (!d || !d.totalTime) return null;
+    const t = d.totalTime.toLowerCase();
+    if (t.includes('+') || t.includes('overnight')) return 9999;
+    const h = t.match(/(\d+)\s*hr/);
+    const m = t.match(/(\d+)\s*min/);
+    return (h ? parseInt(h[1], 10) * 60 : 0) + (m ? parseInt(m[1], 10) : 0);
+  }
+  function recipeMatches(r){
+    const q = (rbSearch.value || '').trim().toLowerCase();
+    if (q){
+      const d = RECIPE_DETAILS[r.name];
+      const hay = (r.name + ' ' + (d && d.ingredients ? d.ingredients.join(' ') : '')).toLowerCase();
+      if (!q.split(/\s+/).every(word => hay.includes(word))) return false;
+    }
+    if (rbCuisine.value && r.cuisine !== rbCuisine.value) return false;
+    if (activeFilters.has('fav') && !favorites.has(r.name)) return false;
+    if (activeFilters.has('quick')){
+      const mins = totalMinutes(r.name);
+      if (mins === null || mins > 30) return false;
+    }
+    const pesc = isPescatarian(r.name);
+    if (activeFilters.has('veg') && pesc) return false;
+    if (activeFilters.has('pesc') && !pesc) return false;
+    if (activeFilters.has('fresh')){
+      const last = historyFor(r.name).last;
+      if (last && (Date.now() - new Date(last).getTime()) < 21 * 86400000) return false;
+    }
+    return true;
+  }
+  rbSearch.addEventListener('input', () => renderRecipeBox());
+  rbCuisine.addEventListener('change', () => renderRecipeBox());
+  rbFilters.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-filter]');
+    if (!btn) return;
+    const f = btn.getAttribute('data-filter');
+    if (activeFilters.has(f)) activeFilters.delete(f);
+    else {
+      activeFilters.add(f);
+      if (f === 'veg') activeFilters.delete('pesc');
+      if (f === 'pesc') activeFilters.delete('veg');
+    }
+    rbFilters.querySelectorAll('[data-filter]').forEach(b =>
+      b.setAttribute('aria-pressed', activeFilters.has(b.getAttribute('data-filter')) ? 'true' : 'false'));
+    renderRecipeBox();
+  });
+
   async function saveWeek(){
     try{
-      const res = await window.storage.set(WEEK_STORAGE_KEY, JSON.stringify(weekEntries), false);
+      const res = await store.set(WEEK_STORAGE_KEY, JSON.stringify(weekEntries), false);
       if (!res) console.error('Week save returned no result');
     }catch(e){ console.error('Week storage save error', e); }
   }
   async function loadWeek(){
     try{
-      const res = await window.storage.get(WEEK_STORAGE_KEY, false);
+      const res = await store.get(WEEK_STORAGE_KEY, false);
       if (res && res.value) weekEntries = JSON.parse(res.value);
     }catch(e){ weekEntries = []; }
     weekLoaded = true;
@@ -3106,6 +3987,17 @@
     const e = weekEntries.find(x => x.id === id);
     if (!e) return;
     e.done = !e.done;
+    if (!e.leftoverOf){
+      if (e.done){
+        mealHistory.push({ name: e.text, meal: e.meal, date: new Date().toISOString(), entryId: e.id });
+      } else {
+        for (let k = mealHistory.length - 1; k >= 0; k--){
+          if (mealHistory[k].entryId === e.id){ mealHistory.splice(k, 1); break; }
+        }
+      }
+      saveHistory();
+      renderHistory();
+    }
     const ingredients = findRecipeGroceryIngredients(e.text);
     if (ingredients){
       const sign = e.done ? -1 : 1; // made = consume stock; un-made = give it back
@@ -3118,6 +4010,15 @@
     renderWeek();
     saveWeek();
     recomputeDerivedGroceryItems();
+  }
+  function addLeftovers(id){
+    const e = weekEntries.find(x => x.id === id);
+    if (!e || e.leftoverOf) return;
+    const nextDay = DAYS[(DAYS.indexOf(e.day) + 1) % DAYS.length];
+    weekEntries.push({ id: uid('e'), day: nextDay, text: 'Leftovers: ' + e.text, meal: 'lunch', done:false, leftoverOf: e.text });
+    renderWeek();
+    saveWeek();
+    showToast('Leftovers planned for ' + nextDay + ' lunch 🥡');
   }
   function deleteWeekEntry(id){
     weekEntries = weekEntries.filter(x => x.id !== id);
@@ -3145,8 +4046,10 @@
 
   function renderRecipeBox(){
     recipeBoxScroll.innerHTML = '';
+    let shown = 0;
     MEAL_TYPES.forEach(meal => {
-      const inMeal = RECIPE_BOX.filter(r => r.meal === meal);
+      const inMeal = RECIPE_BOX.filter(r => r.meal === meal && recipeMatches(r));
+      shown += inMeal.length;
       if (inMeal.length === 0) return;
       const groupWrap = document.createElement('div');
       groupWrap.className = 'rb-group';
@@ -3167,6 +4070,14 @@
         chip.className = 'rb-chip';
         chip.type = 'button';
         chip.textContent = '+ ' + r.name;
+        if (favorites.has(r.name)){
+          const heart = document.createElement('span');
+          heart.className = 'rb-fav-mark';
+          heart.textContent = '♥';
+          chip.textContent = '+ ';
+          chip.appendChild(heart);
+          chip.appendChild(document.createTextNode(r.name));
+        }
         chip.addEventListener('click', (ev) => {
           ev.stopPropagation();
           togglePopover(wrap, r);
@@ -3179,6 +4090,11 @@
       groupWrap.appendChild(chipsWrap);
       recipeBoxScroll.appendChild(groupWrap);
     });
+    const filtering = (rbSearch.value || '').trim() || rbCuisine.value || activeFilters.size;
+    rbCount.textContent = filtering ? ('Showing ' + shown + ' of ' + RECIPE_BOX.length + ' recipes') : (RECIPE_BOX.length + ' recipes');
+    if (shown === 0){
+      recipeBoxScroll.innerHTML = '<div class="rb-empty">No recipes match. Try clearing a filter or a search word.</div>';
+    }
   }
 
   function togglePopover(anchorEl, recipe){
@@ -3188,11 +4104,31 @@
 
     const pop = document.createElement('div');
     pop.className = 'day-popover';
-    let html = '<div class="hint">add to which day?</div>';
+    const isFav = favorites.has(recipe.name);
+    let html = '<div class="pop-actions">' +
+      '<button type="button" data-pop="view">View recipe</button>' +
+      '<button type="button" data-pop="fav" class="' + (isFav ? 'fav-on' : '') + '" aria-pressed="' + isFav + '">' + (isFav ? '♥ Saved' : '♡ Favorite') + '</button>' +
+      '</div>';
+    html += '<div class="hint">add to which day?</div>';
     DAY_ABBR.forEach((abbr, i) => {
       html += '<button type="button" data-day-index="' + i + '">' + abbr + '</button>';
     });
+    const hist = historyFor(recipe.name);
+    html += '<div class="pop-meta">' + (hist.count
+      ? 'Made ' + hist.count + (hist.count === 1 ? ' time' : ' times') + ' · last ' + formatWhen(hist.last)
+      : 'Not made yet') + '</div>';
     pop.innerHTML = html;
+    pop.querySelector('[data-pop="view"]').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      closeAllPopovers();
+      showRecipeModal(recipe.name, recipe.meal);
+    });
+    pop.querySelector('[data-pop="fav"]').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      closeAllPopovers();
+      toggleFavorite(recipe.name);
+      showToast(favorites.has(recipe.name) ? 'Added to favorites ♥' : 'Removed from favorites');
+    });
     anchorEl.appendChild(pop);
 
     pop.querySelectorAll('button[data-day-index]').forEach(btn => {
@@ -3211,6 +4147,7 @@
 
   function renderWeek(){
     renderRecipeBox();
+    renderHistory();
 
     if (!weekLoaded){
       weekEl.innerHTML = '<div class="status">Loading your week…</div>';
@@ -3225,9 +4162,13 @@
       if (dayEntries.length > 0){
         html += '<ul class="entries">';
         dayEntries.forEach(e => {
-          html += '<li class="entry' + (e.done ? ' done' : '') + '">' +
+          const leftoverBtn = (!e.leftoverOf && e.meal === 'dinner')
+            ? '<button class="leftover-btn" data-action="leftovers" data-id="' + e.id + '" aria-label="Plan leftovers of ' + escapeAttr(e.text) + ' for the next day\'s lunch" title="Plan leftovers for tomorrow\'s lunch">🥡</button>'
+            : '';
+          html += '<li class="entry' + (e.done ? ' done' : '') + (e.leftoverOf ? ' leftover' : '') + '">' +
             '<button class="check' + (e.done ? ' checked' : '') + '" data-action="toggle" data-id="' + e.id + '" aria-label="Mark ' + escapeAttr(e.text) + (e.done ? ' not made' : ' made') + '">' + checkIconSvg() + '</button>' +
             '<span class="entry-text clickable" data-action="view" data-id="' + e.id + '" role="button" tabindex="0">' + escapeHtml(e.text) + '</span>' +
+            leftoverBtn +
             '<button class="meal-tag tag-' + e.meal + '" data-action="cycle" data-id="' + e.id + '">' + MEAL_LABELS[e.meal] + '</button>' +
             '<button class="del" data-action="delete" data-id="' + e.id + '" aria-label="Remove ' + escapeAttr(e.text) + '">✕</button>' +
           '</li>';
@@ -3261,6 +4202,7 @@
     if (action === 'toggle') toggleWeekEntry(id);
     if (action === 'delete') deleteWeekEntry(id);
     if (action === 'cycle') cycleMeal(id);
+    if (action === 'leftovers') addLeftovers(id);
     if (action === 'add'){
       const day = btn.getAttribute('data-day');
       const input = weekEl.querySelector('input[data-day="' + day + '"]');
@@ -3311,6 +4253,10 @@
         lines.push(day.toUpperCase());
         dayEntries.forEach(e => {
           lines.push('  ' + MEAL_LABELS[e.meal] + ' — ' + e.text);
+          if (e.leftoverOf){
+            lines.push('    (leftovers — no extra groceries needed)');
+            return;
+          }
           const details = findRecipeDetails(e.text);
           if (details && details.ingredients && details.ingredients.length){
             if (details.servings) lines.push('    Serves: ' + details.servings);
@@ -3355,11 +4301,15 @@
   function openRecipeModal(entryId){
     const entry = weekEntries.find(x => x.id === entryId);
     if (!entry) return;
-    const details = findRecipeDetails(entry.text);
+    showRecipeModal(entry.leftoverOf || entry.text, entry.meal, !!entry.leftoverOf);
+  }
+
+  function showRecipeModal(recipeName, meal, isLeftover){
+    const details = findRecipeDetails(recipeName);
 
     let html = '<button class="modal-close" id="modalCloseBtn" aria-label="Close recipe">✕</button>';
-    html += '<span class="modal-meal-tag tag-' + entry.meal + '">' + MEAL_LABELS[entry.meal] + '</span>';
-    html += '<h2 class="modal-title">' + escapeHtml(entry.text) + '</h2>';
+    html += '<span class="modal-meal-tag tag-' + meal + '">' + MEAL_LABELS[meal] + (isLeftover ? ' · leftovers' : '') + '</span>';
+    html += '<h2 class="modal-title">' + escapeHtml(recipeName) + '</h2>';
 
     if (!details){
       html += '<div class="modal-empty">🌿 No saved recipe details for this one yet.<br>Add it to the recipe box to see it here next time.</div>';
@@ -3418,6 +4368,7 @@
   loadPantryStock();
   loadDerivedChecked();
   loadWeek();
+  renderHistory();
 })();
 </script>
 </body>
