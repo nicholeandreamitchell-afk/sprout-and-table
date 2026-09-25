@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sprout &amp; Table</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+CjxyZWN0IHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgcng9IjEwIiBmaWxsPSIjRURGMkUxIi8+CjxwYXRoIGQ9Ik0yNCA0MlYyMiIgc3Ryb2tlPSIjNjM4MDRBIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0yNCAyNEMyNCAyNCAxMiAyMiAxMCAxMkMxMCAxMiAyNCAxMCAyNCAyNFoiIGZpbGw9IiM4Q0FFNjgiLz4KPHBhdGggZD0iTTI0IDIyQzI0IDIyIDM2IDIwIDM4IDEwQzM4IDEwIDI0IDggMjQgMjJaIiBmaWxsPSIjNjM4MDRBIi8+CjxjaXJjbGUgY3g9IjI0IiBjeT0iNDEiIHI9IjMuNSIgZmlsbD0iI0UwQTIyRSIvPgo8L3N2Zz4K">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -68,7 +69,7 @@
     border-radius: 100px;
     padding: 4px;
     margin: 20px auto 18px;
-    max-width: 340px;
+    max-width: 400px;
   }
   .tab{
     flex:1;
@@ -76,8 +77,8 @@
     background:transparent;
     font-family:'Figtree', sans-serif;
     font-weight:600;
-    font-size: 14px;
-    padding: 9px 10px;
+    font-size: 13.5px;
+    padding: 9px 8px;
     border-radius: 100px;
     color: var(--matcha-deep);
     cursor:pointer;
@@ -421,6 +422,46 @@
   .entry-text.clickable{ cursor:pointer; }
   .entry-text.clickable:hover{ text-decoration: underline; text-decoration-color: var(--matcha); text-underline-offset: 3px; }
 
+  /* ---- Kitchen Basics tab ---- */
+  .basics-box{ padding: 2px 2px 4px; }
+  .basics-box .label{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 14.5px;
+    color: var(--matcha-deep);
+    margin: 4px 2px 12px;
+  }
+  .basic-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 22px -18px rgba(46,43,34,0.2);
+    padding: 18px 18px 16px;
+    margin-bottom: 12px;
+  }
+  .basic-card-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom: 4px;
+  }
+  .basic-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size: 18px;
+    color: var(--ink);
+    margin:0;
+  }
+  .basic-time{
+    flex-shrink:0;
+    font-size: 12px;
+    font-weight:600;
+    color: var(--matcha-deep);
+    white-space:nowrap;
+  }
+
   /* ---- Recipe modal ---- */
   .modal-backdrop{
     position: fixed; inset: 0;
@@ -654,6 +695,7 @@
   <div class="tabs">
     <button class="tab active" data-tab="grocery">Grocery List</button>
     <button class="tab" data-tab="week">This Week</button>
+    <button class="tab" data-tab="basics">Basics</button>
   </div>
 
   <!-- GROCERY PANEL -->
@@ -698,6 +740,14 @@
       </div>
     </div>
   </div>
+
+  <!-- BASICS PANEL -->
+  <div class="panel" id="basicsPanel" hidden>
+    <div class="basics-box">
+      <div class="label">quick reference — kitchen basics</div>
+      <div id="basicsList"></div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-backdrop" id="recipeModalBackdrop" hidden>
@@ -736,6 +786,7 @@
   const tabs = document.querySelectorAll('.tab');
   const groceryPanel = document.getElementById('groceryPanel');
   const weekPanel = document.getElementById('weekPanel');
+  const basicsPanel = document.getElementById('basicsPanel');
   tabs.forEach(t => {
     t.addEventListener('click', () => {
       tabs.forEach(x => x.classList.remove('active'));
@@ -743,19 +794,111 @@
       const which = t.getAttribute('data-tab');
       groceryPanel.hidden = which !== 'grocery';
       weekPanel.hidden = which !== 'week';
+      basicsPanel.hidden = which !== 'basics';
     });
   });
+
+  /* ================= KITCHEN BASICS ================= */
+  const KITCHEN_BASICS = [
+    {
+      title: 'Soft-Boiled Egg',
+      time: '6–7 min',
+      description: 'A jammy, just-set yolk — perfect for ramen, rice bowls, or topping a salad.',
+      steps: [
+        {title:'Bring water to a boil', content:'Bring a small pot of water to a rolling boil.'},
+        {title:'Lower and cook', content:'Gently lower the eggs in with a slotted spoon. Cook 6 minutes for a very jammy yolk, or 7 minutes for a slightly firmer one.'},
+        {title:'Ice bath', content:'Transfer immediately to a bowl of ice water and let sit 2 to 3 minutes to stop the cooking.'},
+        {title:'Peel', content:'Peel carefully under cool running water — the whites are more delicate than a hard-boiled egg.'},
+      ],
+      tip: 'Eggs a few days out of the fridge (not ice-cold) peel more easily.',
+    },
+    {
+      title: 'Hard-Boiled Egg',
+      time: '10–11 min',
+      description: 'Fully set yolk, easy to peel — for egg salad, snacking, or slicing over a bowl.',
+      steps: [
+        {title:'Start in cold water', content:'Place the eggs in a single layer in a pot and cover with cold water by about an inch.'},
+        {title:'Bring to a boil', content:'Bring to a boil over high heat, then cover, remove from the heat, and let sit 10 to 11 minutes.'},
+        {title:'Ice bath', content:'Transfer to a bowl of ice water for at least 5 minutes.'},
+        {title:'Peel', content:'Crack all over and peel under cool running water, starting from the wider end.'},
+      ],
+      tip: 'A splash of vinegar in the cooking water can make cracked eggs easier to peel too.',
+    },
+    {
+      title: 'Quick-Pickled Red Onions',
+      time: '10 min + 20 min rest',
+      description: 'Bright, tangy pickled onions for tacos, bowls, sandwiches, and the tuna sandwich above.',
+      steps: [
+        {title:'Slice the onion', content:'Thinly slice 1 red onion and pack it into a jar.'},
+        {title:'Make the brine', content:'Warm 1/2 cup vinegar, 1/2 cup water, 1 tablespoon sugar, and 1 teaspoon salt in a small pot just until the sugar dissolves.'},
+        {title:'Pour and rest', content:"Pour the brine over the onions, making sure they're submerged. Let sit at least 20 minutes at room temperature."},
+        {title:'Store', content:'Refrigerate in the jar for up to 2 weeks.'},
+      ],
+      tip: 'Rice vinegar leans Asian-bowl-friendly; apple cider vinegar leans toward tacos and sandwiches.',
+    },
+    {
+      title: 'Toasting Nuts & Seeds',
+      time: '3–5 min',
+      description: 'Brings out flavor for the sesame seeds, almonds, and pistachios used throughout the recipe box.',
+      steps: [
+        {title:'Use a dry skillet', content:'Warm a dry skillet over medium heat — no oil needed.'},
+        {title:'Toast', content:'Add the nuts or seeds in a single layer and cook, shaking the pan often, until fragrant and lightly golden — about 1 to 2 minutes for sesame seeds, 3 to 5 minutes for larger nuts.'},
+        {title:'Cool', content:"Transfer immediately to a plate to stop the cooking; they'll crisp further as they cool."},
+      ],
+      tip: 'They go from toasted to burnt fast — stay close to the pan.',
+    },
+    {
+      title: 'Basic Vinaigrette Ratio',
+      time: '5 min',
+      description: 'The formula behind most of the salads and slaws in the recipe box.',
+      steps: [
+        {title:'Start with the ratio', content:'Whisk 3 parts oil to 1 part acid (vinegar or citrus juice) — for example, 3 tablespoons olive oil to 1 tablespoon lemon juice or vinegar.'},
+        {title:'Add flavor', content:'Whisk in a small spoonful of Dijon mustard or honey to help it emulsify and round out the flavor.'},
+        {title:'Season', content:"Finish with salt and pepper, then taste and adjust — more acid if it tastes flat, more oil if it's too sharp."},
+      ],
+      tip: 'Once you know the 3:1 ratio, you can freestyle just about any dressing without measuring.',
+    },
+    {
+      title: 'Softening Butter Fast',
+      time: '10–15 min',
+      description: "For when the butter's too cold and the recipe needs it soft — like the Nutella Framboise Cookie dough.",
+      steps: [
+        {title:'Cut it small', content:'Cut the butter into small, roughly 1-inch cubes and spread them out on a plate.'},
+        {title:'Rest at room temperature', content:"Let sit for 10 to 15 minutes — cutting it up speeds up the warming since more surface area is exposed."},
+        {title:'Check', content:"It's ready when it gives easily to a light press but isn't shiny or greasy-looking, which means it's started to melt."},
+      ],
+      tip: "Skip the microwave if you can — it's easy to melt part of the butter, which throws off creaming and can lead to flat cookies (like the early Nutella Framboise batches).",
+    },
+  ];
+
+  function renderBasics(){
+    const container = document.getElementById('basicsList');
+    if (!container) return;
+    container.innerHTML = KITCHEN_BASICS.map(b => {
+      const stepsHtml = b.steps.map(s =>
+        '<li><div class="modal-step-body"><div class="modal-step-title">' + escapeHtml(s.title) + '</div><div class="modal-step-content">' + escapeHtml(s.content) + '</div></div></li>'
+      ).join('');
+      const tipHtml = b.tip ? '<div class="modal-notes"><strong>Tip:</strong> ' + escapeHtml(b.tip) + '</div>' : '';
+      return '<div class="basic-card">' +
+        '<div class="basic-card-header"><h3 class="basic-title">' + escapeHtml(b.title) + '</h3><span class="basic-time">' + escapeHtml(b.time) + '</span></div>' +
+        '<p class="modal-desc">' + escapeHtml(b.description) + '</p>' +
+        '<ol class="modal-steps">' + stepsHtml + '</ol>' +
+        tipHtml +
+        '</div>';
+    }).join('');
+  }
+  renderBasics();
 
   /* ================= GROCERY ================= */
   const GROCERY_STORAGE_KEY = 'grocery-items';
 
-  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry' };
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry', 'old bay seasoning': 'pantry' };
 
   const CATEGORIES = [
-    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo'] },
+    { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo','beet'] },
     { id:'dairy',     label:'Dairy & Eggs',       color:'#E0A22E', keywords:['milk','cream','butter','cheese','yogurt','egg','sour cream','mascarpone','ricotta','buttermilk','queso'] },
     { id:'bakery',    label:'Bakery',             color:'#C24C79', keywords:['bread','bagel','croissant','roll','bun','tortilla','pita','baguette','brioche','graham cracker'] },
-    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','pappardelle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','chile','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko','hominy','gochujang','sambal','togarashi','spaghetti','coffee','candy','sprinkle','wrapper','olive','granola','orzo','cavatelli','almond','thyme'] },
+    { id:'pantry',    label:'Pantry & Specialty', color:'#8A6B3D', keywords:['rice','quinoa','couscous','pasta','noodle','pappardelle','flour','sugar','honey','oil','vinegar','soy sauce','miso','tahini','nori','panko','matcha','chocolate','valrhona','cocoa','spice','salt','can of','bean','chickpea','lentil','broth','stock','nut','seed','vanilla','cornstarch','baking','tamarind','sriracha','mirin','tofu','cumin','paprika','turmeric','coriander','oregano','cinnamon','curry','chili','chile','garlic powder','mustard','ketchup','relish','mayonnaise','hot sauce','wine','raisin','chipotle','pepper','maple syrup','pickle','pistachio','mochiko','hominy','gochujang','sambal','togarashi','spaghetti','coffee','candy','sprinkle','wrapper','olive','granola','orzo','cavatelli','almond','thyme','dill','caper'] },
     { id:'seafood',   label:'Seafood',            color:'#3F7C8A', keywords:['salmon','tuna','shrimp','fish','cod','halibut','scallop','crab','ahi','unagi','roe','uni','anchov'] },
     { id:'frozen',    label:'Frozen',             color:'#6B84A8', keywords:['frozen','ice cream','popsicle','sorbet','edamame'] },
     { id:'other',     label:'Other',              color:'#8A897A', keywords:[] },
@@ -1127,6 +1270,8 @@
     { name:'Soba Noodle Salad with Edamame and Sesame-Ginger Dressing', meal:'lunch' },
     { name:'Baked Feta Pasta Salad', meal:'lunch' },
     { name:'Quick Miso Ramen with Soft-Boiled Egg', meal:'lunch' },
+    { name:'Quinoa and Chickpea Bowls with Beets and Tahini Goddess Dressing', meal:'lunch' },
+    { name:'Tartine-Inspired Tuna Salad Sandwiches', meal:'lunch' },
     // Dinner
     { name:'Chirashi-Style Rice Bowl', meal:'dinner' },
     { name:'Crispy Tofu Banh Mi', meal:'dinner' },
@@ -1151,11 +1296,14 @@
     { name:'Pappardelle with Artichokes, Butter Beans, and Basil Pistou', meal:'dinner' },
     { name:'Pozole Verde with Mild Green Chiles, Pinto Beans, and Avocado', meal:'dinner' },
     { name:'Fresh Cavatelli and Summer Squash with Pesto Alla Trapanese', meal:'dinner' },
+    { name:'Crispy Fish Sandwiches with Quick Slaw', meal:'dinner' },
+    { name:'Salt-and-Pepper Tofu Stir-Fry with Glass Noodles', meal:'dinner' },
+    { name:'Casareccia Pasta with Butternut Squash and Truffle Buttered Mushrooms', meal:'dinner' },
+    { name:'Thai-Style Salmon in Spicy Red Curry with Fresh Basil', meal:'dinner' },
     // Dessert
     { name:'Nutella Framboise Cookie', meal:'dessert' },
     { name:'Matcha Nuage Bar', meal:'dessert' },
     { name:'Honey Apple Galette', meal:'dessert' },
-    { name:'No-Churn Mango Ice Cream', meal:'dessert' },
     { name:'Olive Oil Cake with Lemon and Whipped Cream', meal:'dessert' },
     { name:'Turkish Yogurt Cake', meal:'dessert' },
     { name:'Banana Cake with Cream Cheese Frosting', meal:'dessert' },
@@ -1469,22 +1617,6 @@
         {title:'Finish and serve', content:'Let cool about 10 minutes, then drizzle with a little extra honey before slicing and serving warm.'},
       ],
       notes: "For Ruby's portion, serve a piece from the center where the apple is softest, away from the firmer crimped edge, cut into small, soft pieces. Dough can be made a day ahead and refrigerated, or frozen up to a month.",
-    },
-    'No-Churn Mango Ice Cream': {
-      servings: 8,
-      prepTime: "15 min",
-      cookTime: "No cook",
-      totalTime: "6 hr 15 min (includes 6 hr freezing)",
-      description: "A simple three-ingredient ice cream that needs no ice cream maker — just a blender and a freezer.",
-      ingredients: ['20 oz frozen mango chunks','14 oz sweetened condensed milk','1 cup heavy cream','1 tbsp fresh lime juice','1 pinch salt'],
-      steps: [
-        {title:'Blend the mango base', content:'In a blender or food processor, blend the frozen mango, condensed milk, and lime juice until smooth, scraping down the sides as needed.'},
-        {title:'Whip the cream', content:'In a separate bowl, whip the heavy cream with a pinch of salt to soft peaks.'},
-        {title:'Fold together', content:'Gently fold the mango purée into the whipped cream until no streaks remain.'},
-        {title:'Freeze', content:'Pour into a loaf pan or airtight container, cover, and freeze until firm, about 6 hours.'},
-        {title:'Serve', content:'Let sit at room temperature for 5 minutes before scooping.'},
-      ],
-      notes: 'Makes about 1 quart. Frozen mango straight from the freezer works best — no need to thaw first.',
     },
     'Olive Oil Cake with Lemon and Whipped Cream': {
       servings: 8,
@@ -1972,6 +2104,106 @@
       ],
       notes: "Reconstructed from a Sunbasket recipe — their pesto alla trapanese (a Sicilian tomato-almond pesto) is rebuilt here as a quick blend of tomatoes, sun-dried tomatoes, almonds, Parmesan, and garlic. Fresh cavatelli is usually found near other fresh pastas; dried shells or orecchiette work as a substitute.",
     },
+    'Crispy Fish Sandwiches with Quick Slaw': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "15 min",
+      totalTime: "25 min",
+      description: "Casual bar-food energy — panko-crusted fish on a toasted brioche bun with a bright, mayo-lemon slaw. A confirmed favorite.",
+      ingredients: ['3 cod or tilapia fillets (about 4-5 oz each)','1/2 cup all-purpose flour','1 cup panko breadcrumbs','2 large eggs','1 tsp Old Bay seasoning','1/2 tsp salt','1/4 cup avocado oil, for frying','3 brioche buns','2 cups cabbage, shredded','3 tbsp mayonnaise','1 tbsp lemon juice','6 dill pickle slices'],
+      steps: [
+        {title:'Set up the breading station', content:'Season the fish with the salt. Place the flour in one bowl, whisk the eggs in a second, and mix the panko with the Old Bay in a third.'},
+        {title:'Bread the fish', content:'Dredge each fillet in flour, then egg, then the seasoned panko, pressing to coat.'},
+        {title:'Fry until golden', content:'Heat the avocado oil in a skillet over medium-high heat. Fry the fillets 3 to 4 minutes per side until golden and cooked through.'},
+        {title:'Toss the slaw', content:'Toss the cabbage with the mayonnaise and lemon juice.'},
+        {title:'Build the sandwiches', content:'Toast the buns lightly, then layer each with a fried fillet, slaw, and pickles.'},
+      ],
+      notes: "For Ruby: cut a plain piece of fish into strips (skip the Old Bay if she's spice-sensitive) and serve alongside soft bun pieces and cucumber sticks instead of the full sandwich.",
+    },
+    'Salt-and-Pepper Tofu Stir-Fry with Glass Noodles': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/salt-and-pepper-tofu-stir-fry-with-glass-noodles",
+      prepTime: "15 min",
+      cookTime: "15 min",
+      totalTime: "30 min",
+      description: "Crisp cornstarch-dredged tofu and bouncy glass noodles tossed with bell pepper, edamame, and spinach in a sweet-savory sauce. Rebuilt from a Sunbasket favorite. Vegan as written.",
+      ingredients: ['7 1/2 oz glass (sweet potato) noodles','15 oz extra-firm tofu, pressed and cut into 1-inch cubes','6 tbsp cornstarch','1 tsp salt, divided','1/2 tsp black pepper, divided','3 tbsp avocado oil, divided','1 1/2 red bell peppers, thinly sliced','1/2 cup shelled edamame','4 1/2 oz baby spinach','4 scallions, thinly sliced','3 tbsp soy sauce','1 tbsp natural peanut butter','1 tbsp brown sugar','1 tbsp toasted sesame oil','2 garlic cloves, minced','1 tsp fresh ginger, grated','1/3 cup water'],
+      steps: [
+        {title:'Cook the noodles', content:'Bring a large pot of water to a boil. Add the glass noodles and cook until just tender, 8 to 10 minutes. Drain, rinse under cold water, and set aside.'},
+        {title:'Bread and fry the tofu', content:'Stir together the cornstarch and half the salt and pepper. Dredge the tofu cubes, turning to coat, and shake off the excess. Warm 2 tablespoons of the oil in a large skillet over medium-high heat. Add the tofu and cook, turning as needed, until browned and crisp, about 1 minute per side. Transfer to a paper-towel-lined plate.'},
+        {title:'Cook the vegetables', content:'Warm the remaining oil in the same skillet over medium heat. Add the bell pepper, season with the remaining salt and pepper, and cook, stirring occasionally, until starting to soften, 2 to 4 minutes. Add the edamame and spinach and cook, stirring, until the edamame is warmed through and the spinach is wilted, 2 to 3 minutes.'},
+        {title:'Make the sauce', content:'Whisk together the soy sauce, peanut butter, brown sugar, sesame oil, garlic, ginger, and water until smooth.'},
+        {title:'Combine and serve', content:'Add the noodles and sauce to the skillet with the vegetables; toss to coat and cook until heated through, about 1 minute. Divide among bowls, top with the tofu, and garnish with the scallions.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their proprietary sweet stir-fry sauce base (coconut aminos, cashew butter, dried plums, molasses, sesame oil, garlic, ginger) is rebuilt here as a simpler soy sauce, peanut butter, and brown sugar version. Glass noodles are usually found in the Asian foods aisle. For Ruby: serve her tofu plain (skip the cornstarch dredge's salt and pepper) with the sauce on the side, since the full sauce is fairly salty for a toddler portion.",
+    },
+    'Casareccia Pasta with Butternut Squash and Truffle Buttered Mushrooms': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/casareccia-pasta-with-butternut-squash-and-truffle-buttered-mushrooms",
+      prepTime: "10 min",
+      cookTime: "20 min",
+      totalTime: "30 min",
+      description: "A rich, earthy \"pasta night\" dish — browned butternut squash and specialty mushrooms tossed with casareccia in a black truffle butter sauce. Rebuilt from a Sunbasket favorite. Vegetarian as written.",
+      ingredients: ['7 1/2 oz casareccia (or another short pasta, like orecchiette)','4 1/2 oz maitake mushrooms (or other specialty mushroom), cut into 1/2-inch pieces','6 oz cremini mushrooms, cut into 1/2-inch pieces','6 oz peeled butternut squash, cut into 1/2-inch pieces','3 tbsp olive oil, divided','1 small shallot, minced','2 garlic cloves, minced','3/4 tsp fresh thyme leaves (from about 3 sprigs)','1/2 cup vegetable broth','3 tbsp black truffle butter (or 2 tbsp butter whisked with 1 tsp truffle oil)','3 tbsp shredded Italian cheese blend (mozzarella and Parmesan)'],
+      steps: [
+        {title:'Cook the casareccia', content:'Bring a pot of generously salted water to a boil. Add the pasta and cook until just tender, 9 to 11 minutes. Drain and set aside.'},
+        {title:'Cook the squash and mushrooms', content:'Warm 2 tablespoons of the olive oil in a large skillet over medium-high heat. Add the squash, cover, and cook, stirring occasionally, until starting to soften, about 4 minutes. Stir in the maitake and cremini mushrooms and remaining tablespoon of oil; cover and cook until the squash is tender and the mushrooms are lightly browned, 4 to 5 minutes.'},
+        {title:'Add the aromatics', content:'Stir in the shallot and garlic and cook until fragrant, about 1 minute. Add the truffle butter and thyme; cook, stirring, until the butter melts and the thyme is fragrant, about 1 minute.'},
+        {title:'Simmer and combine', content:'Add the vegetable broth and bring to a boil, then reduce to a vigorous simmer. Stir in the pasta and cook until heated through, 1 to 2 minutes. Remove from the heat and stir in the cheese blend. Season to taste with salt and pepper.'},
+        {title:'Serve', content:'Divide among bowls and serve.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their vegetable broth concentrate and shallot-garlic confit are swapped here for regular vegetable broth and freshly sautéed shallot and garlic. Black truffle butter can be found at specialty grocers or online. For Ruby: go light on the truffle butter in her portion — it's rich and pungent for a toddler palate — and mash the squash into her pasta.",
+    },
+    'Thai-Style Salmon in Spicy Red Curry with Fresh Basil': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/thai-style-salmon-in-spicy-red-curry-with-fresh-basil",
+      prepTime: "15 min",
+      cookTime: "20 min",
+      totalTime: "35 min",
+      description: "Seared salmon and mushrooms simmered in a coconut red curry with cabbage, brightened with lime and fresh basil. Rebuilt from a Sunbasket favorite. Pescatarian as written.",
+      ingredients: ['3 salmon fillets (about 5 oz each)','6 oz cremini mushrooms, thinly sliced','10 oz green cabbage, thinly sliced','1 1/2 limes, juiced, plus wedges for serving','5 sprigs fresh Thai basil (or regular basil), leaves stripped and chopped','3 tbsp red curry paste','1 1/2 cups coconut milk','1 1/2 cups water','3 tbsp avocado oil, divided','1/2 tsp salt, plus more to taste'],
+      steps: [
+        {title:'Cook the salmon', content:'Pat the salmon dry and season generously with salt and pepper. Warm 2 tablespoons of the oil in a large skillet over medium-high heat. Add the salmon and cook until lightly browned, 3 to 4 minutes. Turn and cook 1 to 2 minutes more, until just opaque but not yet cooked through. Transfer to a plate; do not clean the pan.'},
+        {title:'Start the curry', content:'Warm the remaining oil in the same skillet over medium-high heat. Add the mushrooms and curry paste and cook, stirring occasionally, until the mushrooms start to soften, 2 to 3 minutes. Add the cabbage, season with salt, and cook, stirring, until just wilted, 2 to 3 minutes.'},
+        {title:'Simmer', content:'Add the coconut milk and water and bring to a boil, then reduce to a simmer. Cook, stirring occasionally, until slightly thickened, 4 to 6 minutes.'},
+        {title:'Finish', content:'Return the salmon to the skillet and cook until flaky and cooked through, 2 to 3 minutes. Remove from the heat, stir in the lime juice and basil, and season to taste.'},
+        {title:'Serve', content:'Divide the salmon, vegetables, and sauce among bowls and serve with the lime wedges.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their house red curry paste is swapped here for a standard store-bought red curry paste. For Ruby: serve a plain piece of salmon with a few plain cabbage pieces on the side — the curry broth is spicy and rich for a toddler portion.",
+    },
+    'Quinoa and Chickpea Bowls with Beets and Tahini Goddess Dressing': {
+      servings: 3,
+      sourceUrl: "https://sunbasket.com/recipe/quinoa-and-chickpea-bowls-with-beets-and-tahini-goddess-dressing",
+      prepTime: "10 min",
+      cookTime: "20 min",
+      totalTime: "30 min",
+      description: "A vegan grain bowl with crisped chickpeas, roasted beets, and tart apple over quinoa, tied together with a lemony tahini dressing. Rebuilt from a Sunbasket favorite. Vegan as written.",
+      ingredients: ['3/4 cup rainbow quinoa (or other quinoa)','1 1/2 cups water','1 1/2 tbsp olive oil','1 1/2 cups cooked chickpeas, drained and rinsed','1 1/2 tsp smoked paprika','1 1/2 Granny Smith apples (or other crisp apple), thinly sliced','12 oz roasted beets, cut into 1-inch pieces','3 oz shredded green cabbage','1/4 cup tahini','3 tbsp lemon juice','1 tbsp apple cider vinegar','1 garlic clove, minced','2 scallions, thinly sliced','2 tbsp fresh parsley, chopped','1/2 tsp dried dill','1/4 tsp salt','4 tbsp water, to thin the dressing'],
+      steps: [
+        {title:'Cook the quinoa', content:'Rinse the quinoa. Combine with the water and a pinch of salt in a small pot. Bring to a boil, reduce to a simmer, cover, and cook until tender and the water is absorbed, 15 to 20 minutes. Fluff with a fork.'},
+        {title:'Make the dressing', content:'Whisk together the tahini, lemon juice, apple cider vinegar, garlic, scallions, parsley, and dill. Season with the salt, then thin with water, a tablespoon at a time, until pourable.'},
+        {title:'Crisp the chickpeas', content:'Warm the olive oil in a skillet over high heat. Add the chickpeas, season with salt and pepper, and cook, stirring occasionally, until lightly crisped, 3 to 5 minutes. Toss with half the smoked paprika.'},
+        {title:'Dress the cabbage', content:'Toss the cabbage with 2 tablespoons of the dressing and the remaining smoked paprika.'},
+        {title:'Assemble', content:'Divide the quinoa among bowls and top with the cabbage, chickpeas, apple, and beets. Spoon over the remaining dressing.'},
+      ],
+      notes: "Reconstructed from a Sunbasket recipe — their tahini goddess dressing is rebuilt here as a simple tahini, lemon, and herb dressing. Pre-roasted, peeled beets (found near the packaged salad greens) make this a fast one. For Ruby: serve the components separately rather than dressed — plain quinoa, chickpeas, apple, and beets — with a small spoon of dressing on the side.",
+    },
+    'Tartine-Inspired Tuna Salad Sandwiches': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "5 min",
+      totalTime: "15 min",
+      description: "Tartine doesn't publish their tuna sandwich recipe, so this is a reconstruction leaning on the French-bakery flavors they're known for — capers, red onion, lemon, and good country bread.",
+      ingredients: ['2 (5 oz) cans oil-packed tuna, drained','3 tbsp mayonnaise','1 tbsp Dijon mustard','2 tbsp capers, drained and chopped','1/4 cup red onion, finely diced (or quick-pickled — see Kitchen Basics)','1 celery rib, finely diced (optional)','1 lemon, zested and juiced','2 tbsp fresh dill or chives, chopped','1/4 tsp black pepper','6 slices country levain or sourdough bread','1 garlic clove, halved','2 tbsp butter, softened, for the bread','3 lettuce leaves (optional)'],
+      steps: [
+        {title:'Toast and rub the bread', content:'Toast the bread slices until golden. While still warm, rub one side of each slice with the cut garlic clove, then spread lightly with the butter.'},
+        {title:'Make the tuna salad', content:'In a bowl, combine the tuna, mayonnaise, Dijon mustard, capers, red onion, and celery (if using). Stir in the lemon zest and half the lemon juice.'},
+        {title:'Season', content:'Season with the black pepper, adding more lemon juice to taste, then fold in the dill or chives.'},
+        {title:'Assemble', content:'Layer the lettuce, if using, on 3 slices of the toasted bread, then top generously with the tuna salad. Close with the remaining bread slices.'},
+        {title:'Serve', content:'Slice in half and serve.'},
+      ],
+      notes: "Since this isn't from a published recipe, treat it as a starting point rather than an exact replica. For Ruby: mash a plain portion of tuna with a little extra mayo before adding the capers, mustard, and lemon, and serve it on soft bread or crackers instead.",
+    },
   };
 
   // Structured ingredient data (amount/unit/name) used only for grocery-list math.
@@ -2271,13 +2503,6 @@
       {amount:1, unit:'tbsp', name:'cornstarch'},
       {amount:1, unit:'pinch', name:'salt'},
       {amount:1, unit:null, name:'egg (beaten, or milk for brushing)', namePlural:'eggs (beaten, or milk for brushing)'},
-    ],
-    'No-Churn Mango Ice Cream': [
-      {amount:20, unit:'oz', name:'frozen mango chunks'},
-      {amount:14, unit:'oz', name:'sweetened condensed milk'},
-      {amount:1, unit:'cup', name:'heavy cream'},
-      {amount:1, unit:'tbsp', name:'fresh lime juice'},
-      {amount:1, unit:'pinch', name:'salt'},
     ],
     'Banana Cake with Cream Cheese Frosting': [
       {amount:3, unit:null, name:'ripe banana', namePlural:'ripe bananas'},
@@ -2651,6 +2876,93 @@
       {amount:1, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
       {amount:2, unit:'tbsp', name:'olive oil'},
       {amount:4.5, unit:'oz', name:'baby arugula'},
+    ],
+    'Crispy Fish Sandwiches with Quick Slaw': [
+      {amount:3, unit:null, name:'cod or tilapia fillet', namePlural:'cod or tilapia fillets'},
+      {amount:0.5, unit:'cup', name:'all-purpose flour'},
+      {amount:1, unit:'cup', name:'panko breadcrumbs'},
+      {amount:2, unit:null, name:'large egg', namePlural:'large eggs'},
+      {amount:1, unit:'tsp', name:'Old Bay seasoning'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+      {amount:0.25, unit:'cup', name:'avocado oil'},
+      {amount:3, unit:null, name:'brioche bun', namePlural:'brioche buns'},
+      {amount:2, unit:'cup', name:'cabbage'},
+      {amount:3, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:'tbsp', name:'lemon juice'},
+      {amount:6, unit:null, name:'dill pickle slice', namePlural:'dill pickle slices'},
+    ],
+    'Salt-and-Pepper Tofu Stir-Fry with Glass Noodles': [
+      {amount:7.5, unit:'oz', name:'glass (sweet potato) noodles'},
+      {amount:15, unit:'oz', name:'extra-firm tofu'},
+      {amount:6, unit:'tbsp', name:'cornstarch'},
+      {amount:1, unit:'tsp', name:'salt'},
+      {amount:0.5, unit:'tsp', name:'black pepper'},
+      {amount:3, unit:'tbsp', name:'avocado oil'},
+      {amount:1.5, unit:null, name:'red bell pepper', namePlural:'red bell peppers'},
+      {amount:0.5, unit:'cup', name:'edamame, shelled'},
+      {amount:4.5, unit:'oz', name:'baby spinach'},
+      {amount:4, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:3, unit:'tbsp', name:'soy sauce'},
+      {amount:1, unit:'tbsp', name:'natural peanut butter'},
+      {amount:1, unit:'tbsp', name:'brown sugar'},
+      {amount:1, unit:'tbsp', name:'toasted sesame oil'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:1, unit:'tsp', name:'fresh ginger'},
+    ],
+    'Casareccia Pasta with Butternut Squash and Truffle Buttered Mushrooms': [
+      {amount:7.5, unit:'oz', name:'casareccia (or other short pasta)'},
+      {amount:4.5, unit:'oz', name:'maitake mushrooms'},
+      {amount:6, unit:'oz', name:'cremini mushrooms'},
+      {amount:6, unit:'oz', name:'butternut squash, peeled and cubed'},
+      {amount:3, unit:'tbsp', name:'olive oil'},
+      {amount:1, unit:null, name:'shallot'},
+      {amount:2, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:3, unit:null, name:'fresh thyme sprig', namePlural:'fresh thyme sprigs'},
+      {amount:0.5, unit:'cup', name:'vegetable broth'},
+      {amount:3, unit:'tbsp', name:'black truffle butter'},
+      {amount:3, unit:'tbsp', name:'Italian cheese blend'},
+    ],
+    'Thai-Style Salmon in Spicy Red Curry with Fresh Basil': [
+      {amount:3, unit:null, name:'salmon fillet', namePlural:'salmon fillets'},
+      {amount:6, unit:'oz', name:'cremini mushrooms'},
+      {amount:10, unit:'oz', name:'green cabbage'},
+      {amount:1.5, unit:null, name:'lime', namePlural:'limes'},
+      {amount:5, unit:null, name:'fresh Thai basil sprig', namePlural:'fresh Thai basil sprigs'},
+      {amount:3, unit:'tbsp', name:'red curry paste'},
+      {amount:1.5, unit:'cup', name:'coconut milk'},
+      {amount:3, unit:'tbsp', name:'avocado oil'},
+      {amount:0.5, unit:'tsp', name:'salt'},
+    ],
+    'Quinoa and Chickpea Bowls with Beets and Tahini Goddess Dressing': [
+      {amount:0.75, unit:'cup', name:'rainbow quinoa'},
+      {amount:1.5, unit:'tbsp', name:'olive oil'},
+      {amount:1.5, unit:'cup', name:'cooked chickpeas'},
+      {amount:1.5, unit:'tsp', name:'smoked paprika'},
+      {amount:1.5, unit:null, name:'Granny Smith apple', namePlural:'Granny Smith apples'},
+      {amount:12, unit:'oz', name:'roasted beets'},
+      {amount:3, unit:'oz', name:'shredded green cabbage'},
+      {amount:0.25, unit:'cup', name:'tahini'},
+      {amount:3, unit:'tbsp', name:'lemon juice'},
+      {amount:1, unit:'tbsp', name:'apple cider vinegar'},
+      {amount:1, unit:null, name:'garlic clove', namePlural:'garlic cloves'},
+      {amount:2, unit:null, name:'scallion', namePlural:'scallions'},
+      {amount:2, unit:'tbsp', name:'fresh parsley'},
+      {amount:0.5, unit:'tsp', name:'dried dill'},
+      {amount:0.25, unit:'tsp', name:'salt'},
+    ],
+    'Tartine-Inspired Tuna Salad Sandwiches': [
+      {amount:2, unit:null, name:'can tuna', namePlural:'cans tuna'},
+      {amount:3, unit:'tbsp', name:'mayonnaise'},
+      {amount:1, unit:'tbsp', name:'Dijon mustard'},
+      {amount:2, unit:'tbsp', name:'capers'},
+      {amount:0.25, unit:'cup', name:'red onion'},
+      {amount:1, unit:null, name:'celery rib'},
+      {amount:1, unit:null, name:'lemon'},
+      {amount:2, unit:'tbsp', name:'fresh dill or chives'},
+      {amount:6, unit:null, name:'slice country levain or sourdough bread', namePlural:'slices country levain or sourdough bread'},
+      {amount:1, unit:null, name:'garlic clove'},
+      {amount:2, unit:'tbsp', name:'butter'},
+      {amount:3, unit:null, name:'lettuce leaf', namePlural:'lettuce leaves'},
     ],
   };
 
