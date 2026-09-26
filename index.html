@@ -1042,7 +1042,7 @@
   /* ================= GROCERY ================= */
   const GROCERY_STORAGE_KEY = 'grocery-items';
 
-  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry', 'old bay seasoning': 'pantry', "old-fashioned rolled oats": 'pantry', "almond butter": 'pantry', "cottage cheese": 'dairy', "roasted red pepper strips": 'pantry', "salsa": 'pantry', "monterey jack cheese": 'dairy', "large flour tortilla": 'bakery', "anchovy paste": 'pantry', "head little gem lettuce": 'produce', "can cannellini beans": 'pantry', "can tuna in olive oil": 'pantry', "whole peeled tomatoes": 'pantry', "canned diced tomatoes": 'pantry', "diced tomatoes": 'pantry', "tomato paste": 'pantry', "sharp cheddar cheese": 'dairy', "red lentils": 'pantry', "whole grain spaghetti": 'pantry', "halloumi cheese": 'dairy', "pizza dough": 'bakery', "fresh mozzarella": 'dairy', "cornmeal": 'pantry', "fresh dill": 'produce', "lager beer or sparkling water": 'pantry', "cod fillet": 'seafood', "tortilla chips": 'pantry', "elbow macaroni": 'pantry', "gruyère cheese": 'dairy', "garam masala": 'pantry', "basmati rice": 'pantry', "dried chickpeas": 'pantry', "sashimi-grade salmon": 'seafood', "wasabi": 'pantry', "pickled sushi ginger": 'pantry', "bunch lacinato kale": 'produce', "head baby bok choy": 'produce', "shichimi togarashi": 'pantry', "chia seeds": 'pantry', "head broccoli": 'produce', "head cauliflower": 'produce', "cooked chickpeas": 'pantry', "bean sprouts": 'produce', "panko breadcrumbs": 'pantry' };
+  const CATEGORY_OVERRIDES = { 'crushed tomatoes': 'pantry', 'sun-dried tomatoes': 'pantry', 'avocado oil': 'pantry', 'old bay seasoning': 'pantry', "old-fashioned rolled oats": 'pantry', "almond butter": 'pantry', "cottage cheese": 'dairy', "roasted red pepper strips": 'pantry', "salsa": 'pantry', "monterey jack cheese": 'dairy', "large flour tortilla": 'bakery', "anchovy paste": 'pantry', "head little gem lettuce": 'produce', "can cannellini beans": 'pantry', "can tuna in olive oil": 'pantry', "whole peeled tomatoes": 'pantry', "canned diced tomatoes": 'pantry', "diced tomatoes": 'pantry', "tomato paste": 'pantry', "sharp cheddar cheese": 'dairy', "red lentils": 'pantry', "whole grain spaghetti": 'pantry', "halloumi cheese": 'dairy', "pizza dough": 'bakery', "fresh mozzarella": 'dairy', "cornmeal": 'pantry', "fresh dill": 'produce', "lager beer or sparkling water": 'pantry', "cod fillet": 'seafood', "tortilla chips": 'pantry', "elbow macaroni": 'pantry', "gruyère cheese": 'dairy', "garam masala": 'pantry', "basmati rice": 'pantry', "dried chickpeas": 'pantry', "sashimi-grade salmon": 'seafood', "wasabi": 'pantry', "pickled sushi ginger": 'pantry', "bunch lacinato kale": 'produce', "head baby bok choy": 'produce', "shichimi togarashi": 'pantry', "chia seeds": 'pantry', "head broccoli": 'produce', "head cauliflower": 'produce', "cooked chickpeas": 'pantry', "bean sprouts": 'produce', "panko breadcrumbs": 'pantry', "bay leaf": 'pantry' };
 
   const CATEGORIES = [
     { id:'produce',   label:'Produce',            color:'#63804A', keywords:['apple','banana','avocado','lemon','lime','lettuce','spinach','kale','tomato','onion','garlic clove','shallot','cucumber','carrot','potato','herb','cilantro','basil','mint','parsley','scallion','ginger','mushroom','squash','zucchini','broccoli','cauliflower','raspberr','strawberr','berries','fruit','cabbage','radish','pear','mango','papaya','peach','plum','grape','celery','corn kernel','bell pepper','jalapeño','jalapeno','eggplant','peas','green bean','arugula','frisée','frisee','artichoke','tomatillo','beet'] },
@@ -1470,6 +1470,7 @@
     { name:'Baked Falafel Pitas with Tahini Sauce', meal:'dinner', cuisine:'mediterranean' },
     { name:'Sushi Night: Salmon Nigiri and Cucumber-Avocado Maki', meal:'dinner', cuisine:'japanese' },
     { name:'Tuscan White Bean and Kale Ribollita', meal:'dinner', cuisine:'italian' },
+    { name:'Cookie and Kate-Style Mushroom & White Bean Stew', meal:'dinner', cuisine:'mediterranean' },
     // Dessert
     { name:'Nutella Framboise Cookie', meal:'dessert' },
     { name:'Matcha Nuage Bar', meal:'dessert' },
@@ -2670,6 +2671,21 @@
       ],
       notes: "This is naturally soft and great for Ruby. Scoop hers before adding extra pepper flakes, and mash the beans a little more in her bowl. Ribollita means 'reboiled,' so it's even better reheated the next day, making it a great candidate for planned leftovers.",
     },
+    'Cookie and Kate-Style Mushroom & White Bean Stew': {
+      servings: 3,
+      prepTime: "10 min",
+      cookTime: "35 min",
+      totalTime: "45 min",
+      description: "A quick, hearty vegetarian stew — browned cremini mushrooms and white beans in a thyme-scented tomato broth, ready in under an hour.",
+      ingredients: ["2 tbsp olive oil","1 yellow onion, diced","3 garlic cloves, minced","12 oz cremini mushrooms, sliced","2 carrots, diced","1 (15 oz) can cannellini beans, drained","3 cups vegetable broth","1 (14 oz) can diced tomatoes","1 tsp fresh thyme leaves","1 bay leaf","2 cups kale, chopped","1/2 tsp salt","1/4 tsp black pepper"],
+      steps: [
+        {title:"Sauté the onion and garlic", content:"Heat the olive oil in a large pot over medium heat. Add the onion and garlic and cook until softened, about 5 minutes."},
+        {title:"Cook the mushrooms and carrots", content:"Add the mushrooms and carrots and cook until the mushrooms release their liquid and it evaporates, about 8 minutes."},
+        {title:"Simmer the stew", content:"Stir in the cannellini beans, vegetable broth, diced tomatoes, thyme, bay leaf, salt, and pepper. Bring to a simmer and cook uncovered for 20 minutes."},
+        {title:"Stir in the kale", content:"Stir in the kale and cook just until wilted, about 2 minutes. Remove the bay leaf before serving."},
+      ],
+      notes: "For Ruby: set aside a portion of beans, carrots, and mushrooms before adding extra pepper, and mash or blend it a bit with some broth for an easier texture. It reheats and freezes well, so it's worth making the full batch even on a normal night.",
+    },
   };
 
   // Structured ingredient data (amount/unit/name) used only for grocery-list math.
@@ -3724,6 +3740,21 @@
       {amount:0.25, unit:'tsp', name:"black pepper"},
       {amount:3, unit:null, name:"slice country levain or sourdough bread", namePlural:"slices country levain or sourdough bread"},
       {amount:0.25, unit:'cup', name:"parmesan cheese"},
+    ],
+    'Cookie and Kate-Style Mushroom & White Bean Stew': [
+      {amount:2, unit:'tbsp', name:"olive oil"},
+      {amount:1, unit:null, name:"yellow onion", namePlural:"yellow onions"},
+      {amount:3, unit:null, name:"garlic clove", namePlural:"garlic cloves"},
+      {amount:12, unit:'oz', name:"cremini mushrooms"},
+      {amount:2, unit:null, name:"carrot", namePlural:"carrots"},
+      {amount:1, unit:null, name:"can cannellini beans"},
+      {amount:3, unit:'cup', name:"vegetable broth"},
+      {amount:14, unit:'oz', name:"canned diced tomatoes"},
+      {amount:1, unit:'tsp', name:"fresh thyme leaves"},
+      {amount:1, unit:null, name:"bay leaf"},
+      {amount:2, unit:'cup', name:"kale"},
+      {amount:0.5, unit:'tsp', name:"salt"},
+      {amount:0.25, unit:'tsp', name:"black pepper"},
     ],
   };
 
